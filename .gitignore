@@ -37,3 +37,6 @@ sessions.json
 # Caché de Python
 __pycache__/
 *.pyc
+
+# Artefactos del workflow iOS
+release-out/

@@ -87,8 +87,9 @@ jobs:
         run: |
           APP=$(find src-tauri/gen/apple/build -type d -name '*.app' | grep -i 'sim' | head -1)
           [ -n "$APP" ] || { echo "::error::No se encontró el .app del simulador"; exit 1; }
-          mkdir -p dist
-          ditto -c -k --sequesterRsrc --keepParent "$APP" "dist/NetTerminal-v${VERSION}-ios-simulator.app.zip"
+          # Fuera de dist/: el build de dispositivo recompila el frontend y Vite vacía dist/.
+          mkdir -p release-out
+          ditto -c -k --sequesterRsrc --keepParent "$APP" "release-out/NetTerminal-v${VERSION}-ios-simulator.app.zip"
 
       # Dispositivo sin firma: xcodebuild directo no sirve (la fase de Tauri exige que el CLI esté corriendo).
       # Sin certificado de Apple, el .app sale sin firmar y se re-firma al instalarlo (AltStore, Sideloadly o Xcode).
@@ -103,26 +104,26 @@ jobs:
           [ -n "$APP" ] || { echo "::error::No se encontró el .app de dispositivo"; exit 1; }
           rm -rf ipa && mkdir -p ipa/Payload
           cp -R "$APP" ipa/Payload/
-          (cd ipa && zip -qry "../dist/NetTerminal-v${VERSION}-ios-unsigned.ipa" Payload)
+          (cd ipa && zip -qry "../release-out/NetTerminal-v${VERSION}-ios-unsigned.ipa" Payload)
 
       # latest.json: lo consulta la app (Ajustes > Acerca de) para avisar de versiones nuevas.
       - name: Generar latest.json
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          printf '{"version":"%s","notes":"","pub_date":"%s"}\n' "$VERSION" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > dist/latest.json
-          cat dist/latest.json
+          printf '{"version":"%s","notes":"","pub_date":"%s"}\n' "$VERSION" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > release-out/latest.json
+          cat release-out/latest.json
 
       - name: Generar SHA256SUMS
         run: |
-          cd dist
+          cd release-out
           shasum -a 256 *.zip *.ipa > SHA256SUMS
           cat SHA256SUMS
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: NetTerminal-v${{ steps.version.outputs.version }}-ios
-          path: dist/
+          path: release-out/
           if-no-files-found: error
 
   # Al publicar un tag v*-ios crea el Release con el .app de simulador y el .ipa sin firma.
@@ -137,7 +138,7 @@ jobs:
         with:
           pattern: NetTerminal-v*-ios
           merge-multiple: true
-          path: dist
+          path: release-out
 
       - name: Crear release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
@@ -151,7 +152,7 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
-            dist/*.zip
-            dist/*.ipa
-            dist/SHA256SUMS
-            dist/latest.json
+            release-out/*.zip
+            release-out/*.ipa
+            release-out/SHA256SUMS
+            release-out/latest.json
