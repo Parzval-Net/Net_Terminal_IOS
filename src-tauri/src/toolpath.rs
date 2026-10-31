@@ -11,6 +11,10 @@
 //! registro (Windows) y las carpetas habituales de cada sistema. Cada candidato se confirma
 //! ejecutando `--version`.
 
+// iOS: nada de esto se usa (el sandbox no ejecuta binarios), pero el módulo se compila
+// igual para que el resto del código tenga los mismos tipos.
+#![cfg_attr(target_os = "ios", allow(dead_code, unused_imports))]
+
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 use std::sync::Mutex;
@@ -234,6 +238,10 @@ static IPERF: Mutex<Option<Found>> = Mutex::new(None);
 /// Busca iperf3: primero `custom` (ruta elegida por el usuario: el ejecutable o su carpeta),
 /// luego el PATH y las carpetas habituales. Solo se recuerda un resultado positivo.
 pub fn find_iperf(custom: Option<&str>) -> Option<Found> {
+    // iOS no puede ejecutar iperf3 aunque el archivo exista: no se busca ni se sugiere.
+    if cfg!(target_os = "ios") {
+        return None;
+    }
     let name = exe("iperf3");
     let mut candidates: Vec<PathBuf> = Vec::new();
     if let Some(c) = custom.map(str::trim).filter(|c| !c.is_empty()) {

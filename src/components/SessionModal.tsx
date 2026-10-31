@@ -10,6 +10,7 @@ import { normPath } from "../lib/folders";
 import { useDragResize } from "../lib/useDragResize";
 import { CredStatus, MASK, credStatus, needsUnlock, storageLabel } from "../lib/credentials";
 import { VaultUnlock } from "./VaultUnlock";
+import { IOS_UNAVAILABLE, isIOS } from "../lib/platform";
 
 /** Qué hacer con la contraseña guardada al guardar la sesión. */
 export type CredChange = { action: "keep" } | { action: "set"; password: string } | { action: "delete" };
@@ -62,7 +63,7 @@ export function SessionModal({ initial, title, defaultFolder, folders, onClose, 
       .catch(() => {});
 
   useEffect(() => {
-    if (s.type === "serial") loadPorts();
+    if (s.type === "serial" && !isIOS) loadPorts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [s.type]);
 
@@ -171,8 +172,11 @@ export function SessionModal({ initial, title, defaultFolder, folders, onClose, 
         </header>
 
         <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 space-y-4">
-          <div className="grid grid-cols-5 gap-1 p-1 rounded-xl sm:rounded-lg bg-hover">
-            {(["ssh", "telnet", "serial", "raw", "local"] as SessionType[]).map((t) => (
+          <div className={`grid ${isIOS ? "grid-cols-3" : "grid-cols-5"} gap-1 p-1 rounded-xl sm:rounded-lg bg-hover`}>
+            {(["ssh", "telnet", "serial", "raw", "local"] as SessionType[])
+              // iOS no tiene puertos serial USB ni shell local.
+              .filter((t) => !isIOS || (t !== "serial" && t !== "local"))
+              .map((t) => (
               <button
                 key={t}
                 type="button"
@@ -294,18 +298,22 @@ export function SessionModal({ initial, title, defaultFolder, folders, onClose, 
                   Permitir algoritmos legacy
                   <span className="block text-muted">
                     Equipos antiguos: DH group1/14/GEX-sha1, ssh-rsa, cifrados CBC/3DES y MAC hmac-sha1/md5.
-                    Solo se activan los que soporte el OpenSSH instalado.
+                    {isIOS ? "Solo se activan los que soporte el cliente SSH integrado." : "Solo se activan los que soporte el OpenSSH instalado."}
                   </span>
                 </span>
               </label>
               <p className="text-[11.5px] text-muted">
-                Usa OpenSSH del sistema, por lo que respeta tu ~/.ssh/config, agente y known_hosts. Las llaves y el
-                agente siguen siendo la opción más segura.
+                {isIOS
+                  ? "Usa el cliente SSH integrado de la app. No lee ~/.ssh/config ni agente del sistema; las llaves privadas son la opción más segura."
+                  : "Usa OpenSSH del sistema, por lo que respeta tu ~/.ssh/config, agente y known_hosts. Las llaves y el agente siguen siendo la opción más segura."}
               </p>
             </>
           )}
 
-          {s.type === "serial" && (
+          {isIOS && (s.type === "serial" || s.type === "local") && (
+            <p className="text-[12.5px] text-warn">{IOS_UNAVAILABLE}: las sesiones {s.type === "serial" ? "Serial" : "de shell local"} no funcionan en este dispositivo. Elige SSH, Telnet o TCP.</p>
+          )}
+          {s.type === "serial" && !isIOS && (
             <>
               <Row cols="3fr 2fr">
                 <Field label="Puerto">

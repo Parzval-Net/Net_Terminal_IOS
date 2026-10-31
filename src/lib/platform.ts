@@ -1,6 +1,17 @@
 export const isAndroid = typeof navigator !== "undefined" && /Android/i.test(navigator.userAgent);
-export const isMobile = typeof navigator !== "undefined" && /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent);
-export const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.userAgent);
+/**
+ * iOS/iPadOS. El iPad moderno reporta un UA de Mac ("Macintosh") en WKWebView, así que se detecta
+ * por plataforma MacIntel + pantalla táctil (un Mac real no tiene maxTouchPoints > 1).
+ */
+export const isIOS =
+  typeof navigator !== "undefined" &&
+  (/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
+export const isIPad = isIOS && !/iPhone|iPod/.test(navigator.userAgent);
+export const isMobile = isIOS || (typeof navigator !== "undefined" && /Android|iPhone|iPad|Mobile/i.test(navigator.userAgent));
+export const isMac = isIOS || (typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.userAgent));
+
+/** Mensaje para funciones que dependen de procesos externos o hardware que iOS no ofrece. */
+export const IOS_UNAVAILABLE = "No disponible en iOS";
 
 /**
  * Modificador de la app. En macOS es Cmd; en Windows/Linux es Ctrl+Shift para no
@@ -116,4 +127,4 @@ export function shortcutFor(e: KeyboardEvent): AppAction | null {
 
 /** Catálogo de comandos del sistema donde corre la app (para la terminal local). */
 export const localOsVendor = (): string =>
-  isAndroid ? "linux" : isMac ? "macos" : typeof navigator !== "undefined" && /Windows/i.test(navigator.userAgent) ? "windows" : "linux";
+  isAndroid ? "linux" : isIOS ? "macos" : isMac ? "macos" : typeof navigator !== "undefined" && /Windows/i.test(navigator.userAgent) ? "windows" : "linux";

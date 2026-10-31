@@ -7,6 +7,7 @@ import { SessionIcon, typeLabel } from "./SessionIcon";
 import { quickTarget } from "./CommandPalette";
 import { useDragResize } from "../lib/useDragResize";
 import { backspaceOptions } from "../lib/backspace";
+import { isIOS } from "../lib/platform";
 
 interface Props {
   onClose: () => void;
@@ -16,7 +17,8 @@ interface Props {
 
 type QuickType = Exclude<SessionType, "local">;
 
-const TYPES: QuickType[] = ["ssh", "telnet", "raw", "serial"];
+// iOS no tiene puertos serial USB.
+const TYPES: QuickType[] = isIOS ? ["ssh", "telnet", "raw"] : ["ssh", "telnet", "raw", "serial"];
 const DEFAULT_PORT: Record<QuickType, number> = { ssh: 22, telnet: 23, raw: 2001, serial: 0 };
 const BAUDS = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600];
 const HOST = /^[\w.\-:%[\]]+$/;
@@ -51,7 +53,7 @@ export function QuickConnectDialog({ onClose, onOpen }: Props) {
       .catch(() => {});
 
   useEffect(() => {
-    if (s.type === "serial") loadPorts();
+    if (s.type === "serial" && !isIOS) loadPorts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [s.type]);
 
@@ -112,7 +114,7 @@ export function QuickConnectDialog({ onClose, onOpen }: Props) {
         </header>
 
         <div className="flex-1 min-h-0 overflow-y-auto p-3 sm:p-5 space-y-4">
-          <div className="grid grid-cols-4 gap-1 p-1 rounded-xl sm:rounded-lg bg-hover">
+          <div className={`grid ${isIOS ? "grid-cols-3" : "grid-cols-4"} gap-1 p-1 rounded-xl sm:rounded-lg bg-hover`}>
             {TYPES.map((t) => (
               <button
                 key={t}

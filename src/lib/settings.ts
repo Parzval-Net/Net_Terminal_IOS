@@ -7,7 +7,7 @@ import type { DeviceInfoMap } from "./lifecycle";
 import type { TopoSnapshot, TopoSources, Topology } from "./topology";
 import type { SnmpProfile } from "./snmp";
 import { type GhostColor, type GhostStyle, type ListKey, SUGGEST_DEFAULT, migrateSuggest } from "./suggest";
-import { isAndroid } from "./platform";
+import { isIPad, isMobile } from "./platform";
 
 export type ModuleId = "monitor" | "diag" | "topology" | "subnet" | "perf" | "transfer" | "syslog" | "plugins" | "backup" | "snmp";
 
@@ -148,7 +148,7 @@ export const defaultSettings: Settings = {
   lineHeight: 1.15,
   cursorStyle: "block",
   cursorBlink: true,
-  scrollback: isAndroid ? 2000 : 5000,
+  scrollback: isMobile ? 2000 : 5000,
   copyOnSelect: true,
   rightClickPaste: true,
   confirmClose: true,
@@ -176,15 +176,15 @@ export const defaultSettings: Settings = {
     { id: "m2", label: "Interfaces", kind: "send", text: "show ip interface brief" },
   ],
   showButtonBar: true,
-  showMobileKeyBar: isAndroid,
-  cliLabEnabled: !isAndroid,
+  showMobileKeyBar: isMobile,
+  cliLabEnabled: !isMobile || isIPad,
   floatingSidebar: false,
   mcpEnabled: false,
   mcpPort: 47821,
   mcpToken: "",
   mcpApproval: true,
   mcpReadOnly: false,
-  modules: { monitor: true, diag: true, topology: true, subnet: true, perf: true, transfer: true, syslog: true, plugins: !isAndroid, backup: true, snmp: true },
+  modules: { monitor: true, diag: true, topology: true, subnet: true, perf: true, transfer: true, syslog: true, plugins: !isMobile, backup: true, snmp: true },
   monitors: [],
   tftpPort: 69,
   httpPort: 8080,

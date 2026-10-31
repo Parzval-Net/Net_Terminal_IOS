@@ -2,7 +2,7 @@ name: net-terminal
 options:
   bundleIdPrefix: cl.netterminal.app
   deploymentTarget:
-    iOS: 15.0
+    iOS: "16.0"
 fileGroups: [../../src]
 configs:
   debug: debug
@@ -44,6 +44,14 @@ targets:
     info:
       path: net-terminal_iOS/Info.plist
       properties:
+        CFBundleDisplayName: NetTerminal
+        ITSAppUsesNonExemptEncryption: false
+        NSLocalNetworkUsageDescription: NetTerminal necesita acceso a la red local para conectarse por SSH, Telnet y TCP a los equipos de tu red (routers, switches, firewalls y servidores).
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
+        UIRequiresFullScreen: false
+        UIRequiresFullScreen~ipad: false
+        UIViewControllerBasedStatusBarAppearance: true
         LSRequiresIPhoneOS: true
         UILaunchStoryboardName: LaunchScreen
         UIRequiredDeviceCapabilities: [arm64, metal]
@@ -67,6 +75,8 @@ targets:
     settings:
       base:
         ENABLE_BITCODE: false
+        TARGETED_DEVICE_FAMILY: "1,2"
+        IPHONEOS_DEPLOYMENT_TARGET: "16.0"
         ARCHS: [arm64]
         VALID_ARCHS: arm64 
         LIBRARY_SEARCH_PATHS[arch=x86_64]: $(inherited) $(PROJECT_DIR)/Externals/x86_64/$(CONFIGURATION) $(SDKROOT)/usr/lib/swift $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/$(PLATFORM_NAME) $(DEVELOPER_DIR)/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift-5.0/$(PLATFORM_NAME)

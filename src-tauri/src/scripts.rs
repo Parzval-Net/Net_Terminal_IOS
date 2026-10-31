@@ -1002,6 +1002,10 @@ fn python_version(i: &Interpreter) -> Option<String> {
 }
 
 fn detect() -> Option<(Interpreter, String)> {
+    // iOS: el sandbox no permite lanzar intérpretes; no hay nada que detectar.
+    if cfg!(target_os = "ios") {
+        return None;
+    }
     let dirs: Vec<PathBuf> = std::env::var_os("PATH").map(|p| std::env::split_paths(&p).collect()).unwrap_or_default();
     let clt = || {
         let mut c = Command::new("xcode-select");
@@ -1040,7 +1044,10 @@ pub fn python_status() -> Result<String, String> {
     cached.as_ref().map(|(i, v)| format!("{v} ({})", i.bin)).ok_or_else(|| NO_PYTHON.into())
 }
 
+#[cfg(not(target_os = "ios"))]
 const NO_PYTHON: &str = "No se encontró Python 3. Instálalo (python.org o Homebrew en macOS) y usa Volver a detectar.";
+#[cfg(target_os = "ios")]
+const NO_PYTHON: &str = "Scripts y plugins Python no disponibles en iOS: el sistema no permite ejecutar programas externos.";
 
 fn hide_console(_c: &mut Command) {
     #[cfg(windows)]

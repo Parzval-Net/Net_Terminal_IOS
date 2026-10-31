@@ -15,7 +15,7 @@ import { Settings, logOptions } from "../lib/settings";
 import { alertHighlights } from "../lib/alerts";
 import { StreamHighlighter, compile, effectiveRules } from "../lib/highlight";
 import { backspaceMode, backspaceSeq, translateBackspace } from "../lib/backspace";
-import { isMac, modLabel, shortcutFor } from "../lib/platform";
+import { isIOS, isMac, modLabel, shortcutFor } from "../lib/platform";
 import { paneBodyStyle } from "../lib/split";
 import { credStatus, needsUnlock } from "../lib/credentials";
 import { VaultUnlock } from "./VaultUnlock";
@@ -254,6 +254,14 @@ export const TerminalView = memo(function TerminalView({ id, session, active, vi
     term.loadAddon(search);
     term.loadAddon(new WebLinksAddon((_e, uri) => openUrl(uri)));
     term.open(hostRef.current!);
+    // Sin autocorrección, mayúscula inicial ni revisión ortográfica: en iOS alteraban lo que se teclea.
+    if (term.textarea) {
+      term.textarea.setAttribute("autocorrect", "off");
+      term.textarea.setAttribute("autocapitalize", "none");
+      term.textarea.setAttribute("autocomplete", "off");
+      term.textarea.setAttribute("spellcheck", "false");
+      term.textarea.setAttribute("enterkeyhint", "enter");
+    }
     fit.fit();
     termRef.current = term;
     fitRef.current = fit;
@@ -961,6 +969,14 @@ export const TerminalView = memo(function TerminalView({ id, session, active, vi
       if (!isMac && e.shiftKey && key === "insert") {
         paste();
         return false;
+      }
+      // iOS/iPadOS con teclado físico: no hay menú Edición nativo, así que ⌘C se resuelve aquí (⌘V llega como evento paste nativo al textarea de xterm).
+      if (isIOS && e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey && key === "c") {
+        const sel = term.getSelection();
+        if (sel) {
+          writeText(sel).catch(() => {});
+          return false;
+        }
       }
       // Los atajos de la app no llegan a la sesión remota.
       return shortcutFor(e) === null;

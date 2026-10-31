@@ -18,6 +18,22 @@
 	<string>0.9.19</string>
 	<key>CFBundleVersion</key>
 	<string>0.9.19</string>
+	<key>CFBundleDisplayName</key>
+	<string>NetTerminal</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>NetTerminal necesita acceso a la red local para conectarse por SSH, Telnet y TCP a los equipos de tu red (routers, switches, firewalls y servidores).</string>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIRequiresFullScreen</key>
+	<false/>
+	<key>UIRequiresFullScreen~ipad</key>
+	<false/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

@@ -17,6 +17,9 @@ mod nettools;
 mod plugins;
 mod servers;
 mod snmp;
+// Cliente SSH nativo: solo iOS (en el PC se compila para sus pruebas).
+#[cfg(any(target_os = "ios", test))]
+mod ssh_native;
 mod scripts;
 mod seal;
 mod models;

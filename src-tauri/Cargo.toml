@@ -60,6 +60,13 @@ rustls-platform-verifier = "0.7"
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"
 
+# iOS no permite lanzar procesos: SSH con cliente nativo (russh) en vez del binario ssh.
+# Backend ring (el mismo de rustls) en vez de aws-lc-rs, que exige cmake/NASM al compilar.
+# "des" y "dsa": 3des-cbc y ssh-dss para equipos antiguos (opción "legacy").
+[target.'cfg(target_os = "ios")'.dependencies]
+russh = { version = "0.65", default-features = false, features = ["ring", "rsa", "des", "dsa", "flate2"] }
+tokio = { version = "1", features = ["net", "sync", "time", "macros"] }
+
 [target.'cfg(all(target_os = "linux", not(target_env = "musl")))'.dependencies]
 serialport = { version = "4.6", features = ["libudev"] }
 
@@ -82,6 +89,11 @@ keyring = { version = "3.6", default-features = false, features = ["sync-secret-
 
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+# Pruebas del cliente SSH nativo de iOS en el PC (servidor russh en el mismo proceso).
+[dev-dependencies]
+russh = { version = "0.65", default-features = false, features = ["ring", "rsa", "des", "dsa", "flate2"] }
+tokio = { version = "1", features = ["net", "sync", "time", "macros", "rt-multi-thread"] }
+
 [profile.release]
 codegen-units = 1
 lto = true

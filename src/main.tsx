@@ -1,6 +1,9 @@
 import { Component, type ReactNode } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { initIosLayout } from "./lib/ios";
+
+initIosLayout();
 
 /**
  * Un error al dibujar la app dejaba la ventana en blanco y sin pista. Se muestra el error

@@ -2,6 +2,8 @@
 //! Cada conexión empuja bytes crudos al frontend por un `Channel`, opcionalmente los
 //! registra en un log de texto plano y mantiene un historial limpio que leen los
 //! scripts y los agentes de IA (MCP).
+// iOS no usa la PTY ni el serial (SSH nativo en ssh_native.rs): su código queda sin uso ahí.
+#![cfg_attr(target_os = "ios", allow(dead_code))]
 
 use crate::autofill::AutoFill;
 use crate::logfile::{LogOptions, LogVars, LogWriter};
@@ -307,7 +309,7 @@ pub struct Sink {
 }
 
 impl Sink {
-    fn new(data: Channel<InvokeResponseBody>) -> Self {
+    pub(crate) fn new(data: Channel<InvokeResponseBody>) -> Self {
         Sink {
             out: Outbox::start(data),
             exited: Arc::new(AtomicBool::new(false)),
@@ -409,7 +411,14 @@ enum Transport {
         port: Box<dyn serialport::SerialPort>,
         stop: Arc<AtomicBool>,
     },
+    /// SSH nativo (russh): iOS no permite lanzar el binario ssh en una PTY.
+    #[cfg(target_os = "ios")]
+    NativeSsh(crate::ssh_native::NativeSsh),
 }
+
+/// En iOS el sandbox no deja crear procesos ni abrir puertos serie.
+#[cfg(target_os = "ios")]
+const IOS_UNAVAILABLE: &str = "No disponible en iOS";
 
 /// Lo que se envía al equipo. `Raw` no pasa por la codificación Telnet (comandos IAC).
 /// `Secret` es como `Data`, pero sus búferes se borran de memoria tras escribirse.
@@ -498,6 +507,31 @@ impl ConnectionManager {
         let sink = Sink::new(data);
         lock(&sink.mirror).watch = Some(Watcher::new(self.triggers.clone(), id.clone(), session.folder.as_deref()));
 
+        // iOS: el SSH nativo usa la contraseña guardada directo en el login (sin esperar el
+        // prompt), así que no se instala el autocompletado de la pantalla.
+        #[cfg(target_os = "ios")]
+        let mut fill = fill;
+        #[cfg(target_os = "ios")]
+        let mut transport = match session.session_type {
+            SessionType::Local if session.scp.is_some() => {
+                return Err(format!("{IOS_UNAVAILABLE}: la transferencia SCP/SFTP usa el cliente ssh del sistema"))
+            }
+            SessionType::Local => return Err(format!("{IOS_UNAVAILABLE}: la shell local requiere crear procesos")),
+            SessionType::Serial => return Err(format!("{IOS_UNAVAILABLE}: el sistema no da acceso a puertos serie")),
+            SessionType::Ssh => {
+                if session.ssh_args.as_deref().is_some_and(|a| !a.trim().is_empty())
+                    || session.tunnels.as_ref().is_some_and(|t| !t.is_empty())
+                {
+                    sink.push("Aviso: en iOS no se aplican los argumentos extra ni los túneles de la sesión.\r\n".as_bytes());
+                }
+                let secret = fill.take().map(|f| f.secret);
+                let opts = crate::ssh_native::Options::from_session(session, erase_of(session), secret)?;
+                Transport::NativeSsh(crate::ssh_native::open(opts, cols, rows, &sink))
+            }
+            SessionType::Telnet => open_telnet(session, cols, rows, &sink, false)?,
+            SessionType::Raw => open_telnet(session, cols, rows, &sink, true)?,
+        };
+        #[cfg(not(target_os = "ios"))]
         let mut transport = match session.session_type {
             SessionType::Local if session.scp.is_some() => spawn_pty(scp_command(session)?, cols, rows, &sink, None)?,
             SessionType::Local => spawn_pty(local_shell(), cols, rows, &sink, None)?,
@@ -513,6 +547,8 @@ impl ConnectionManager {
                 spawn_writer(Box::new(stream.try_clone().map_err(|e| e.to_string())?), !*raw)
             }
             Transport::Serial { port, .. } => spawn_writer(Box::new(port.try_clone().map_err(|e| e.to_string())?), false),
+            #[cfg(target_os = "ios")]
+            Transport::NativeSsh(ssh) => spawn_writer(ssh.writer(), false),
         };
 
         if let Some(f) = fill {
@@ -597,6 +633,11 @@ impl ConnectionManager {
                 Ok(())
             }
             Transport::Serial { .. } => Ok(()),
+            #[cfg(target_os = "ios")]
+            Transport::NativeSsh(ssh) => {
+                ssh.resize(cols, rows);
+                Ok(())
+            }
         }
     }
 
@@ -615,6 +656,8 @@ impl ConnectionManager {
                         .map_err(|_| "La conexión se cerró".to_string())
                 }
                 Transport::Pty { .. } => return Err("Break solo aplica a Serial y Telnet".into()),
+                #[cfg(target_os = "ios")]
+                Transport::NativeSsh(_) => return Err("Break solo aplica a Serial y Telnet".into()),
             }
         };
         port.set_break().map_err(|e| e.to_string())?;
@@ -712,6 +755,8 @@ impl ConnectionManager {
                 let _ = stream.shutdown(Shutdown::Both);
             }
             Transport::Serial { stop, .. } => stop.store(true, Ordering::SeqCst),
+            #[cfg(target_os = "ios")]
+            Transport::NativeSsh(ssh) => ssh.close(),
         }
     }
 }

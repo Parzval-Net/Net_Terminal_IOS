@@ -5,7 +5,10 @@ use crate::monitor::{command, resolve, tcp_probe_addrs, validate_host};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::collections::HashMap;
+// En iOS no se lanzan procesos (traceroute e iperf tienen su propia vía o no existen).
+#[cfg_attr(target_os = "ios", allow(unused_imports))]
 use std::io::{BufRead, BufReader, Read};
+#[cfg_attr(target_os = "ios", allow(unused_imports))]
 use std::process::{Child, Stdio};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
@@ -53,6 +56,7 @@ impl Jobs {
     }
 
     /// Ejecuta un comando y transmite cada línea de salida como evento.
+    #[cfg_attr(target_os = "ios", allow(dead_code))]
     fn spawn(&self, app: AppHandle, mut cmd: std::process::Command, collect_json: bool) -> Result<String, String> {
         cmd.stdout(Stdio::piped()).stderr(Stdio::piped()).stdin(Stdio::null());
         let mut child = cmd.spawn().map_err(|e| format!("No se pudo ejecutar: {e}"))?;
@@ -106,6 +110,39 @@ impl Jobs {
         Ok(job)
     }
 
+    /// iOS: sin `traceroute` del sistema (el sandbox no lanza procesos), se hace con el
+    /// socket ICMP de datagramas y TTL creciente (`monitor::icmp`). Misma salida que
+    /// `traceroute -n -q 1`, una línea por salto, cancelable con `tool_stop`.
+    #[cfg(target_os = "ios")]
+    pub fn traceroute(&self, app: AppHandle, host: &str) -> Result<String, String> {
+        use crate::monitor::icmp;
+        validate_host(host)?;
+        let addrs = resolve(host, 0)?;
+        let Some(ip) = addrs.iter().map(|a| a.ip()).find(|a| a.is_ipv4()).or_else(|| addrs.first().map(|a| a.ip())) else {
+            return Err("DNS: sin dirección".into());
+        };
+        // Se abre el socket antes de devolver el job: así un sandbox que lo prohíba
+        // produce un error inmediato y claro en vez de un trabajo que falla al instante.
+        icmp::Socket::new(ip.is_ipv6()).map_err(|e| format!("Traceroute no disponible en iOS: el sistema no permitió abrir el socket ICMP ({e})"))?;
+        let (job, cancel, done) = self.cancelable();
+        let (id, host) = (job.clone(), host.to_string());
+        std::thread::spawn(move || {
+            emit(&app, &id, "line", format!("traceroute to {host} ({ip}), 30 hops max, una sonda por salto"), None);
+            let res = icmp::traceroute(ip, 30, Duration::from_secs(2), &cancel, |line| emit(&app, &id, "line", line, None));
+            let code = match res {
+                Ok(()) => 0,
+                Err(e) => {
+                    emit(&app, &id, "error", format!("Traceroute falló: {e}"), None);
+                    1
+                }
+            };
+            done();
+            emit(&app, &id, "done", format!("Finalizado (código {code})"), None);
+        });
+        Ok(job)
+    }
+
+    #[cfg(not(target_os = "ios"))]
     pub fn traceroute(&self, app: AppHandle, host: &str) -> Result<String, String> {
         validate_host(host)?;
         let cmd = if cfg!(windows) {
@@ -146,6 +183,13 @@ impl Jobs {
         self.spawn(app, cmd, false)
     }
 
+    /// iOS: no hay forma de ejecutar el binario iperf3 dentro del sandbox.
+    #[cfg(target_os = "ios")]
+    pub fn iperf(&self, _app: AppHandle, _p: IperfParams) -> Result<String, String> {
+        Err("iperf3 no está disponible en iOS: el sistema no permite ejecutar programas externos. Usa Speedtest o la verificación de puertos.".into())
+    }
+
+    #[cfg(not(target_os = "ios"))]
     pub fn iperf(&self, app: AppHandle, p: IperfParams) -> Result<String, String> {
         let Some(mut c) = crate::toolpath::iperf_command() else {
             return Err("No se encontró iperf3. Instálalo o elige el ejecutable con \"Elegir iperf3…\" en esta sección.".into());
@@ -206,6 +250,7 @@ impl Jobs {
     }
 }
 
+#[cfg_attr(target_os = "ios", allow(dead_code))]
 fn which(bin: &str) -> bool {
     if cfg!(target_os = "android") {
         let candidates = [

@@ -61,7 +61,7 @@ const MODULES: [ModuleId, string, string][] = [
  */
 const sections: { id: Section; label: string; Icon: typeof Palette; group: string; keywords: string }[] = [
   { id: "appearance", label: "Apariencia", Icon: Palette, group: "General", keywords: "interfaz claro oscuro sistema barra de sesiones flotante superpuesta pestañas verticales horizontales tema de terminal fuente tamaño interlineado cursor parpadeante colores" },
-  { id: "terminal", label: "Terminal", Icon: SquareTerminal, group: "General", keywords: "historial scrollback copiar al seleccionar pegar clic derecho confirmar al cerrar legacy ssh algoritmos antiguos ssh-rsa compatibilidad sugerencias de comandos autocompletar abreviaturas historial de sugerencias tecla de lista confirmar envío varias líneas barra de botones pausa entre líneas notas barra de teclas tactiles táctiles android móvil virtual" },
+  { id: "terminal", label: "Terminal", Icon: SquareTerminal, group: "General", keywords: "historial scrollback copiar al seleccionar pegar clic derecho confirmar al cerrar legacy ssh algoritmos antiguos ssh-rsa compatibilidad sugerencias de comandos autocompletar abreviaturas historial de sugerencias tecla de lista confirmar envío varias líneas barra de botones pausa entre líneas notas barra de teclas tactiles táctiles móvil tablet iphone ipad virtual" },
   { id: "highlight", label: "Resaltado", Icon: Highlighter, group: "General", keywords: "resaltado sintaxis reglas regex esquemas fabricante cisco juniper huawei fortinet colores exportar importar" },
   { id: "data", label: "Logs", Icon: ScrollText, group: "Sesiones y datos", keywords: "logs grabar automáticamente hora en cada línea nombre del archivo patrón anexar rotación diaria ocultar secretos carpeta de logs" },
   { id: "credentials", label: "Credenciales", Icon: KeyRound, group: "Sesiones y datos", keywords: "contraseñas guardadas bóveda llavero contraseña maestra portable credenciales" },
@@ -457,7 +457,7 @@ export function SettingsModal({
                 )}
                 <Item
                   label="Barra de teclas táctiles en terminal"
-                  hint="Muestra una barra de teclas rápidas (Esc, Tab, Ctrl, flechas, ?, |, pegar, buscar) optimizada para dispositivos Android y pantallas táctiles"
+                  hint="Muestra una barra de teclas rápidas (Esc, Tab, Ctrl, flechas, ?, |, pegar, buscar) optimizada para pantallas táctiles (móvil y tablet)"
                 >
                   <Switch checked={s.showMobileKeyBar} onChange={(v) => onChange({ showMobileKeyBar: v })} />
                 </Item>

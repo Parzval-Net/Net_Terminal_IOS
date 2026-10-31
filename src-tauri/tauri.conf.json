@@ -47,6 +47,9 @@
     "android": {
       "minSdkVersion": 26
     },
+    "iOS": {
+      "minimumSystemVersion": "16.0"
+    },
     "windows": {
       "nsis": {
         "installMode": "currentUser"

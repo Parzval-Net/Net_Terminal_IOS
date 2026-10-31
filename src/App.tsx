@@ -34,7 +34,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { ChevronRight, Pin, Plus, Search, Sparkles, Terminal, Wrench, X as XIcon, Zap } from "lucide-react";
 import { listen } from "@tauri-apps/api/event";
 import { ConnStatus, Session, Tab, TabState, historyKey, tabTitle } from "./types";
-import { closeAllLabel, focusLabel, historyLabel, isMac, isMobile, localOsVendor, modLabel, shortcutFor } from "./lib/platform";
+import { IOS_UNAVAILABLE, closeAllLabel, focusLabel, historyLabel, isIOS, isMac, isMobile, localOsVendor, modLabel, shortcutFor } from "./lib/platform";
 import { presets, resolvePreset, useSystemDark } from "./lib/theme";
 import { Settings, logOptions, useSettings } from "./lib/settings";
 import { useAlerts } from "./lib/alerts";
@@ -522,10 +522,11 @@ function Workspace({
     else controllers.current.delete(id);
   }, []);
 
-  const newLocal = useCallback(
-    () => openTab(sessions.find((s) => s.type === "local") ?? LOCAL),
-    [sessions, openTab],
-  );
+  const newLocal = useCallback(() => {
+    // iOS no tiene shell local (sin PTY ni procesos externos).
+    if (isIOS) return toast(`Terminal local: ${IOS_UNAVAILABLE}`, "error");
+    openTab(sessions.find((s) => s.type === "local") ?? LOCAL);
+  }, [sessions, openTab, toast]);
 
   const activeTab = tabs.find((t) => t.id === activeId);
   const activeCtrl = () => (activeId ? controllers.current.get(activeId) : undefined);
@@ -1956,7 +1957,7 @@ function Workspace({
             { label: "Catálogo de comandos", detail: "Comandos por fabricante", shortcut: `${modLabel}L`, run: h.toggleCommands },
             { label: "Barra de sesiones", detail: "Mostrar u ocultar la lista de sesiones", shortcut: `${modLabel}B`, run: h.toggleSidebar },
             { label: "Ajustes", detail: "Preferencias de la aplicación", shortcut: isMac ? "⌘," : "Ctrl+,", run: h.openSettings },
-            { label: "Nueva terminal local", detail: "Abre una pestaña con la terminal de este equipo", shortcut: `${modLabel}T`, run: newLocal },
+            ...(!isIOS ? [{ label: "Nueva terminal local", detail: "Abre una pestaña con la terminal de este equipo", shortcut: `${modLabel}T`, run: newLocal }] : []),
             { label: "Conexión rápida", detail: "SSH o Telnet sin guardar la sesión", shortcut: `${modLabel}O`, run: h.openQuick },
             { label: "Nueva sesión guardada", detail: "Crea una sesión en la barra de sesiones", shortcut: `${modLabel}N`, run: () => h.newSession() },
             ...(settings.cliLabEnabled
@@ -2064,6 +2065,7 @@ function EmptyState({
             </div>
           </button>
 
+          {!isIOS && (
           <button
             onClick={onLocal}
             type="button"
@@ -2084,6 +2086,7 @@ function EmptyState({
               <div className="text-[11px] text-muted leading-tight mt-0.5">Shell Linux nativo</div>
             </div>
           </button>
+          )}
         </div>
 
         {/* Acciones secundarias en lista tonal sobria */}

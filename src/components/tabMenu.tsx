@@ -4,7 +4,7 @@ import { SplitLayout, layoutLabel } from "../lib/split";
 import type { TabLayout } from "../lib/settings";
 import type { Tab, TabState } from "../types";
 import type { CloseScope } from "../lib/closeAll";
-import { historyLabel, modLabel } from "../lib/platform";
+import { historyLabel, isIOS, modLabel } from "../lib/platform";
 
 /** [etiqueta, icono, acción, deshabilitado/marcado, atajo, separador antes] — formato de ContextMenu. */
 export type MenuItem = [string, ReactNode, () => void, boolean?, string?, boolean?];
@@ -33,7 +33,8 @@ export interface TabMenuHandlers {
 
 /** Menú del botón "+": terminal local, conexión rápida sin guardar y nueva sesión guardada. */
 export function newTabMenuItems(p: { onNew: () => void; onQuickConnect?: () => void; onNewSession?: () => void; onNewButton?: () => void }): MenuItem[] {
-  const items: MenuItem[] = [["Terminal local", <SquareTerminal size={13} />, p.onNew, false, `${modLabel}T`]];
+  // iOS no tiene shell local: el menú empieza en la conexión rápida.
+  const items: MenuItem[] = isIOS ? [] : [["Terminal local", <SquareTerminal size={13} />, p.onNew, false, `${modLabel}T`]];
   if (p.onQuickConnect) items.push(["Conexión rápida…", <Zap size={13} />, p.onQuickConnect, false, `${modLabel}O`]);
   if (p.onNewSession) items.push(["Nueva sesión…", <Plus size={13} />, p.onNewSession, false, `${modLabel}N`]);
   // La barra de botones se oculta sola sin botones: crear uno desde aquí la muestra.
