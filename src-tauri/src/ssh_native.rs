@@ -10,20 +10,24 @@
 use crate::connection::Sink;
 use crate::models::Session;
 use russh::client::{self, Handle, KeyboardInteractiveAuthResponse};
-use russh::keys::known_hosts::{known_host_keys_path, learn_known_hosts_path};
-use russh::keys::{HashAlg, PrivateKey, PrivateKeyWithHashAlg, PublicKeyOrCertificate};
+use russh::keys::known_hosts::known_host_keys_path;
+use russh::keys::{Algorithm, HashAlg, PrivateKey, PrivateKeyWithHashAlg, PublicKey, PublicKeyOrCertificate};
 use russh::{cipher, kex, mac, ChannelMsg, Disconnect, MethodKind, MethodSet, Preferred, Pty};
 use std::borrow::Cow;
-use std::collections::VecDeque;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::mpsc::{unbounded_channel, UnboundedReceiver, UnboundedSender};
 use tokio::sync::Notify;
-use zeroize::Zeroizing;
+use zeroize::{Zeroize, Zeroizing};
 
 const CONNECT_TIMEOUT: Duration = Duration::from_secs(15);
+/// Tope para el intercambio de llaves y para cada respuesta del servidor durante el login
+/// (no cuenta el tiempo que el operador tarda en teclear).
+const NET_TIMEOUT: Duration = Duration::from_secs(20);
+/// Rondas keyboard-interactive sin preguntas aceptadas antes de abandonar (servidor en bucle).
+const MAX_EMPTY_ROUNDS: usize = 10;
 const CANCELLED: &str = "Autenticación cancelada";
 /// Intentos interactivos de contraseña, como NumberOfPasswordPrompts de OpenSSH.
 const PASSWORD_TRIES: usize = 3;
@@ -172,8 +176,10 @@ fn parse_jump(spec: &str) -> Result<(Option<String>, String, u16), String> {
 
 /// Algoritmos ofrecidos. Por defecto, los de OpenSSH actual (russh deja fuera ECDH NIST y
 /// HMAC-SHA1, que OpenSSH sí ofrece y que muchos equipos de red necesitan). Con "legacy" se
-/// suman los que OpenSSH apaga: DH con SHA-1, CBC, 3DES y llaves ssh-dss.
-fn preferred(legacy: bool) -> Preferred {
+/// suman los que OpenSSH apaga: DH con SHA-1, CBC, 3DES, firmas ssh-rsa (SHA-1) y ssh-dss.
+/// Los algoritmos de host que known_hosts ya tiene para el equipo van primero, como hace
+/// OpenSSH, para que el servidor presente la llave guardada y no otra.
+fn preferred(legacy: bool, known: &[Algorithm]) -> Preferred {
     let mut kex_list = vec![
         kex::MLKEM768X25519_SHA256,
         kex::CURVE25519,
@@ -212,10 +218,17 @@ fn preferred(legacy: bool) -> Preferred {
         mac::HMAC_SHA1,
     ];
 
-    let mut keys = Preferred::DEFAULT.key.to_vec();
+    let mut keys: Vec<Algorithm> = Preferred::DEFAULT
+        .key
+        .iter()
+        .filter(|a| legacy || **a != Algorithm::Rsa { hash: None })
+        .cloned()
+        .collect();
     if legacy {
-        keys.push(russh::keys::Algorithm::Dsa);
+        keys.push(Algorithm::Dsa);
     }
+    // Orden estable: primero los conocidos (todas las variantes RSA cuentan como ssh-rsa).
+    keys.sort_by_key(|a| !known.iter().any(|k| same_key_type(k, a)));
     Preferred {
         kex: Cow::Owned(kex_list),
         key: Cow::Owned(keys),
@@ -225,15 +238,28 @@ fn preferred(legacy: bool) -> Preferred {
     }
 }
 
-fn config(legacy: bool) -> Arc<client::Config> {
+/// Mismo tipo de llave: RSA es uno solo aunque se firme con SHA-1, SHA-256 o SHA-512.
+fn same_key_type(a: &Algorithm, b: &Algorithm) -> bool {
+    matches!((a, b), (Algorithm::Rsa { .. }, Algorithm::Rsa { .. })) || a == b
+}
+
+fn config(legacy: bool, known: &[Algorithm]) -> Arc<client::Config> {
     Arc::new(client::Config {
-        preferred: preferred(legacy),
+        preferred: preferred(legacy, known),
         // Como ServerAliveInterval=30 de escritorio: 3 sin respuesta cortan la sesión.
         keepalive_interval: Some(Duration::from_secs(30)),
         keepalive_max: 3,
         nodelay: true,
         ..Default::default()
     })
+}
+
+/// Texto que manda el servidor antes del login (banner, keyboard-interactive): sin controles
+/// que la terminal interprete (ESC, CSI de 8 bits, DEL); solo quedan \n, \r y \t.
+fn sanitize(text: &str) -> String {
+    text.chars()
+        .filter(|&c| matches!(c, '\n' | '\r' | '\t') || !(c < ' ' || c == '\u{7f}' || ('\u{80}'..='\u{9f}').contains(&c)))
+        .collect()
 }
 
 /// Texto para la terminal: saltos de línea como CRLF.
@@ -252,13 +278,13 @@ impl client::Handler for Client {
     type Error = russh::Error;
 
     async fn auth_banner(&mut self, banner: &str, _session: &mut client::Session) -> Result<(), Self::Error> {
-        self.sink.push(&crlf(banner));
+        self.sink.push(&crlf(&sanitize(banner)));
         Ok(())
     }
 
-    /// Confianza en el primer uso: una llave nueva se guarda y se informa con su huella
-    /// SHA256; una distinta a la guardada (de cualquier algoritmo) se rechaza, como OpenSSH
-    /// con StrictHostKeyChecking=accept-new.
+    /// Confianza en el primer uso, como OpenSSH con StrictHostKeyChecking=accept-new: una
+    /// llave de un tipo que el equipo aún no tiene guardado se guarda y se informa con su huella
+    /// SHA256; una distinta a la guardada del mismo tipo se rechaza.
     async fn check_server_key(&mut self, key: &PublicKeyOrCertificate) -> Result<bool, Self::Error> {
         let PublicKeyOrCertificate::PublicKey { key, .. } = key else {
             self.sink.push("\r\nEl servidor presentó un certificado de host; no se admite en iOS.\r\n".as_bytes());
@@ -266,17 +292,19 @@ impl client::Handler for Client {
         };
         let fp = key.fingerprint(HashAlg::Sha256);
         let alg = key.algorithm();
-        let known = match known_host_keys_path(&self.host, self.port, &self.known_hosts) {
+        let known = match read_known(&self.host, self.port, &self.known_hosts) {
             Ok(k) => k,
             Err(e) => {
-                self.sink.push(&crlf(&format!("\nNo se pudo leer known_hosts: {e}\n")));
+                self.sink.push(&crlf(&format!("\n{e}\n")));
                 return Ok(false);
             }
         };
-        if known.iter().any(|(_, k)| k == key) {
-            return Ok(true);
-        }
-        if let Some((line, _)) = known.first() {
+        let line = match verdict(&known, key) {
+            Verdict::Known => return Ok(true),
+            Verdict::Changed(line) => line,
+            Verdict::New => 0,
+        };
+        if line > 0 {
             self.sink.push(&crlf(&format!(
                 "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n\
                  @    WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!     @\n\
@@ -288,7 +316,7 @@ impl client::Handler for Client {
             )));
             return Ok(false);
         }
-        if let Err(e) = learn_known_hosts_path(&self.host, self.port, key, &self.known_hosts) {
+        if let Err(e) = learn(&self.host, self.port, key, &self.known_hosts) {
             self.sink.push(&crlf(&format!("\nNo se pudo guardar la llave en known_hosts: {e}\n")));
             return Ok(false);
         }
@@ -301,16 +329,78 @@ impl client::Handler for Client {
     }
 }
 
+#[derive(Debug, PartialEq)]
+enum Verdict {
+    Known,
+    New,
+    /// Hay otra llave del mismo tipo guardada (línea de known_hosts).
+    Changed(usize),
+}
+
+fn verdict(known: &[(usize, PublicKey)], key: &PublicKey) -> Verdict {
+    if known.iter().any(|(_, k)| k == key) {
+        return Verdict::Known;
+    }
+    match known.iter().find(|(_, k)| same_key_type(&k.algorithm(), &key.algorithm())) {
+        Some((line, _)) => Verdict::Changed(*line),
+        None => Verdict::New,
+    }
+}
+
+/// Llaves guardadas del equipo. russh trata un archivo que no se puede abrir como vacío; aquí
+/// eso es un error (si no, una lectura fallida aprendería cualquier llave).
+fn read_known(host: &str, port: u16, path: &Path) -> Result<Vec<(usize, PublicKey)>, String> {
+    match std::fs::File::open(path) {
+        Ok(_) => {}
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(Vec::new()),
+        Err(e) => return Err(format!("No se pudo leer known_hosts: {e}")),
+    }
+    known_host_keys_path(host, port, path).map_err(|e| format!("No se pudo leer known_hosts: {e}"))
+}
+
+/// Agrega la llave a known_hosts (formato OpenSSH). A diferencia de la de russh, informa un
+/// error de escritura al vaciar el búfer y llega al disco antes de dar la llave por guardada.
+fn learn(host: &str, port: u16, key: &PublicKey, path: &Path) -> Result<(), String> {
+    use std::io::{Read, Seek, SeekFrom};
+    let e = |e: std::io::Error| e.to_string();
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).map_err(e)?;
+    }
+    let mut f = std::fs::OpenOptions::new().read(true).append(true).create(true).open(path).map_err(e)?;
+    let mut last = [0u8; 1];
+    let newline = f.seek(SeekFrom::End(-1)).is_ok() && f.read_exact(&mut last).is_ok() && last[0] != b'\n';
+    let name = if port == 22 { host.to_string() } else { format!("[{host}]:{port}") };
+    let line = format!(
+        "{}{name} {}\n",
+        if newline { "\n" } else { "" },
+        key.to_openssh().map_err(|x| x.to_string())?
+    );
+    f.write_all(line.as_bytes()).map_err(e)?;
+    f.flush().map_err(e)?;
+    f.sync_all().map_err(e)
+}
+
+/// Respuesta del servidor con tope de tiempo.
+async fn net<T>(f: impl std::future::Future<Output = Result<T, russh::Error>>) -> Result<T, String> {
+    match tokio::time::timeout(NET_TIMEOUT, f).await {
+        Ok(r) => r.map_err(|e| format!("ssh: {e}")),
+        Err(_) => Err("ssh: el servidor no respondió a tiempo".into()),
+    }
+}
+
 /// Lado de la terminal durante el login: lee líneas de lo tecleado (sin eco para secretos).
 struct Term {
     rx: UnboundedReceiver<Cmd>,
     sink: Sink,
-    pending: VecDeque<u8>,
+    /// Lo tecleado aún sin leer (`pos` marca lo consumido). Puede traer secretos: se borra.
+    pending: Zeroizing<Vec<u8>>,
+    pos: usize,
     cols: u16,
     rows: u16,
     /// Tras un CR se descarta el LF que lo acompañe (Enter "crlf").
     skip_lf: bool,
-    /// 0 normal, 1 tras ESC, 2 dentro de una secuencia CSI (flechas: se ignoran).
+    /// 0 normal, 1 tras ESC, 2 dentro de CSI (ESC [ …), 3 tras SS3 (ESC O x): las flechas
+    /// y teclas de función se ignoran.
     esc: u8,
 }
 
@@ -318,20 +408,30 @@ impl Term {
     async fn read_line(&mut self, echo: bool) -> Result<Zeroizing<String>, String> {
         let mut line = Zeroizing::new(Vec::with_capacity(256));
         loop {
-            while let Some(b) = self.pending.pop_front() {
+            while let Some(&b) = self.pending.get(self.pos) {
+                self.pos += 1;
                 if std::mem::take(&mut self.skip_lf) && b == b'\n' {
                     continue;
                 }
                 match (self.esc, b) {
                     (1, b'[') => self.esc = 2,
-                    (1, _) => self.esc = 0,
+                    (1, b'O') => self.esc = 3,
+                    (1, _) | (3, _) => self.esc = 0,
                     (2, 0x40..=0x7e) => self.esc = 0,
                     (2, _) => {}
                     (_, 0x1b) => self.esc = 1,
                     (_, b'\r' | b'\n') => {
                         self.skip_lf = b == b'\r';
                         self.sink.push(b"\r\n");
-                        return Ok(Zeroizing::new(String::from_utf8_lossy(&line).into_owned()));
+                        // Se mueve el búfer sin copiarlo; solo un UTF-8 inválido se reescribe.
+                        let text = match String::from_utf8(std::mem::take(&mut *line)) {
+                            Ok(t) => t,
+                            Err(err) => {
+                                let bytes = Zeroizing::new(err.into_bytes());
+                                String::from_utf8_lossy(&bytes).into_owned()
+                            }
+                        };
+                        return Ok(Zeroizing::new(text));
                     }
                     (_, 0x7f | 0x08) => {
                         // Borra un carácter UTF-8 completo.
@@ -358,10 +458,13 @@ impl Term {
                     }
                 }
             }
+            // Todo leído: se borra antes de recibir más (la contraseña no queda en memoria).
+            self.pending.zeroize();
+            self.pos = 0;
             match self.rx.recv().await {
                 Some(Cmd::Data(d)) => {
                     let d = Zeroizing::new(d);
-                    self.pending.extend(d.iter());
+                    self.pending.extend_from_slice(&d);
                 }
                 Some(Cmd::Resize(c, r)) => (self.cols, self.rows) = (c, r),
                 None => return Err(CANCELLED.into()),
@@ -373,6 +476,14 @@ impl Term {
         self.sink.push(text.as_bytes());
         self.read_line(echo).await
     }
+
+    /// Lo tecleado después del último Enter del login (va al shell) y borra el búfer.
+    fn take_rest(&mut self) -> Vec<u8> {
+        let rest = self.pending.get(self.pos..).unwrap_or_default().to_vec();
+        self.pending.zeroize();
+        self.pos = 0;
+        rest
+    }
 }
 
 /// Abre la sesión en segundo plano. Los errores de red o de login se muestran en la terminal
@@ -380,7 +491,7 @@ impl Term {
 pub fn open(opts: Options, cols: u16, rows: u16, sink: &Sink) -> NativeSsh {
     let (tx, rx) = unbounded_channel();
     let cancel = Arc::new(Notify::new());
-    let term = Term { rx, sink: sink.clone(), pending: VecDeque::new(), cols, rows, skip_lf: false, esc: 0 };
+    let term = Term { rx, sink: sink.clone(), pending: Zeroizing::new(Vec::with_capacity(1024)), pos: 0, cols, rows, skip_lf: false, esc: 0 };
     let s = sink.clone();
     let c = cancel.clone();
     tauri::async_runtime::spawn(async move {
@@ -419,12 +530,21 @@ async fn tcp_connect(host: &str, port: u16) -> Result<tokio::net::TcpStream, Str
 
 /// Conecta, autentica y atiende el shell. Devuelve el código de salida remoto.
 async fn run(opts: Options, mut term: Term) -> Result<u32, String> {
-    let cfg = config(opts.legacy);
+    // Tipos de llave ya guardados para cada equipo (destino y bastión), primero en la oferta.
+    let known_algs = |host: &str, port: u16| -> Result<Vec<Algorithm>, String> {
+        Ok(read_known(host, port, &opts.known_hosts)?.iter().map(|(_, k)| k.algorithm()).collect())
+    };
+    let cfg_for = |host: &str, port: u16| -> Result<Arc<client::Config>, String> { Ok(config(opts.legacy, &known_algs(host, port)?)) };
     let (known_hosts, sink) = (opts.known_hosts.clone(), term.sink.clone());
     let client = |host: &str, port: u16| Client { host: host.to_string(), port, known_hosts: known_hosts.clone(), sink: sink.clone() };
     let key_err = |e: russh::Error| match e {
         russh::Error::UnknownKey => "Host key verification failed.".to_string(),
         e => format!("ssh: {e}"),
+    };
+    // Intercambio de llaves con tope: un servidor que acepta TCP y no habla SSH no cuelga la pestaña.
+    let handshake = |r: Result<Result<Handle<Client>, russh::Error>, tokio::time::error::Elapsed>| match r {
+        Ok(r) => r.map_err(key_err),
+        Err(_) => Err("ssh: tiempo de espera agotado en el intercambio de llaves".to_string()),
     };
 
     // Con jump host: la conexión al destino viaja por un canal direct-tcpip del bastión.
@@ -433,34 +553,36 @@ async fn run(opts: Options, mut term: Term) -> Result<u32, String> {
     let mut handle = if let Some(spec) = opts.jump.as_deref() {
         let (juser, jhost, jport) = parse_jump(spec)?;
         let stream = tcp_connect(&jhost, jport).await?;
-        let mut jh = client::connect_stream(cfg.clone(), stream, client(&jhost, jport)).await.map_err(key_err)?;
+        let cfg = cfg_for(&jhost, jport)?;
+        let mut jh = handshake(tokio::time::timeout(NET_TIMEOUT, client::connect_stream(cfg, stream, client(&jhost, jport))).await)?;
         let juser = match juser.or_else(|| opts.user.clone()) {
             Some(u) => u,
             None => term.prompt(&format!("login as ({jhost}): "), true).await?.to_string(),
         };
         // La contraseña guardada es del destino: el bastión nunca la recibe.
-        authenticate(&mut jh, &mut term, &juser, &jhost, opts.identity_file.as_deref(), None).await?;
-        let ch = jh
-            .channel_open_direct_tcpip(opts.host.clone(), opts.port as u32, "127.0.0.1", 0)
+        authenticate(&mut jh, &mut term, &juser, &jhost, opts.identity_file.as_deref(), None, opts.legacy).await?;
+        let ch = net(jh.channel_open_direct_tcpip(opts.host.clone(), opts.port as u32, "127.0.0.1", 0))
             .await
             .map_err(|e| format!("channel 0: open failed: {e}"))?;
-        let h = client::connect_stream(cfg.clone(), ch.into_stream(), client(&opts.host, opts.port))
-            .await
-            .map_err(key_err)?;
+        let cfg = cfg_for(&opts.host, opts.port)?;
+        let h = handshake(
+            tokio::time::timeout(NET_TIMEOUT, client::connect_stream(cfg, ch.into_stream(), client(&opts.host, opts.port))).await,
+        )?;
         _bastion = Some(jh);
         h
     } else {
         let stream = tcp_connect(&opts.host, opts.port).await?;
-        client::connect_stream(cfg.clone(), stream, client(&opts.host, opts.port)).await.map_err(key_err)?
+        let cfg = cfg_for(&opts.host, opts.port)?;
+        handshake(tokio::time::timeout(NET_TIMEOUT, client::connect_stream(cfg, stream, client(&opts.host, opts.port))).await)?
     };
 
     let user = match opts.user.clone() {
         Some(u) => u,
         None => term.prompt("login as: ", true).await?.to_string(),
     };
-    authenticate(&mut handle, &mut term, &user, &opts.host, opts.identity_file.as_deref(), opts.secret).await?;
+    authenticate(&mut handle, &mut term, &user, &opts.host, opts.identity_file.as_deref(), opts.secret, opts.legacy).await?;
 
-    let mut channel = handle.channel_open_session().await.map_err(|e| format!("ssh: {e}"))?;
+    let mut channel = net(handle.channel_open_session()).await?;
     let mut modes = Vec::new();
     if let Some(erase) = opts.erase {
         modes.push((Pty::VERASE, erase as u32));
@@ -471,8 +593,8 @@ async fn run(opts: Options, mut term: Term) -> Result<u32, String> {
         .map_err(|e| format!("ssh: PTY allocation request failed: {e}"))?;
     channel.request_shell(false).await.map_err(|e| format!("ssh: {e}"))?;
     // Lo tecleado durante el login que sobró después del último Enter.
-    if !term.pending.is_empty() {
-        let rest: Vec<u8> = term.pending.drain(..).collect();
+    let rest = term.take_rest();
+    if !rest.is_empty() {
         let _ = channel.data_bytes(rest).await;
     }
 
@@ -519,9 +641,9 @@ async fn authenticate(
     host: &str,
     key: Option<&Path>,
     secret: Option<Zeroizing<String>>,
+    legacy: bool,
 ) -> Result<(), String> {
-    let e = |e: russh::Error| format!("ssh: {e}");
-    let Some(mut methods) = methods_of(&h.authenticate_none(user).await.map_err(e)?) else {
+    let Some(mut methods) = methods_of(&net(h.authenticate_none(user)).await?) else {
         return Ok(());
     };
     let has = |m: &MethodSet, k: MethodKind| m.is_empty() || m.contains(&k);
@@ -529,11 +651,19 @@ async fn authenticate(
     if let Some(path) = key.filter(|_| has(&methods, MethodKind::PublicKey)) {
         match load_key(term, path).await {
             Ok(k) => {
-                let hash = h.best_supported_rsa_hash().await.map_err(e)?.flatten();
-                let r = h.authenticate_publickey(user, PrivateKeyWithHashAlg::new(Arc::new(k), hash)).await.map_err(e)?;
-                match methods_of(&r) {
-                    None => return Ok(()),
-                    Some(m) => methods = m,
+                let hash = net(h.best_supported_rsa_hash()).await?.flatten();
+                // Sin rsa-sha2 en el servidor, una llave RSA firmaría con SHA-1 (ssh-rsa): solo con legacy.
+                if k.algorithm().is_rsa() && hash.is_none() && !legacy {
+                    term.sink.push(
+                        "El servidor solo acepta firmas ssh-rsa (SHA-1) para la llave RSA. Activa \"SSH legacy\" en la sesión para usarla.\r\n"
+                            .as_bytes(),
+                    );
+                } else {
+                    let r = net(h.authenticate_publickey(user, PrivateKeyWithHashAlg::new(Arc::new(k), hash))).await?;
+                    match methods_of(&r) {
+                        None => return Ok(()),
+                        Some(m) => methods = m,
+                    }
                 }
             }
             Err(msg) if msg == CANCELLED => return Err(msg),
@@ -543,7 +673,7 @@ async fn authenticate(
 
     if let Some(secret) = secret {
         let r = if has(&methods, MethodKind::Password) {
-            methods_of(&h.authenticate_password(user, secret.as_str()).await.map_err(e)?)
+            methods_of(&net(h.authenticate_password(user, secret.as_str())).await?)
         } else if methods.contains(&MethodKind::KeyboardInteractive) {
             kbd_interactive(h, term, user, Some(&secret)).await?.0
         } else {
@@ -575,7 +705,7 @@ async fn authenticate(
             r
         } else if has(&methods, MethodKind::Password) {
             let pw = term.prompt(&format!("{user}@{host}'s password: "), false).await?;
-            methods_of(&h.authenticate_password(user, pw.as_str()).await.map_err(e)?)
+            methods_of(&net(h.authenticate_password(user, pw.as_str())).await?)
         } else {
             break;
         };
@@ -603,17 +733,24 @@ async fn kbd_interactive(
     user: &str,
     saved: Option<&Zeroizing<String>>,
 ) -> Result<(Option<MethodSet>, bool), String> {
-    let e = |e: russh::Error| format!("ssh: {e}");
     let mut saved = saved;
     let mut asked = false;
-    let mut r = h.authenticate_keyboard_interactive_start(user, None).await.map_err(e)?;
+    let mut empty_rounds = 0;
+    let mut r = net(h.authenticate_keyboard_interactive_start(user, None)).await?;
     loop {
         match r {
             KeyboardInteractiveAuthResponse::Success => return Ok((None, true)),
             KeyboardInteractiveAuthResponse::Failure { remaining_methods, .. } => return Ok((Some(remaining_methods), asked)),
             KeyboardInteractiveAuthResponse::InfoRequest { name, instructions, prompts } => {
                 asked |= !prompts.is_empty();
-                let mut answers = Vec::with_capacity(prompts.len());
+                if prompts.is_empty() {
+                    empty_rounds += 1;
+                    if empty_rounds > MAX_EMPTY_ROUNDS {
+                        return Err("ssh: el servidor repite pedidos keyboard-interactive vacíos".into());
+                    }
+                }
+                // Las respuestas se borran de memoria si algo falla antes de entregarlas a russh.
+                let mut answers: Zeroizing<Vec<String>> = Zeroizing::new(Vec::with_capacity(prompts.len()));
                 if let (Some(secret), [p]) = (saved.take(), prompts.as_slice()) {
                     if !p.echo {
                         answers.push(secret.to_string());
@@ -621,14 +758,16 @@ async fn kbd_interactive(
                 }
                 if answers.is_empty() {
                     for text in [&name, &instructions].into_iter().filter(|t| !t.is_empty()) {
-                        term.sink.push(&crlf(&format!("{text}\n")));
+                        term.sink.push(&crlf(&format!("{}\n", sanitize(text))));
                     }
                     for p in &prompts {
-                        let prompt = if p.prompt.is_empty() { format!("({user}) Password: ") } else { p.prompt.clone() };
-                        answers.push(term.prompt(&prompt, p.echo).await?.to_string());
+                        let prompt = if p.prompt.is_empty() { format!("({user}) Password: ") } else { sanitize(&p.prompt) };
+                        let mut answer = term.prompt(&prompt, p.echo).await?;
+                        // Se mueve el String sin copiarlo (el Zeroizing vacío no deja rastro).
+                        answers.push(std::mem::take(&mut *answer));
                     }
                 }
-                r = h.authenticate_keyboard_interactive_respond(answers).await.map_err(e)?;
+                r = net(h.authenticate_keyboard_interactive_respond(std::mem::take(&mut *answers))).await?;
             }
         }
     }
@@ -869,7 +1008,8 @@ ofWDpxzB8xG1hm5DRoEfAAAAAAECAwQF
         let port = start_server();
         let kh = std::env::temp_dir().join(format!("nt_kh_{}", uuid::Uuid::new_v4()));
         let (snk, out, _) = sink();
-        let ssh = open(opts(port, &kh, Some("mala")), 80, 24, &snk);
+        // Sin legacy: también prueba la oferta de algoritmos por defecto.
+        let ssh = open(Options { legacy: false, ..opts(port, &kh, Some("mala")) }, 80, 24, &snk);
         // La guardada falla por password; el reintento va por keyboard-interactive.
         wait_for(&out, "Password: ");
         let mut w = ssh.writer();
@@ -885,12 +1025,88 @@ ofWDpxzB8xG1hm5DRoEfAAAAAAECAwQF
         let kh = std::env::temp_dir().join(format!("nt_kh_{}", uuid::Uuid::new_v4()));
         // Otra llave registrada para el mismo host y puerto.
         let other = key(OTHER_KEY);
-        learn_known_hosts_path("127.0.0.1", port, other.public_key(), &kh).unwrap();
+        learn("127.0.0.1", port, other.public_key(), &kh).unwrap();
         let (snk, out, _) = sink();
         let _ssh = open(opts(port, &kh, Some("s3creta")), 80, 24, &snk);
         let s = wait_for(&out, "Host key verification failed.");
         assert!(s.contains("REMOTE HOST IDENTIFICATION HAS CHANGED") && !s.contains("router# "));
         let _ = std::fs::remove_file(&kh);
+    }
+
+    const ECDSA_PUB: &str = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBDAH2Qom5wM+hu+Ai++TC3wFwLb92+KbFA/RnCGaHat3F1Fn1clBnNUy1rjkaJyukzcmpwXYYISy6/Wr6RRWNoE=";
+
+    #[test]
+    fn host_key_rule_is_per_key_type() {
+        let a = key(HOST_KEY).public_key().clone();
+        let b = key(OTHER_KEY).public_key().clone();
+        let ec = PublicKey::from_openssh(ECDSA_PUB).unwrap();
+        assert_eq!(verdict(&[], &a), Verdict::New);
+        assert_eq!(verdict(&[(1, a.clone())], &a), Verdict::Known);
+        // Otra ed25519 para el mismo equipo: cambio real.
+        assert_eq!(verdict(&[(1, ec.clone()), (2, a.clone())], &b), Verdict::Changed(2));
+        // Solo hay una ECDSA guardada: una ed25519 es un tipo nuevo, no un cambio.
+        assert_eq!(verdict(&[(1, ec.clone())], &a), Verdict::New);
+    }
+
+    #[test]
+    fn learn_writes_and_reads_back() {
+        let kh = std::env::temp_dir().join(format!("nt_kh_{}", uuid::Uuid::new_v4()));
+        let a = key(HOST_KEY).public_key().clone();
+        let ec = PublicKey::from_openssh(ECDSA_PUB).unwrap();
+        learn("10.0.0.1", 22, &a, &kh).unwrap();
+        learn("10.0.0.1", 2222, &ec, &kh).unwrap();
+        let k22 = read_known("10.0.0.1", 22, &kh).unwrap();
+        assert_eq!(k22.len(), 1);
+        assert_eq!(k22[0].1, a);
+        assert_eq!(read_known("10.0.0.1", 2222, &kh).unwrap()[0].1, ec);
+        assert!(read_known("10.0.0.2", 22, &kh).unwrap().is_empty());
+        // Un known_hosts que existe pero no se puede abrir no cuenta como vacío.
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            std::fs::set_permissions(&kh, std::fs::Permissions::from_mode(0o000)).unwrap();
+            let unreadable = std::fs::File::open(&kh).is_err(); // root sí puede abrirlo
+            if unreadable {
+                assert!(read_known("10.0.0.1", 22, &kh).is_err());
+            }
+            std::fs::set_permissions(&kh, std::fs::Permissions::from_mode(0o600)).unwrap();
+        }
+        let _ = std::fs::remove_file(&kh);
+    }
+
+    #[test]
+    fn preferred_keys_filter_sha1_and_put_known_first() {
+        let plain = preferred(false, &[]);
+        assert!(!plain.key.contains(&Algorithm::Rsa { hash: None }));
+        assert!(!plain.key.contains(&Algorithm::Dsa));
+        let legacy = preferred(true, &[]);
+        assert!(legacy.key.contains(&Algorithm::Rsa { hash: None }) && legacy.key.contains(&Algorithm::Dsa));
+        // Con una RSA guardada, las variantes RSA van primero (en su orden original).
+        let known = preferred(false, &[Algorithm::Rsa { hash: None }]);
+        assert_eq!(known.key[0], Algorithm::Rsa { hash: Some(HashAlg::Sha512) });
+        assert_eq!(known.key[1], Algorithm::Rsa { hash: Some(HashAlg::Sha256) });
+        assert_eq!(known.key[2], Algorithm::Ed25519);
+    }
+
+    #[test]
+    fn sanitizes_server_text() {
+        assert_eq!(sanitize("Hola\x1b[2J\x1b]0;x\x07 mundo\r\n\tok\x7f\u{9b}31m"), "Hola[2J]0;x mundo\r\n\tok31m");
+        assert_eq!(sanitize("Contraseña: "), "Contraseña: ");
+    }
+
+    #[test]
+    fn password_line_ignores_arrow_and_function_keys() {
+        let (snk, out, _) = sink();
+        let (tx, rx) = unbounded_channel();
+        let mut term = Term { rx, sink: snk, pending: Zeroizing::new(Vec::new()), pos: 0, cols: 80, rows: 24, skip_lf: false, esc: 0 };
+        // Flecha arriba (CSI), F1 (SS3) y flecha en modo aplicación (SS3 A), luego la clave.
+        tx.send(Cmd::Data(b"\x1b[A\x1bOP\x1bOAs3c\x7fcreta\rshow ver".to_vec())).unwrap();
+        let line = tauri::async_runtime::block_on(term.read_line(false)).unwrap();
+        assert_eq!(line.as_str(), "s3creta");
+        assert_eq!(term.take_rest(), b"show ver");
+        assert!(term.pending.is_empty());
+        std::thread::sleep(Duration::from_millis(50));
+        assert!(!String::from_utf8_lossy(&out.lock().unwrap()).contains("s3"), "sin eco");
     }
 
     #[test]

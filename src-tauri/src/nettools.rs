@@ -30,6 +30,8 @@ pub struct Jobs {
 }
 
 #[derive(Deserialize)]
+// iOS no ejecuta iperf3: los campos solo se leen en el resto de plataformas.
+#[cfg_attr(target_os = "ios", allow(dead_code))]
 pub struct IperfParams {
     pub host: Option<String>,
     pub port: Option<u16>,

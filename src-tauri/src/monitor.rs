@@ -214,6 +214,7 @@ fn icmp_probe(host: &str, timeout: Duration) -> (bool, Option<f64>, Option<Strin
 /// Interpreta la salida de ping en cualquier idioma. "TTL=" aparece en todas las
 /// localizaciones y distingue una respuesta real de "host inaccesible" (Windows
 /// devuelve código 0 aunque el gateway responda que el destino no es alcanzable).
+#[cfg_attr(target_os = "ios", allow(dead_code))]
 pub fn parse_ping(success: bool, text: &str, wall_ms: f64) -> (bool, Option<f64>, Option<String>) {
     static RTT: OnceLock<Regex> = OnceLock::new();
     let lower = text.to_lowercase();
@@ -424,7 +425,17 @@ pub mod icmp {
             let (sa, salen) = sockaddr(dst);
             let t0 = Instant::now();
             let n = unsafe { libc::sendto(self.fd, pkt.as_ptr() as *const libc::c_void, pkt.len(), 0, &sa as *const _ as *const libc::sockaddr, salen) };
-            io_err(n as libc::c_int, ())?;
+            if n < 0 {
+                let e = io::Error::last_os_error();
+                // Sin ruta o host caído según la tabla local: es "inaccesible", no un fallo
+                // del socket (que llevaría al fallback TCP). Los códigos siguen a ICMP
+                // destination unreachable: 0 = red, 1 = host.
+                return match e.raw_os_error() {
+                    Some(libc::ENETUNREACH) => Ok(Hop::Unreachable { from: dst, code: 0 }),
+                    Some(libc::EHOSTUNREACH) | Some(libc::EHOSTDOWN) => Ok(Hop::Unreachable { from: dst, code: 1 }),
+                    _ => Err(e),
+                };
+            }
 
             let deadline = t0 + timeout;
             let mut buf = vec![0u8; 2048];
@@ -449,33 +460,31 @@ pub mod icmp {
                 }
                 let rtt = t0.elapsed().as_secs_f64() * 1000.0;
                 let Some(from) = ip_of(&from) else { continue };
-                if let Some(h) = self.parse(&buf[..n as usize], seq, from, rtt) {
+                if let Some(h) = self.parse(&buf[..n as usize], dst, seq, from, rtt) {
                     return Ok(h);
                 }
             }
         }
 
-        /// Interpreta un paquete recibido; `None` si no corresponde a este echo.
-        fn parse(&self, data: &[u8], seq: u16, from: IpAddr, rtt: f64) -> Option<Hop> {
+        /// Interpreta un paquete recibido; `None` si no corresponde a este echo. Todo
+        /// acceso va con `get`: el paquete viene de la red y puede estar truncado o malformado.
+        fn parse(&self, data: &[u8], dst: IpAddr, seq: u16, from: IpAddr, rtt: f64) -> Option<Hop> {
             // Darwin entrega los paquetes IPv4 con cabecera IP; IPv6 llega sin ella.
             let icmp = if !self.v6 && data.first().map(|b| b >> 4) == Some(4) {
-                let ihl = usize::from(data[0] & 0x0f) * 4;
-                data.get(ihl..)?
+                data.get(ipv4_header_len(data)?..)?
             } else {
                 data
             };
-            if icmp.len() < 8 {
-                return None;
-            }
-            let (ty, code) = (icmp[0], icmp[1]);
-            let mine = |hdr: &[u8]| hdr.len() >= 8 && hdr[4..6] == self.id.to_be_bytes() && hdr[6..8] == seq.to_be_bytes();
+            let (ty, code) = (*icmp.first()?, *icmp.get(1)?);
+            let mine = |hdr: &[u8]| hdr.get(4..6) == Some(&self.id.to_be_bytes()) && hdr.get(6..8) == Some(&seq.to_be_bytes());
             let (reply, exceeded, unreach, request) = if self.v6 {
                 (ECHO6_REPLY, TIME6_EXCEEDED, DEST6_UNREACH, ECHO6_REQUEST)
             } else {
                 (ECHO_REPLY, TIME_EXCEEDED, DEST_UNREACH, ECHO_REQUEST)
             };
             if ty == reply {
-                return mine(icmp).then_some(Hop::Reached { from, rtt });
+                // Solo cuenta la respuesta del destino: otro host con el mismo id/seq no.
+                return (from == dst && mine(icmp)).then_some(Hop::Reached { from, rtt });
             }
             if ty != exceeded && ty != unreach {
                 return None;
@@ -483,17 +492,25 @@ pub mod icmp {
             // Los errores ICMP traen la cabecera IP original y los primeros 8 bytes del echo.
             let inner = icmp.get(8..)?;
             let orig = if self.v6 {
-                // Cabecera IPv6 fija de 40 bytes; next header 58 = ICMPv6.
-                (inner.len() >= 40 && inner[6] == 58).then(|| inner.get(40..)).flatten()?
+                // Cabecera IPv6 fija de 40 bytes; next header (byte 6) 58 = ICMPv6.
+                (*inner.get(6)? == 58).then(|| inner.get(40..)).flatten()?
             } else {
-                let ihl = usize::from(inner.first()? & 0x0f) * 4;
-                (inner.first()? >> 4 == 4 && inner.len() >= ihl && inner[9] == 1).then(|| inner.get(ihl..)).flatten()?
+                // Protocolo (byte 9) 1 = ICMP.
+                let ihl = ipv4_header_len(inner)?;
+                (*inner.get(9)? == 1).then(|| inner.get(ihl..)).flatten()?
             };
             if orig.first() != Some(&request) || !mine(orig) {
                 return None;
             }
             Some(if ty == exceeded { Hop::Exceeded { from, rtt } } else { Hop::Unreachable { from, code } })
         }
+    }
+
+    /// Largo de la cabecera IPv4 al inicio de `data` si es válida (versión 4, IHL >= 20).
+    fn ipv4_header_len(data: &[u8]) -> Option<usize> {
+        let b = *data.first()?;
+        let ihl = usize::from(b & 0x0f) * 4;
+        (b >> 4 == 4 && ihl >= 20).then_some(ihl)
     }
 
     /// Un echo al destino: RTT en ms si contesta.
@@ -557,13 +574,16 @@ pub mod icmp {
             icmp.extend_from_slice(&s.id.to_be_bytes());
             icmp.extend_from_slice(&7u16.to_be_bytes());
             let from: IpAddr = "10.0.0.1".parse().unwrap();
-            assert_eq!(s.parse(&icmp, 7, from, 1.0), Some(Hop::Reached { from, rtt: 1.0 }));
+            assert_eq!(s.parse(&icmp, from, 7, from, 1.0), Some(Hop::Reached { from, rtt: 1.0 }));
             let mut with_ip = vec![0x45u8];
             with_ip.extend_from_slice(&[0; 19]);
             with_ip.extend_from_slice(&icmp);
-            assert_eq!(s.parse(&with_ip, 7, from, 1.0), Some(Hop::Reached { from, rtt: 1.0 }));
+            assert_eq!(s.parse(&with_ip, from, 7, from, 1.0), Some(Hop::Reached { from, rtt: 1.0 }));
             // Otra secuencia u otro id: no es nuestro.
-            assert_eq!(s.parse(&icmp, 8, from, 1.0), None);
+            assert_eq!(s.parse(&icmp, from, 8, from, 1.0), None);
+            // Respuesta de otro host (no el destino): tampoco.
+            let other: IpAddr = "10.0.0.2".parse().unwrap();
+            assert_eq!(s.parse(&icmp, other, 7, from, 1.0), None);
             // Time exceeded con el echo original adentro.
             let mut te = vec![TIME_EXCEEDED, 0, 0, 0, 0, 0, 0, 0, 0x45];
             te.extend_from_slice(&[0; 8]);
@@ -573,7 +593,45 @@ pub mod icmp {
             te.extend_from_slice(&[0, 0, 0]);
             te.extend_from_slice(&s.id.to_be_bytes());
             te.extend_from_slice(&7u16.to_be_bytes());
-            assert_eq!(s.parse(&te, 7, from, 2.0), Some(Hop::Exceeded { from, rtt: 2.0 }));
+            assert_eq!(s.parse(&te, "1.1.1.1".parse().unwrap(), 7, from, 2.0), Some(Hop::Exceeded { from, rtt: 2.0 }));
+        }
+
+
+        /// Paquetes truncados, IHL inválido (0x40..0x44) y bytes aleatorios: nunca panic.
+        #[test]
+        fn malformed_packets_never_panic() {
+            let from: IpAddr = "10.0.0.1".parse().unwrap();
+            let dst: IpAddr = "1.1.1.1".parse().unwrap();
+            let from6: IpAddr = "fe80::1".parse().unwrap();
+            let s4 = Socket::new(false).unwrap();
+            let s6 = Socket::new(true).unwrap();
+            let mut cases: Vec<Vec<u8>> = vec![vec![], vec![0x45], vec![0x40, 1, 2], vec![0x41; 9], vec![0x4f; 30]];
+            // Time exceeded con echo original truncado o con IHL < 20.
+            cases.push(vec![TIME_EXCEEDED, 0, 0, 0, 0, 0, 0, 0]);
+            cases.push(vec![TIME_EXCEEDED, 0, 0, 0, 0, 0, 0, 0, 0x45]);
+            cases.push(vec![TIME_EXCEEDED, 0, 0, 0, 0, 0, 0, 0, 0x40, 0, 0, 0, 0, 0, 0, 0, 0, 1]);
+            cases.push(vec![TIME_EXCEEDED, 0, 0, 0, 0, 0, 0, 0, 0x42, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0]);
+            cases.push(vec![DEST_UNREACH, 1, 0, 0, 0, 0, 0, 0, 0x45, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8]);
+            cases.push(vec![TIME6_EXCEEDED, 0, 0, 0, 0, 0, 0, 0, 0x60, 0, 0, 0, 0, 0, 58]);
+            cases.push(vec![TIME6_EXCEEDED, 0, 0, 0, 0, 0, 0, 0, 0x60, 0, 0, 0, 0, 0, 58, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128]);
+            // Generador lineal congruente: aleatorio reproducible, sin dependencias.
+            let mut x = 0x2545_f491_4f6c_dd1du64;
+            for n in 0..4000 {
+                let len = n % 70;
+                let pkt: Vec<u8> = (0..len)
+                    .map(|_| {
+                        x = x.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+                        (x >> 56) as u8
+                    })
+                    .collect();
+                cases.push(pkt);
+            }
+            for c in &cases {
+                for seq in [0u16, 7] {
+                    let _ = s4.parse(c, dst, seq, from, 1.0);
+                    let _ = s6.parse(c, from6, seq, from6, 1.0);
+                }
+            }
         }
 
         /// Ping real por socket de datagramas (mismo API que iOS). Loopback siempre debe

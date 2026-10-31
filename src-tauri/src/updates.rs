@@ -44,9 +44,11 @@ fn endpoint() -> String {
 #[derive(Default)]
 pub struct Pending(Mutex<Option<Update>>);
 
+// Tupla vacía y no struct unitario: `Pending::default()` en lib.rs vale para ambas
+// variantes sin que clippy lo marque (default_constructed_unit_structs).
 #[cfg(any(target_os = "android", target_os = "ios"))]
 #[derive(Default)]
-pub struct Pending;
+pub struct Pending(());
 
 #[derive(Serialize)]
 pub struct UpdateInfo {
