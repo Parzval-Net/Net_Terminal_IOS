@@ -10,6 +10,7 @@ import { normPath } from "../lib/folders";
 import { useDragResize } from "../lib/useDragResize";
 import { CredStatus, MASK, credStatus, needsUnlock, storageLabel } from "../lib/credentials";
 import { VaultUnlock } from "./VaultUnlock";
+import { IosKeyField } from "./IosKeyField";
 import { IOS_UNAVAILABLE, isIOS } from "../lib/platform";
 
 /** Qué hacer con la contraseña guardada al guardar la sesión. */
@@ -245,24 +246,28 @@ export function SessionModal({ initial, title, defaultFolder, folders, onClose, 
 
           {s.type === "ssh" && (
             <>
-              <Row>
+              {/* iOS no tiene ~/.ssh: la llave se importa o se genera en la app. */}
+              <Row cols={isIOS ? "1fr" : undefined}>
                 <Field label="Usuario">
                   <input
                     className="field"
                     value={s.username ?? ""}
-                    placeholder="Según ~/.ssh/config"
+                    placeholder={isIOS ? "admin" : "Según ~/.ssh/config"}
                     onChange={(e) => set("username", e.target.value)}
                   />
                 </Field>
-                <Field label="Llave privada (opcional)">
-                  <input
-                    className="field"
-                    value={s.identity_file ?? ""}
-                    placeholder="~/.ssh/id_ed25519"
-                    onChange={(e) => set("identity_file", e.target.value)}
-                  />
-                </Field>
+                {!isIOS && (
+                  <Field label="Llave privada (opcional)">
+                    <input
+                      className="field"
+                      value={s.identity_file ?? ""}
+                      placeholder="~/.ssh/id_ed25519"
+                      onChange={(e) => set("identity_file", e.target.value)}
+                    />
+                  </Field>
+                )}
               </Row>
+              {isIOS && <IosKeyField value={s.identity_file ?? ""} onChange={(v) => set("identity_file", v || undefined)} />}
               {pwBlock}
               <Field label="Jump host / bastión (opcional)">
                 <input

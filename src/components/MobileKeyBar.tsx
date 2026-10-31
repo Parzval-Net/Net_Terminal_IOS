@@ -33,13 +33,15 @@ function KeyBtn({ label, title, ariaLabel, active, accent, onPress }: KeyBtnProp
       type="button"
       title={title}
       aria-label={ariaLabel || title}
+      // Ctrl fijado: VoiceOver lo anuncia como activado (y App.css lo usa para el aspecto en iOS).
+      aria-pressed={active === undefined ? undefined : active}
       onPointerDown={(e) => {
         // e.preventDefault() evita que el teclado virtual de Android pierda el foco o se cierre
         e.preventDefault();
         onPress();
       }}
       onClick={(e) => e.preventDefault()}
-      className={`shrink-0 h-8 min-[400px]:h-8.5 min-w-[36px] min-[400px]:min-w-[40px] px-2 min-[400px]:px-2.5 flex items-center justify-center gap-1 text-[12px] min-[400px]:text-[12.5px] font-mono rounded-lg border select-none touch-manipulation transition-all active:scale-95 ${
+      className={`ios-key shrink-0 h-8 min-[400px]:h-8.5 min-w-[36px] min-[400px]:min-w-[40px] px-2 min-[400px]:px-2.5 flex items-center justify-center gap-1 text-[12px] min-[400px]:text-[12.5px] font-mono rounded-lg border select-none touch-manipulation transition-all active:scale-95 ${
         active
           ? "bg-accent text-accent-fg border-accent ring-2 ring-accent/30 font-bold shadow-xs"
           : accent
@@ -108,7 +110,7 @@ export const MobileKeyBar = memo(function MobileKeyBar({
 
   return (
     <div
-      className="shrink-0 h-11 min-[400px]:h-11.5 bg-chrome border-t border-line flex items-center px-1.5 gap-1 min-[400px]:gap-1.5 overflow-x-auto select-none touch-manipulation z-10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      className="ios-keybar shrink-0 h-11 min-[400px]:h-11.5 bg-chrome border-t border-line flex items-center px-1.5 gap-1 min-[400px]:gap-1.5 overflow-x-auto select-none touch-manipulation z-10 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
       role="toolbar"
       aria-label="Teclas táctiles para terminal"
     >

@@ -1,4 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { isIOS, isIPad } from "./platform";
+
+/**
+ * iOS/iPadOS: los diálogos no son ventanas flotantes. En iPhone se muestran como hoja inferior
+ * (sheet) que se cierra deslizando hacia abajo desde el encabezado; en iPad como formSheet
+ * centrado. No se arrastran ni se redimensionan (HIG, Sheets). El aspecto va en App.css
+ * ([data-sheet] bajo html.ios).
+ */
+const SHEET = isIOS ? (isIPad ? "form" : "sheet") : undefined;
+/** Desplazamiento hacia abajo (px) a partir del cual soltar la hoja la cierra. */
+const DISMISS_PX = 110;
 
 interface Box {
   x: number; // desplazamiento desde la posición centrada
@@ -28,7 +39,10 @@ export function useDragResize<T extends HTMLElement = HTMLDivElement>(key: strin
   const [box, setBox] = useState<Box>(() => load(key));
   const drag = useRef<{ sx: number; sy: number; x: number; y: number } | null>(null);
   const sizeAtDown = useRef<{ w: number; h: number } | null>(null);
-  const [isMobileScreen, setIsMobileScreen] = useState(() => typeof window !== "undefined" && window.innerWidth < 640);
+  const [narrow, setIsMobileScreen] = useState(() => typeof window !== "undefined" && window.innerWidth < 640);
+  // En iOS nunca hay ventana arrastrable, tampoco en el ancho regular del iPad.
+  const isMobileScreen = narrow || isIOS;
+  const swipe = useRef<{ sy: number; dy: number; t: number } | null>(null);
 
   useEffect(() => {
     const onResize = () => setIsMobileScreen(window.innerWidth < 640);
@@ -84,12 +98,44 @@ export function useDragResize<T extends HTMLElement = HTMLDivElement>(key: strin
     drag.current = null;
   }, []);
 
+  // Deslizar la hoja hacia abajo desde el encabezado (iPhone). Va con eventos táctiles: en
+  // WKWebView son los que llegan de forma fiable mientras el dedo se mueve.
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length !== 1 || (e.target as HTMLElement).closest("button, input, select, textarea, a")) return;
+    swipe.current = { sy: e.touches[0].clientY, dy: 0, t: performance.now() };
+  }, []);
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    const sw = swipe.current;
+    const el = ref.current;
+    if (!sw || !el) return;
+    // La hoja sigue al dedo hacia abajo; hacia arriba ofrece resistencia.
+    const raw = e.touches[0].clientY - sw.sy;
+    sw.dy = raw > 0 ? raw : raw / 6;
+    el.style.transition = "none";
+    el.style.transform = `translateY(${sw.dy}px)`;
+  }, []);
+
+  const onTouchEnd = useCallback(() => {
+    const sw = swipe.current;
+    swipe.current = null;
+    const el = ref.current;
+    if (!sw || !el) return;
+    const fast = sw.dy > 40 && sw.dy / Math.max(1, performance.now() - sw.t) > 0.6;
+    el.style.transition = "";
+    el.style.transform = "";
+    // Cerrar = lo mismo que tocar el fondo atenuado: el overlay escucha onMouseDown. Los diálogos
+    // que no se cierran tocando el fondo (aprobaciones, avisos de scripts) vuelven a su lugar.
+    if (sw.dy > DISMISS_PX || fast) el.parentElement?.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+  }, []);
+
   const reset = useCallback(() => setBox(EMPTY), []);
 
   return {
     /** Props para el contenedor de la ventana. */
     box: {
       ref,
+      "data-sheet": SHEET,
       style: {
         transform: isMobileScreen ? undefined : (box.x || box.y ? `translate(${box.x}px, ${box.y}px)` : undefined),
         width: !isMobileScreen && resizable && box.w ? box.w : undefined,
@@ -105,8 +151,20 @@ export function useDragResize<T extends HTMLElement = HTMLDivElement>(key: strin
       onPointerDown,
       onPointerMove,
       onPointerUp,
+      ...(SHEET === "sheet"
+        ? {
+            onTouchStart,
+            onTouchMove,
+            onTouchEnd,
+            // Gesto interrumpido por el sistema: la hoja vuelve a su lugar sin cerrarse.
+            onTouchCancel: () => {
+              swipe.current = null;
+              if (ref.current) ref.current.style.transform = "";
+            },
+          }
+        : {}),
       onDoubleClick: isMobileScreen ? undefined : reset,
-      style: { cursor: isMobileScreen ? "default" : "move", touchAction: isMobileScreen ? "auto" : "none" } as React.CSSProperties,
+      style: { cursor: isMobileScreen ? "default" : "move", touchAction: isMobileScreen && SHEET !== "sheet" ? "auto" : "none" } as React.CSSProperties,
       title: isMobileScreen ? undefined : "Arrastra para mover · doble clic para restaurar",
     },
   };

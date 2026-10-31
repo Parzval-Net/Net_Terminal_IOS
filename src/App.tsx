@@ -6,6 +6,8 @@ import { TabBar, type TabBarProps } from "./components/TabBar";
 import { VerticalTabs } from "./components/VerticalTabs";
 import { StatusBar } from "./components/StatusBar";
 import { ActivityBar, MobileBottomNav } from "./components/ActivityBar";
+import { AssistantPanel } from "./components/AssistantPanel";
+import { AI_OUTPUT_LINES, AiAvailability, AiCommand, aiAvailable, catalogFor, trimOutput } from "./lib/ai";
 import { HistoryMenu } from "./components/HistoryMenu";
 import { TerminalView, TermController } from "./components/TerminalView";
 import type { CredChange } from "./components/SessionModal";
@@ -207,17 +209,43 @@ function Workspace({
   const [notesOpen, setNotesOpenRaw] = useState(() => stored("notesOpen", false));
   const [commandsOpen, setCommandsOpenRaw] = useState(() => stored("commandsOpen", false));
   useEffect(() => persist("commandsOpen", commandsOpen), [commandsOpen]);
+  // Asistente IA on-device: solo iOS con Apple Intelligence disponible (null = no se muestra).
+  const [ai, setAi] = useState<AiAvailability | null>(null);
+  const [assistantOpen, setAssistantOpenRaw] = useState(false);
+  useEffect(() => {
+    // modelNotReady: el modelo se descarga en segundo plano; se vuelve a consultar al volver a la app.
+    const check = () => aiAvailable().then(setAi);
+    check();
+    document.addEventListener("visibilitychange", check);
+    return () => document.removeEventListener("visibilitychange", check);
+  }, []);
   // Notas y Comandos comparten el lado derecho: abrir uno cierra el otro.
   const setNotesOpen = (v: boolean | ((o: boolean) => boolean)) =>
     setNotesOpenRaw((o) => {
       const next = typeof v === "function" ? v(o) : v;
-      if (next) setCommandsOpenRaw(false);
+      if (next) {
+        setCommandsOpenRaw(false);
+        setAssistantOpenRaw(false);
+      }
       return next;
     });
   const setCommandsOpen = (v: boolean | ((o: boolean) => boolean)) =>
     setCommandsOpenRaw((o) => {
       const next = typeof v === "function" ? v(o) : v;
-      if (next) setNotesOpenRaw(false);
+      if (next) {
+        setNotesOpenRaw(false);
+        setAssistantOpenRaw(false);
+      }
+      return next;
+    });
+  // Notas, Comandos y Asistente comparten el lado derecho.
+  const setAssistantOpen = (v: boolean | ((o: boolean) => boolean)) =>
+    setAssistantOpenRaw((o) => {
+      const next = typeof v === "function" ? v(o) : v;
+      if (next) {
+        setNotesOpenRaw(false);
+        setCommandsOpenRaw(false);
+      }
       return next;
     });
   const [notesWidth, setNotesWidth] = useState(() =>
@@ -2024,7 +2052,7 @@ function EmptyState({
   );
 
   return (
-    <div className="absolute inset-0 flex flex-col bg-bg overflow-y-auto select-none">
+    <div className="ios-home absolute inset-0 flex flex-col bg-bg overflow-y-auto select-none">
       <div className="w-full max-w-[420px] mx-auto px-4 py-5 sm:py-7 flex flex-col space-y-4">
         {/* Hero Branding: Logo oficial de la app en la parte superior */}
         <div className="flex flex-col items-center text-center pt-1 pb-1">
@@ -2036,9 +2064,11 @@ function EmptyState({
               draggable={false}
             />
           </div>
-          <h1 className="text-[20px] sm:text-[22px] font-bold text-fg tracking-tight">NetTerminal</h1>
-          <p className="text-[12px] sm:text-[12.5px] text-muted max-w-[310px] mt-1 leading-snug">
-            Acceso profesional SSH, Telnet, Serial y herramientas de diagnóstico de red.
+          <h1 className="ios-large-title text-[20px] sm:text-[22px] font-bold text-fg tracking-tight">NetTerminal</h1>
+          <p className="ios-sub text-[12px] sm:text-[12.5px] text-muted max-w-[310px] mt-1 leading-snug">
+            {isIOS
+              ? "Acceso profesional SSH, Telnet y herramientas de diagnóstico de red."
+              : "Acceso profesional SSH, Telnet, Serial y herramientas de diagnóstico de red."}
           </p>
         </div>
 
@@ -2049,7 +2079,7 @@ function EmptyState({
             type="button"
             title="Conexión rápida sin guardar"
             aria-label="Conexión rápida sin guardar"
-            className="flex flex-col justify-between p-3.5 rounded-2xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left group touch-manipulation min-h-[92px] shadow-xs"
+            className="ios-cell flex flex-col justify-between p-3.5 rounded-2xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left group touch-manipulation min-h-[92px] shadow-xs"
           >
             <div className="flex items-center justify-between w-full">
               <span className="w-8 h-8 rounded-xl bg-hover text-muted group-hover:text-fg grid place-items-center transition-colors">
@@ -2058,10 +2088,10 @@ function EmptyState({
               <ChevronRight size={15} className="text-muted/40 group-hover:text-fg transition-colors" />
             </div>
             <div className="mt-2.5">
-              <div className="text-[13px] font-semibold text-fg leading-tight">
+              <div className="ios-title text-[13px] font-semibold text-fg leading-tight">
                 Conexión rápida
               </div>
-              <div className="text-[11px] text-muted leading-tight mt-0.5">SSH o Telnet directo</div>
+              <div className="ios-sub text-[11px] text-muted leading-tight mt-0.5">SSH o Telnet directo</div>
             </div>
           </button>
 
@@ -2071,7 +2101,7 @@ function EmptyState({
             type="button"
             title="Terminal local"
             aria-label="Terminal local"
-            className="flex flex-col justify-between p-3.5 rounded-2xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left group touch-manipulation min-h-[92px] shadow-xs"
+            className="ios-cell flex flex-col justify-between p-3.5 rounded-2xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left group touch-manipulation min-h-[92px] shadow-xs"
           >
             <div className="flex items-center justify-between w-full">
               <span className="w-8 h-8 rounded-xl bg-hover text-muted group-hover:text-fg grid place-items-center transition-colors">
@@ -2080,32 +2110,32 @@ function EmptyState({
               <ChevronRight size={15} className="text-muted/40 group-hover:text-fg transition-colors" />
             </div>
             <div className="mt-2.5">
-              <div className="text-[13px] font-semibold text-fg leading-tight">
+              <div className="ios-title text-[13px] font-semibold text-fg leading-tight">
                 Terminal local
               </div>
-              <div className="text-[11px] text-muted leading-tight mt-0.5">Shell Linux nativo</div>
+              <div className="ios-sub text-[11px] text-muted leading-tight mt-0.5">Shell Linux nativo</div>
             </div>
           </button>
           )}
         </div>
 
         {/* Acciones secundarias en lista tonal sobria */}
-        <div className="rounded-2xl border border-line bg-panel divide-y divide-line overflow-hidden shadow-xs">
+        <div className="ios-group rounded-2xl border border-line bg-panel divide-y divide-line overflow-hidden shadow-xs">
           <button
             onClick={onNew}
             type="button"
             title="Nueva sesión guardada"
             aria-label="Nueva sesión guardada"
-            className="w-full flex items-center gap-3 px-3.5 py-3 hover:bg-hover active:bg-hover transition-colors text-left group touch-manipulation"
+            className="ios-row w-full flex items-center gap-3 px-3.5 py-3 hover:bg-hover active:bg-hover transition-colors text-left group touch-manipulation"
           >
             <span className="w-7.5 h-7.5 rounded-xl bg-hover text-muted group-hover:text-fg grid place-items-center shrink-0 transition-colors">
               <Plus size={16} />
             </span>
             <div className="flex-1 min-w-0">
-              <div className="text-[13px] font-medium text-fg truncate">
+              <div className="ios-title text-[13px] font-medium text-fg truncate">
                 Nueva sesión guardada
               </div>
-              <div className="text-[11px] text-muted truncate">Crea una sesión con host, puerto y credenciales</div>
+              <div className="ios-sub text-[11px] text-muted truncate">Crea una sesión con host, puerto y credenciales</div>
             </div>
             <ChevronRight size={15} className="text-muted/40 shrink-0" />
           </button>
@@ -2115,16 +2145,16 @@ function EmptyState({
             type="button"
             title="Buscar sesión o comando"
             aria-label="Buscar sesión o comando"
-            className="w-full flex items-center gap-3 px-3.5 py-3 hover:bg-hover active:bg-hover transition-colors text-left group touch-manipulation"
+            className="ios-row w-full flex items-center gap-3 px-3.5 py-3 hover:bg-hover active:bg-hover transition-colors text-left group touch-manipulation"
           >
             <span className="w-7.5 h-7.5 rounded-xl bg-hover text-muted group-hover:text-fg grid place-items-center shrink-0 transition-colors">
               <Search size={16} />
             </span>
             <div className="flex-1 min-w-0">
-              <div className="text-[13px] font-medium text-fg truncate">
+              <div className="ios-title text-[13px] font-medium text-fg truncate">
                 Buscar sesión o comando
               </div>
-              <div className="text-[11px] text-muted truncate">Paleta de búsqueda rápida y atajos ({modLabel}K)</div>
+              <div className="ios-sub text-[11px] text-muted truncate">Paleta de búsqueda rápida y atajos ({modLabel}K)</div>
             </div>
             <ChevronRight size={15} className="text-muted/40 shrink-0" />
           </button>
@@ -2134,16 +2164,16 @@ function EmptyState({
             type="button"
             title="Herramientas de red"
             aria-label="Herramientas de red"
-            className="w-full flex items-center gap-3 px-3.5 py-3 hover:bg-hover active:bg-hover transition-colors text-left group touch-manipulation"
+            className="ios-row w-full flex items-center gap-3 px-3.5 py-3 hover:bg-hover active:bg-hover transition-colors text-left group touch-manipulation"
           >
             <span className="w-7.5 h-7.5 rounded-xl bg-hover text-muted group-hover:text-fg grid place-items-center shrink-0 transition-colors">
               <Wrench size={16} />
             </span>
             <div className="flex-1 min-w-0">
-              <div className="text-[13px] font-medium text-fg truncate">
+              <div className="ios-title text-[13px] font-medium text-fg truncate">
                 Herramientas de red
               </div>
-              <div className="text-[11px] text-muted truncate">Subredes, Ping, TFTP, Syslog, SNMP y Topología</div>
+              <div className="ios-sub text-[11px] text-muted truncate">Subredes, Ping, TFTP, Syslog, SNMP y Topología</div>
             </div>
             <ChevronRight size={15} className="text-muted/40 shrink-0" />
           </button>
@@ -2153,13 +2183,13 @@ function EmptyState({
         {recentSessions.length > 0 ? (
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between px-1">
-              <span className="text-[11px] font-medium text-muted uppercase tracking-wider">
+              <span className="ios-section text-[11px] font-medium text-muted uppercase tracking-wider">
                 Sesiones guardadas ({recentSessions.length})
               </span>
               <button
                 type="button"
                 onClick={onPalette}
-                className="text-[11.5px] font-medium text-muted hover:text-fg transition-colors"
+                className="ios-link text-[11.5px] font-medium text-muted hover:text-fg transition-colors"
               >
                 Ver todas
               </button>
@@ -2170,16 +2200,16 @@ function EmptyState({
                   key={s.id}
                   onClick={() => onOpenSession?.(s)}
                   type="button"
-                  className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left touch-manipulation group shadow-xs"
+                  className="ios-cell ios-cell-row flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left touch-manipulation group shadow-xs"
                 >
                   <span className="w-7 h-7 rounded-lg bg-hover grid place-items-center shrink-0 text-muted group-hover:text-fg transition-colors">
                     <SessionIcon type={s.type} size={14} />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <div className="text-[12.5px] font-medium text-fg group-hover:text-accent transition-colors truncate">
+                    <div className="ios-title text-[12.5px] font-medium text-fg group-hover:text-accent transition-colors truncate">
                       {s.name}
                     </div>
-                    <div className="text-[11px] text-muted truncate font-mono">
+                    <div className="ios-sub text-[11px] text-muted truncate font-mono">
                       {s.host ? `${s.host}${s.port ? `:${s.port}` : ""}` : s.type}
                     </div>
                   </div>
@@ -2191,7 +2221,7 @@ function EmptyState({
         ) : (
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between px-1">
-              <span className="text-[11px] font-medium text-muted uppercase tracking-wider">
+              <span className="ios-section text-[11px] font-medium text-muted uppercase tracking-wider">
                 Utilidades de red rápidas
               </span>
             </div>
@@ -2199,7 +2229,7 @@ function EmptyState({
               <button
                 type="button"
                 onClick={onTools}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left touch-manipulation text-[12px] font-medium text-fg shadow-xs"
+                className="ios-cell ios-cell-row ios-title flex items-center gap-2 px-3 py-2.5 rounded-xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left touch-manipulation text-[12px] font-medium text-fg shadow-xs"
               >
                 <span className="w-6.5 h-6.5 rounded-lg bg-hover grid place-items-center shrink-0 text-muted">
                   <Wrench size={13} />
@@ -2209,7 +2239,7 @@ function EmptyState({
               <button
                 type="button"
                 onClick={onPalette}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left touch-manipulation text-[12px] font-medium text-fg shadow-xs"
+                className="ios-cell ios-cell-row ios-title flex items-center gap-2 px-3 py-2.5 rounded-xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left touch-manipulation text-[12px] font-medium text-fg shadow-xs"
               >
                 <span className="w-6.5 h-6.5 rounded-lg bg-hover grid place-items-center shrink-0 text-muted">
                   <Search size={13} />

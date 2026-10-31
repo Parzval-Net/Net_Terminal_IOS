@@ -20,7 +20,7 @@ import { Tab, TabState, sessionTarget, tunnelLabel } from "../types";
 import { BroadcastTargetPicker } from "./BroadcastTarget";
 import { QuickBolt, typeLabel } from "./SessionIcon";
 import { statusColor } from "./TabBar";
-import { historyLabel, isMobile, modLabel } from "../lib/platform";
+import { historyLabel, isIOS, isMobile, modLabel } from "../lib/platform";
 
 /** Etiquetas de los botones accionables: con la barra angosta (ventana mínima o vista con barra
  *  lateral) solo queda el icono y el title. Comandos, Notas, CLI Lab y Ajustes viven en la barra
@@ -72,6 +72,8 @@ export const StatusBar = memo(function StatusBar({
       <span className={LBL}>IA</span>
     </BarBtn>
   );
+  // iOS: sin sesión activa la barra queda vacía y se vería como una franja sobre la tab bar.
+  if ((!tab || !state) && isIOS && !ai) return null;
   if (!tab || !state)
     return (
       <div className="@container h-7 shrink-0 flex items-center justify-end px-3 bg-chrome border-t border-line text-[11.5px] text-muted">
@@ -83,7 +85,7 @@ export const StatusBar = memo(function StatusBar({
   const connected = state.status === "connected";
 
   return (
-    <div className="@container h-7 shrink-0 flex items-center gap-2 @[40rem]:gap-3 px-3 bg-chrome border-t border-line text-[11.5px] text-muted overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="ios-statusbar @container h-7 shrink-0 flex items-center gap-2 @[40rem]:gap-3 px-3 bg-chrome border-t border-line text-[11.5px] text-muted overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       <span className="flex items-center gap-1.5 shrink-0 whitespace-nowrap" title={statusText[state.status]}>
         <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusColor[state.status] }} />
         {/* Barra muy angosta: queda el punto de color (el estado va en el tooltip). */}

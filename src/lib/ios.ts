@@ -1,8 +1,8 @@
-import { isIOS } from "./platform";
+import { isIOS, isIPad } from "./platform";
 
 /**
  * Ajustes de layout para iOS/iPadOS (WKWebView).
- * - Marca <html class="ios"> para los estilos específicos (App.css).
+ * - Marca <html class="ios"> (y "ipad" en iPad) para los estilos específicos (App.css).
  * - WKWebView no redimensiona la página con el teclado virtual (no hay adjustResize): se publica
  *   la altura visible en --vvh y se marca html.kb-open mientras el teclado está arriba. #root usa
  *   esa altura, así la terminal y la MobileKeyBar quedan sobre el teclado y el ResizeObserver de
@@ -12,6 +12,8 @@ export function initIosLayout(): void {
   if (!isIOS || typeof document === "undefined") return;
   const root = document.documentElement;
   root.classList.add("ios");
+  // iPad: ancho regular. Los diálogos van como formSheet centrado y no como hoja inferior.
+  if (isIPad) root.classList.add("ipad");
 
   // Campos de host, usuario, comandos, etc.: sin autocorrección ni mayúscula inicial. Se aplica al
   // enfocar para cubrir también los que se montan después (diálogos).

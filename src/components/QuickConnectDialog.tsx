@@ -8,6 +8,7 @@ import { quickTarget } from "./CommandPalette";
 import { useDragResize } from "../lib/useDragResize";
 import { backspaceOptions } from "../lib/backspace";
 import { isIOS } from "../lib/platform";
+import { IosKeyField } from "./IosKeyField";
 
 interface Props {
   onClose: () => void;
@@ -158,14 +159,18 @@ export function QuickConnectDialog({ onClose, onOpen }: Props) {
 
           {s.type === "ssh" && (
             <>
-              <Row>
+              {/* iOS no tiene ~/.ssh: la llave se importa o se genera en la app. */}
+              <Row cols={isIOS ? "1fr" : undefined}>
                 <Field label="Usuario">
-                  <input className="field" value={s.username ?? ""} placeholder="Según ~/.ssh/config" onChange={(e) => set("username", e.target.value)} />
+                  <input className="field" value={s.username ?? ""} placeholder={isIOS ? "admin" : "Según ~/.ssh/config"} onChange={(e) => set("username", e.target.value)} />
                 </Field>
-                <Field label="Llave privada (opcional)">
-                  <input className="field" value={s.identity_file ?? ""} placeholder="~/.ssh/id_ed25519" onChange={(e) => set("identity_file", e.target.value)} />
-                </Field>
+                {!isIOS && (
+                  <Field label="Llave privada (opcional)">
+                    <input className="field" value={s.identity_file ?? ""} placeholder="~/.ssh/id_ed25519" onChange={(e) => set("identity_file", e.target.value)} />
+                  </Field>
+                )}
               </Row>
+              {isIOS && <IosKeyField value={s.identity_file ?? ""} onChange={(v) => set("identity_file", v || undefined)} />}
               <label className="flex items-start gap-2.5 text-[12.5px]">
                 <input type="checkbox" className="mt-0.5 accent-[var(--accent)]" checked={!!s.legacy_ssh} onChange={(e) => set("legacy_ssh", e.target.checked)} />
                 <span>

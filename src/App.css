@@ -194,6 +194,385 @@ html.ios .xterm-helper-textarea {
   font-size: 16px !important;
 }
 
+/* ---------------------------------------------------------------------------------------------
+   iOS/iPadOS: aspecto nativo según las Human Interface Guidelines. Todo va bajo html.ios, así que
+   Android y escritorio no cambian. Las clases ios-* de los componentes son solo marcadores: fuera
+   de iOS no tienen estilos.
+   --------------------------------------------------------------------------------------------- */
+
+/* Colores del sistema (HIG, Color › Specifications). Donde el valor estándar no llega a 4,5:1 en
+   texto chico se usa la variante de contraste aumentado de Apple: systemBlue #007AFF da 4,0:1
+   sobre blanco, se usa #0066CC (5,6:1); secondaryLabel al 60 % da 3,4:1, se usa #6C6C70 (5,2:1
+   sobre blanco y 4,7:1 sobre #F2F2F7). */
+html.ios:not([data-theme="dark"]) {
+  --bg: #ffffff; /* systemBackground */
+  --chrome: #f2f2f7; /* systemGroupedBackground */
+  --panel: #ffffff; /* secondarySystemGroupedBackground */
+  --field: #ffffff;
+  --border: #c6c6c8; /* opaqueSeparator */
+  --text: #000000; /* label */
+  --muted: #6c6c70; /* secondaryLabel (contraste aumentado) */
+  --accent: #0066cc; /* systemBlue accesible */
+  --accent-fg: #ffffff;
+  --field-border: #8a8a8e; /* 3,4:1 sobre blanco (WCAG 1.4.11) */
+  --hover: rgba(116, 116, 128, 0.08);
+  --selected: rgba(0, 122, 255, 0.12);
+  --danger: #d70015; /* systemRed, contraste aumentado: 5,4:1 */
+  --ok: #248a3d; /* systemGreen, contraste aumentado */
+  --warn: #c93400; /* systemOrange, contraste aumentado: 5,3:1 */
+  --ios-bar: rgba(249, 249, 249, 0.82); /* material de barras (chrome) */
+  --ios-grouped-bg: #f2f2f7; /* systemGroupedBackground */
+  --ios-grabber: rgba(60, 60, 67, 0.3);
+  --ios-key: #ffffff;
+  --ios-key-shadow: rgba(0, 0, 0, 0.3);
+  --ios-keybar: #d1d3d9;
+}
+html.ios[data-theme="dark"] {
+  --bg: #000000;
+  --chrome: #1c1c1e; /* secondarySystemBackground */
+  --panel: #1c1c1e;
+  --field: #2c2c2e; /* tertiarySystemBackground */
+  --border: #38383a;
+  --text: #ffffff;
+  --muted: #98989f; /* 5,9:1 sobre #1C1C1E */
+  --accent: #0a84ff; /* systemBlue oscuro: 4,7:1 sobre #1C1C1E */
+  /* Blanco sobre #0A84FF da 3,7:1: se mantiene texto oscuro en botones rellenos (5,8:1). */
+  --accent-fg: #000000;
+  --field-border: #6b7280;
+  --hover: rgba(255, 255, 255, 0.08);
+  --selected: rgba(10, 132, 255, 0.22);
+  --danger: #ff453a;
+  --danger-fg: #000000;
+  --ok: #30d158;
+  --warn: #ff9f0a;
+  --ios-bar: rgba(22, 22, 24, 0.82);
+  --ios-grouped-bg: #000000; /* systemGroupedBackground oscuro: las celdas #1C1C1E se distinguen */
+  --ios-grabber: rgba(235, 235, 245, 0.3);
+  --ios-key: #6b6b6e;
+  --ios-key-shadow: rgba(0, 0, 0, 0.6);
+  --ios-keybar: #2c2c2e;
+}
+/* Aumentar contraste (Accesibilidad › Pantalla): separadores y bordes más marcados. */
+@media (prefers-contrast: more) {
+  html.ios:not([data-theme="dark"]) {
+    --border: #8a8a8e;
+    --muted: #3c3c43;
+    --accent: #0040dd;
+  }
+  html.ios[data-theme="dark"] {
+    --border: #8e8e93;
+    --muted: #ebebf5;
+    --accent: #409cff;
+  }
+}
+
+/* Tipografía: SF Pro con tamaños de texto dinámico donde la interfaz es de lectura (inicio y
+   encabezados de hojas). El resto de la interfaz es densa y mantiene sus tamaños. */
+html.ios body {
+  font-family: -apple-system, system-ui, sans-serif;
+}
+
+/* Barra de pestañas (HIG, Tab bars): 49 pt de alto más el home indicator, íconos sobre etiquetas
+   de 10 pt, tinte azul del sistema en la pestaña elegida y material translúcido. */
+html.ios #root:has(.ios-tabbar) {
+  padding-bottom: 0;
+}
+html.ios .ios-tabbar {
+  height: auto;
+  align-items: flex-start;
+  padding: 0 max(4px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(4px, env(safe-area-inset-left));
+  background: var(--ios-bar);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-top: 0.5px solid var(--border);
+}
+/* Con el teclado arriba el sistema tapa la tab bar: se oculta para que la terminal y la barra de
+   teclas queden pegadas al teclado. */
+html.ios.kb-open .ios-tabbar {
+  display: none;
+}
+html.ios .ios-tab {
+  height: 49px;
+  min-width: 44px;
+  justify-content: flex-start;
+  padding-top: 5px;
+  gap: 2px;
+  border-radius: 0;
+}
+html.ios .ios-tab:active {
+  opacity: 0.6;
+}
+html.ios .ios-tab-icon {
+  width: auto;
+  height: 26px;
+  background: none;
+  color: var(--muted);
+}
+html.ios .ios-tab-icon svg {
+  width: 25px;
+  height: 25px;
+  stroke-width: 1.9;
+}
+html.ios .ios-tab-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+  line-height: 12px;
+  color: var(--muted);
+}
+html.ios .ios-tab[aria-selected="true"] .ios-tab-icon,
+html.ios .ios-tab[aria-selected="true"] .ios-tab-label {
+  color: var(--accent);
+}
+html.ios .ios-tab[aria-selected="true"] .ios-tab-icon svg {
+  stroke-width: 2.4;
+}
+/* Insignia roja del sistema sobre el ícono. */
+html.ios .ios-tab-icon > span {
+  top: -3px;
+  right: -8px;
+}
+
+/* Barra de estado de la sesión y barra de teclas: controles de al menos 32 pt (mínimo HIG 28). */
+html.ios .ios-statusbar {
+  height: 36px;
+  font-size: 12px;
+  background: var(--chrome);
+  border-top-width: 0.5px;
+}
+html.ios .ios-statusbar button {
+  height: 32px;
+  min-width: 32px;
+}
+/* Barra de teclas como accesorio del teclado de iOS: teclas blancas con sombra inferior. */
+html.ios .ios-keybar {
+  height: 48px;
+  background: var(--ios-keybar);
+  border-top: 0;
+  padding: 0 max(6px, env(safe-area-inset-left));
+  gap: 6px;
+}
+html.ios .ios-key {
+  height: 38px;
+  min-width: 40px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--ios-key);
+  box-shadow: 0 1px 0 var(--ios-key-shadow);
+  color: var(--text);
+  font-size: 15px;
+  transform: none;
+}
+html.ios .ios-key:active {
+  background: var(--ios-keybar);
+}
+html.ios .ios-key[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+/* Hojas (HIG, Sheets). iPhone: hoja inferior a todo el ancho que se ajusta a su contenido y llega
+   como máximo al detent grande (bajo la Dynamic Island), con grabber y cierre deslizando. iPad:
+   formSheet centrado sobre el fondo atenuado. El overlay sigue la altura visible (--vvh), así el
+   teclado virtual no tapa los campos. */
+html.ios .fixed.inset-0:has(> [data-sheet]) {
+  bottom: auto;
+  height: var(--vvh, 100%);
+  animation: ios-dim-in 0.25s ease-out;
+}
+html.ios:not(.ipad) .fixed.inset-0:has(> [data-sheet="sheet"]:not([role="alertdialog"])) {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: calc(env(safe-area-inset-top) + 10px) 0 0;
+}
+html.ios [data-sheet="sheet"]:not([role="alertdialog"]) {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  min-height: 0;
+  max-height: 100%;
+  border: 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--panel);
+  box-shadow: 0 -2px 24px rgba(0, 0, 0, 0.16);
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: ios-sheet-in 0.42s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+}
+html.ios.kb-open [data-sheet="sheet"] {
+  padding-bottom: 0;
+}
+/* Grabber: 36 × 5 pt arriba al centro (indicador de que la hoja se arrastra). */
+html.ios [data-sheet="sheet"]:not([role="alertdialog"])::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 5px;
+  left: 50%;
+  width: 36px;
+  height: 5px;
+  margin-left: -18px;
+  border-radius: 3px;
+  background: var(--ios-grabber);
+  pointer-events: none;
+}
+html.ios [data-sheet="form"] {
+  max-height: calc(var(--vvh, 100vh) - 48px);
+  border: 0;
+  border-radius: 14px;
+  animation: ios-form-in 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+/* Alertas: tarjeta centrada con esquinas de 14 pt, sin borde. */
+html.ios [data-sheet][role="alertdialog"] {
+  max-width: min(340px, calc(100vw - 32px));
+  border: 0;
+  border-radius: 14px;
+}
+/* Encabezado de la hoja como barra de navegación: título Headline y botones de 44 pt. */
+html.ios [data-sheet] header {
+  min-height: 52px;
+  border-bottom-width: 0.5px;
+}
+html.ios [data-sheet] header h2 {
+  font: -apple-system-headline;
+  font-size: min(1em, 21px);
+}
+/* Área táctil de 44 pt sin cambiar el dibujo del botón (los íconos miden 28 a 32 pt). */
+html.ios [data-sheet] header button {
+  position: relative;
+}
+html.ios [data-sheet] header button::after {
+  content: "";
+  position: absolute;
+  inset: -8px -6px;
+}
+@keyframes ios-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes ios-form-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+}
+@keyframes ios-dim-in {
+  from {
+    background-color: transparent;
+  }
+}
+
+/* Pantalla de inicio como lista agrupada tipo Ajustes (HIG, Lists and tables): fondo agrupado,
+   celdas sin borde ni sombra y texto dinámico (Body / Subheadline / Footnote). */
+html.ios .ios-home {
+  background: var(--ios-grouped-bg);
+  font: -apple-system-body;
+}
+html.ios .ios-cell,
+html.ios .ios-group {
+  border: 0;
+  box-shadow: none;
+  border-radius: 12px;
+  background: var(--panel);
+}
+/* Separadores de 0,5 pt con sangría hasta el texto, como en las listas del sistema. */
+html.ios .ios-group > * {
+  position: relative;
+  border-width: 0;
+}
+html.ios .ios-group > * + *::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 58px;
+  border-top: 0.5px solid var(--border);
+}
+/* En iOS no hay terminal local: Conexión rápida queda sola y ocupa todo el ancho. */
+html.ios .ios-home .grid-cols-2:has(> .ios-cell:only-child) {
+  grid-template-columns: 1fr;
+}
+html.ios .ios-row,
+html.ios .ios-cell-row {
+  min-height: 52px;
+}
+html.ios .ios-cell:active,
+html.ios .ios-row:active {
+  background: var(--hover);
+}
+html.ios .ios-title {
+  font: -apple-system-body;
+  font-size: min(1em, 26px);
+  line-height: 1.25;
+}
+/* Accesos rápidos en dos columnas: Subheadline para que el texto quepa. */
+html.ios .ios-cell-row.ios-title {
+  font: -apple-system-subheadline;
+  font-weight: 500;
+  font-size: min(1em, 22px);
+}
+html.ios .ios-home .ios-sub {
+  font: -apple-system-subheadline;
+  font-size: min(1em, 22px);
+  line-height: 1.3;
+}
+html.ios .ios-home .font-mono.ios-sub {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+}
+html.ios .ios-large-title {
+  font: -apple-system-title1;
+  font-weight: 700;
+  font-size: min(1em, 36px);
+}
+html.ios .ios-section {
+  font: -apple-system-footnote;
+  text-transform: none;
+  letter-spacing: 0;
+}
+html.ios .ios-link {
+  font: -apple-system-subheadline;
+  color: var(--accent);
+  min-height: 44px;
+}
+
+/* iPad: barra lateral de actividad con botones de 44 pt y selección teñida (HIG, Sidebars). */
+html.ios .ios-rail {
+  width: 60px;
+  gap: 6px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-right-width: 0.5px;
+}
+html.ios .ios-rail-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+}
+html.ios .ios-rail-btn svg {
+  width: 22px;
+  height: 22px;
+}
+html.ios .ios-rail-btn[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+/* Reducir movimiento y transparencia (HIG, Accessibility › Mobility / Vision). */
+@media (prefers-reduced-motion: reduce) {
+  html.ios [data-sheet],
+  html.ios .fixed.inset-0:has(> [data-sheet]) {
+    animation: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  html.ios .ios-tabbar {
+    background: var(--chrome);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
 .xterm {
   padding: 6px 0 0 10px;
   height: 100%;

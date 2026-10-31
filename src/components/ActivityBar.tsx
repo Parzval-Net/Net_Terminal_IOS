@@ -1,7 +1,7 @@
 import { memo, useCallback, useState, type ReactNode } from "react";
 import { BookOpen, NotebookPen, PanelLeft, Settings, SquareTerminal, Terminal, Wrench, X } from "lucide-react";
 import { useLabRun } from "../lib/cliLab";
-import { isMac, modLabel } from "../lib/platform";
+import { isIOS, isMac, modLabel } from "../lib/platform";
 import { ContextMenu } from "./Sidebar";
 import type { MenuItem } from "./tabMenu";
 
@@ -56,7 +56,8 @@ export const ActivityBar = memo(function ActivityBar(p: Props) {
   return (
     <nav
       aria-label="Barra de actividad"
-      className="hidden sm:flex w-11 shrink-0 flex-col items-center gap-1 py-1.5 bg-chrome border-r border-line"
+      // ios-rail: en iPad se agrandan los botones a 44 pt y se tiñe la selección (App.css).
+      className="ios-rail hidden sm:flex w-11 shrink-0 flex-col items-center gap-1 py-1.5 bg-chrome border-r border-line"
     >
       <ActivityBtn
         label="Sesiones"
@@ -164,7 +165,7 @@ function ActivityBtn({
       title={title}
       aria-label={alert ? `${label}, ${alert}` : label}
       aria-pressed={active}
-      className={`relative w-9 h-9 shrink-0 grid place-items-center rounded-md ${
+      className={`ios-rail-btn relative w-9 h-9 shrink-0 grid place-items-center rounded-md ${
         active ? "bg-selected text-fg" : "text-muted hover:text-fg hover:bg-hover"
       }`}
     >
@@ -190,7 +191,9 @@ export const MobileBottomNav = memo(function MobileBottomNav(p: Props) {
   return (
     <nav
       aria-label="Navegación principal móvil"
-      className="flex sm:hidden h-14 min-[400px]:h-15 shrink-0 items-center justify-around px-0.5 min-[400px]:px-1.5 bg-chrome border-t border-line select-none z-40"
+      role={isIOS ? "tablist" : undefined}
+      // ios-tabbar: en iOS se aplica el aspecto de tab bar del sistema (App.css, html.ios).
+      className="ios-tabbar flex sm:hidden h-14 min-[400px]:h-15 shrink-0 items-center justify-around px-0.5 min-[400px]:px-1.5 bg-chrome border-t border-line select-none z-40"
     >
       <MobileNavBtn
         label="Terminal"
@@ -209,6 +212,7 @@ export const MobileBottomNav = memo(function MobileBottomNav(p: Props) {
         active={p.toolsActive && !p.sidebarOpen && !p.commandsOpen && !p.notesOpen}
         onClick={p.onTools}
         icon={<Wrench size={17} />}
+        alert={p.alerts > 0 ? `${p.alerts} sondas caídas` : undefined}
         badge={
           p.alerts > 0 ? (
             <span className="absolute -top-1 -right-1 min-w-3.5 h-3.5 px-1 grid place-items-center rounded-full bg-danger text-danger-fg text-[9px] font-bold leading-none">
@@ -264,8 +268,11 @@ function MobileNavBtn({
   onClick,
   icon,
   badge,
+  alert,
 }: {
   label: string;
+  /** Estado que el lector de pantalla debe decir junto al nombre (la insignia es solo visual). */
+  alert?: string;
   active: boolean;
   onClick: () => void;
   icon: ReactNode;
@@ -274,12 +281,15 @@ function MobileNavBtn({
   return (
     <button
       onClick={onClick}
-      aria-label={label}
-      aria-pressed={active}
-      className="flex-1 min-w-0 h-12 min-[400px]:h-13 flex flex-col items-center justify-center gap-0.5 rounded-lg active:opacity-80 touch-manipulation"
+      aria-label={alert ? `${label}, ${alert}` : label}
+      // VoiceOver en iOS anuncia "pestaña, seleccionada" como en la tab bar del sistema.
+      role={isIOS ? "tab" : undefined}
+      aria-selected={isIOS ? active : undefined}
+      aria-pressed={isIOS ? undefined : active}
+      className="ios-tab flex-1 min-w-0 h-12 min-[400px]:h-13 flex flex-col items-center justify-center gap-0.5 rounded-lg active:opacity-80 touch-manipulation"
     >
       <span
-        className={`relative w-7 min-[340px]:w-8 min-[380px]:w-10 min-[420px]:w-11 h-5.5 min-[340px]:h-6 min-[420px]:h-6.5 rounded-full grid place-items-center transition-colors ${
+        className={`ios-tab-icon relative w-7 min-[340px]:w-8 min-[380px]:w-10 min-[420px]:w-11 h-5.5 min-[340px]:h-6 min-[420px]:h-6.5 rounded-full grid place-items-center transition-colors ${
           active ? "bg-selected text-accent" : "text-muted"
         }`}
       >
@@ -287,7 +297,7 @@ function MobileNavBtn({
         {badge}
       </span>
       <span
-        className={`text-[8.5px] min-[340px]:text-[9.5px] min-[400px]:text-[10.5px] leading-tight truncate max-w-full px-0.5 ${
+        className={`ios-tab-label text-[8.5px] min-[340px]:text-[9.5px] min-[400px]:text-[10.5px] leading-tight truncate max-w-full px-0.5 ${
           active ? "font-semibold text-fg" : "text-muted"
         }`}
       >
