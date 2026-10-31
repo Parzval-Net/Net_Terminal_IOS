@@ -18,3 +18,8 @@ export function persist(key: string, value: unknown) {
     /* sin almacenamiento local: no se recuerda */
   }
 }
+
+/** Último módulo usado en Herramientas: ToolsView lo lee al montarse para volver donde se estaba. */
+export const TOOLS_MODULE_KEY = "toolsModule";
+/** Evento de ventana para cambiar de módulo cuando Herramientas ya está montada (detail: ModuleId). */
+export const TOOLS_MODULE_EVENT = "nt-tools-module";

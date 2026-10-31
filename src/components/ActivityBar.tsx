@@ -69,7 +69,7 @@ export const ActivityBar = memo(function ActivityBar(p: Props) {
       />
       <ActivityBtn
         label="Herramientas"
-        title={`Herramientas: monitoreo, diagnóstico, TFTP, syslog, plugins (${modLabel}E)${p.alerts > 0 ? `\n${p.alerts} sondas caídas` : ""}\nClic derecho: cerrar`}
+        title={`Herramientas: ${isIOS ? "monitoreo, diagnóstico, syslog, SNMP y respaldos" : "monitoreo, diagnóstico, TFTP, syslog, plugins"} (${modLabel}E)${p.alerts > 0 ? `\n${p.alerts} sondas caídas` : ""}\nClic derecho: cerrar`}
         alert={p.alerts > 0 ? `${p.alerts} sondas caídas` : undefined}
         active={p.toolsActive}
         onClick={p.onTools}
@@ -235,7 +235,9 @@ export const MobileBottomNav = memo(function MobileBottomNav(p: Props) {
         onClick={p.onNotes}
         icon={<NotebookPen size={17} />}
       />
-      {p.cliLabEnabled && (
+      {/* En iOS la tab bar lleva 5 pestañas como la del sistema: CLI Lab (pensado para iPad) y Ajustes
+          quedan fuera. Ajustes se abre desde el engranaje de Sesiones, la fila del inicio y la paleta. */}
+      {p.cliLabEnabled && !isIOS && (
         <MobileNavBtn
           label="CLI Lab"
           active={p.labOpen}
@@ -252,12 +254,14 @@ export const MobileBottomNav = memo(function MobileBottomNav(p: Props) {
           }
         />
       )}
-      <MobileNavBtn
-        label="Ajustes"
-        active={p.settingsOpen}
-        onClick={p.onSettings}
-        icon={<Settings size={17} />}
-      />
+      {!isIOS && (
+        <MobileNavBtn
+          label="Ajustes"
+          active={p.settingsOpen}
+          onClick={p.onSettings}
+          icon={<Settings size={17} />}
+        />
+      )}
     </nav>
   );
 });

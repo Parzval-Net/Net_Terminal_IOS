@@ -107,7 +107,7 @@ export function SyslogTool({
           </p>
         )}
         {s.syslogPort < 1024 && (
-          <p className="mt-1.5 text-[11.5px] text-muted">En Linux y macOS el puerto 514 puede requerir privilegios; si no inicia, usa 1514.</p>
+          <p className="mt-1.5 text-[11.5px] text-muted">En Linux, macOS e iOS el puerto 514 puede requerir privilegios; si no inicia, usa 1514.</p>
         )}
       </Section>
 

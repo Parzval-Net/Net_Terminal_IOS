@@ -18,6 +18,7 @@ import {
   Plus,
   Zap,
   Search,
+  Settings,
   Trash2,
 } from "lucide-react";
 import { ConnStatus, Session, sessionTarget } from "../types";
@@ -80,6 +81,8 @@ interface Props {
   onExportFile?: (folder?: string) => void;
   /** Conexión rápida sin guardar (SSH, Telnet, Serial). */
   onQuickConnect?: () => void;
+  /** Abre Ajustes (solo en iOS, donde Ajustes no está en la tab bar). */
+  onSettings?: () => void;
 }
 
 /** [etiqueta, icono, acción, deshabilitado, atajo que se muestra a la derecha]. */
@@ -633,6 +636,11 @@ export const Sidebar = memo(function Sidebar(p: Props) {
             <MoreHorizontal size={15} />
           </HeadBtn>
         )}
+        {p.onSettings && (
+          <HeadBtn title="Ajustes" aria-label="Ajustes" onClick={p.onSettings}>
+            <Settings size={15} />
+          </HeadBtn>
+        )}
       </div>
 
       {notice && <p className="px-3 pb-1 text-[11.5px] text-danger">{notice}</p>}
@@ -659,7 +667,7 @@ export const Sidebar = memo(function Sidebar(p: Props) {
 
         {empty && (
           <div className="px-3 py-8 text-center text-[12px] text-muted">
-            {q ? "Sin coincidencias" : "Crea una sesión o una carpeta. Clic derecho para más opciones."}
+            {q ? "Sin coincidencias" : isMobile ? "Crea una sesión o una carpeta." : "Crea una sesión o una carpeta. Clic derecho para más opciones."}
             {!q && p.onImportFile && (
               <button className="block mx-auto mt-2 text-accent hover:underline" onClick={p.onImportFile}>
                 Importar desde PuTTY, SecureCRT, MobaXterm…

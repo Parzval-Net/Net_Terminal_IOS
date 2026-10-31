@@ -33,6 +33,7 @@ import {
   trapSummary,
 } from "../../lib/snmp";
 import { Btn, Label, Section, StatusPill, Toggle } from "./ui";
+import { isIOS } from "../../lib/platform";
 import { useLocalIp } from "./useLocalIp";
 import SnmpConfigGen from "./SnmpConfigGen";
 
@@ -306,7 +307,8 @@ function SnmpClient({ settings: s, running, onChange, refreshRunning, onConfirm 
 
       <QuerySection target={target} profile={cur} />
       <PresetsSection target={target} profile={cur} onConfirm={onConfirm} />
-      <TrapSection settings={s} running={running} onChange={onChange} refreshRunning={refreshRunning} target={target} profile={cur} />
+      {/* El receptor de traps queda fuera del primer release iOS: la app no recibe tráfico en segundo plano. */}
+      {!isIOS && <TrapSection settings={s} running={running} onChange={onChange} refreshRunning={refreshRunning} target={target} profile={cur} />}
     </div>
   );
 }
@@ -777,7 +779,7 @@ function TrapSection({
         </p>
       )}
       {s.snmpTrapPort < 1024 && (
-        <p className="mt-2 text-[11.5px] text-muted">En Linux y macOS el puerto 162 puede requerir privilegios; si no inicia, usa 1162 y configúralo en el equipo.</p>
+        <p className="mt-2 text-[11.5px] text-muted">En Linux, macOS e iOS el puerto 162 puede requerir privilegios; si no inicia, usa 1162 y configúralo en el equipo.</p>
       )}
       {error && <p className="mt-2 text-[12px] text-danger">{error}</p>}
       <div className="mt-3 flex items-center justify-between">

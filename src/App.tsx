@@ -29,19 +29,36 @@ import type { ApprovalRequest } from "./components/ApprovalDialog";
 import { ScriptPrompts } from "./components/ScriptPrompts";
 import type { ScriptLaunch } from "./components/ScriptLaunchDialog";
 import type { Section } from "./components/SettingsModal";
-import type { Macro, UpdateInfo } from "./lib/settings";
+import type { Macro, ModuleId, UpdateInfo } from "./lib/settings";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { ChevronRight, Pin, Plus, Search, Sparkles, Terminal, Wrench, X as XIcon, Zap } from "lucide-react";
+import {
+  ArrowDownUp,
+  Calculator,
+  ChevronRight,
+  DatabaseBackup,
+  Network,
+  Pin,
+  Plus,
+  Radar,
+  ScrollText,
+  Search,
+  Settings as SettingsIcon,
+  Sparkles,
+  Terminal,
+  Wrench,
+  X as XIcon,
+  Zap,
+} from "lucide-react";
 import { listen } from "@tauri-apps/api/event";
 import { ConnStatus, Session, Tab, TabState, historyKey, tabTitle } from "./types";
-import { IOS_UNAVAILABLE, closeAllLabel, focusLabel, historyLabel, isIOS, isMac, isMobile, localOsVendor, modLabel, shortcutFor } from "./lib/platform";
+import { IOS_UNAVAILABLE, closeAllLabel, focusLabel, historyLabel, isIOS, isIPad, isMac, isMobile, localOsVendor, modLabel, shortcutFor } from "./lib/platform";
 import { presets, resolvePreset, useSystemDark } from "./lib/theme";
 import { Settings, logOptions, useSettings } from "./lib/settings";
 import { useAlerts } from "./lib/alerts";
 import { BroadcastBar, BroadcastDialog } from "./components/BroadcastDialog";
 import { Resolved, getBroadcastRun, isBroadcastRunning, publishWorkspace, stopBroadcast, resolveTargets, runBroadcast, targetLabel, useBroadcastTarget, useWorkspace } from "./lib/broadcast";
 import { closeLab, isLabRunning, labOwns, openLab, useLabOpen } from "./lib/cliLab";
-import { persist, stored } from "./lib/prefs";
+import { TOOLS_MODULE_EVENT, TOOLS_MODULE_KEY, persist, stored } from "./lib/prefs";
 import { SplitPanes } from "./components/SplitPanes";
 import { SplitLayout, SplitState, fillPanes, paneRect } from "./lib/split";
 import { MobileKeyBar } from "./components/MobileKeyBar";
@@ -162,6 +179,12 @@ function Workspace({
   } | null>(null);
   const [template, setTemplate] = useState<{ text: string; then: (filled: string) => void } | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
+  // iOS no tiene terminal local ni puertos serie: las sesiones de esos tipos que quedaron de una
+  // instalación previa (o de un archivo importado) no se listan, pero siguen en el archivo.
+  const visibleSessions = useMemo(
+    () => (isIOS ? sessions.filter((s) => s.type !== "local" && s.type !== "serial") : sessions),
+    [sessions],
+  );
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [states, setStates] = useState<Record<string, TabState>>({});
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -438,6 +461,19 @@ function Workspace({
    * (los servidores, el syslog y las mediciones siguen vivos); si no, la abre o la activa.
    */
   const toggleTools = () => (activeId === "tools" ? setActiveId(lastTermRef.current) : openTools());
+
+  /**
+   * Accesos directos del inicio: abre Herramientas en un módulo. Se deja guardado como último módulo
+   * (lo lee ToolsView al montarse) y, si ya estaba montada, se le avisa con TOOLS_MODULE_EVENT.
+   */
+  const openToolsModule = useCallback(
+    (id: ModuleId) => {
+      persist(TOOLS_MODULE_KEY, id);
+      window.dispatchEvent(new CustomEvent(TOOLS_MODULE_EVENT, { detail: id }));
+      openTools();
+    },
+    [openTools],
+  );
 
   /**
    * Cierra Herramientas de verdad (botón X de su encabezado, menú del botón o ⌘W sobre la vista).
@@ -1322,6 +1358,7 @@ function Workspace({
     requestCloseTools,
     closeHistory: () => setHistoryFor(null),
     openSettings: () => setSettingsOpen(true),
+    openToolsModule,
     openAi: () => {
       setSettingsSection("ai");
       setSettingsOpen(true);
@@ -1419,7 +1456,9 @@ function Workspace({
 
   const sidebarEl = (extra: Partial<React.ComponentProps<typeof Sidebar>> = {}) => (
     <Sidebar
-          sessions={sessions}
+          sessions={visibleSessions}
+          // En iOS Ajustes sale de la tab bar: queda como engranaje en el encabezado de Sesiones.
+          onSettings={isIOS ? h.openSettings : undefined}
           extraFolders={settings.extraFolders}
           width={sidebarWidth}
           onResize={h.resizeSidebar}
@@ -1660,7 +1699,10 @@ function Workspace({
               onQuick={h.openQuick}
               onNew={() => setModal({})}
               onTools={h.toggleTools}
-              sessions={sessions}
+              onToolsModule={h.openToolsModule}
+              onSettings={h.openSettings}
+              modules={settings.modules}
+              sessions={visibleSessions}
               onOpenSession={openTab}
             />
           )}
@@ -1916,7 +1958,7 @@ function Workspace({
       )}
       {paletteOpen && (
         <CommandPalette
-          sessions={sessions}
+          sessions={visibleSessions}
           onClose={() => setPaletteOpen(false)}
           onOpen={openTab}
           actions={[
@@ -2007,6 +2049,9 @@ function EmptyState({
   onQuick,
   onNew,
   onTools,
+  onToolsModule,
+  onSettings,
+  modules,
   sessions = [],
   onOpenSession,
 }: {
@@ -2015,12 +2060,36 @@ function EmptyState({
   onQuick: () => void;
   onNew: () => void;
   onTools: () => void;
+  /** Abre Herramientas directo en un módulo (accesos rápidos de iOS). */
+  onToolsModule: (id: ModuleId) => void;
+  onSettings: () => void;
+  modules: Record<ModuleId, boolean>;
   sessions?: Session[];
   onOpenSession?: (s: Session) => void;
 }) {
   const recentSessions = useMemo(
     () => sessions.filter((s) => s.type !== "local").slice(0, 4),
     [sessions],
+  );
+  // iOS: accesos a los módulos más usados en terreno, siempre visibles. En iPad se suman Topología y
+  // Transferencias, que en iPhone vienen apagadas. Un módulo desactivado en Ajustes no se muestra.
+  const quickTools = useMemo(
+    () =>
+      (
+        [
+          ["diag", "Ping/Traceroute", Radar],
+          ["subnet", "Subredes", Calculator],
+          ["syslog", "Syslog en vivo", ScrollText],
+          ["backup", "Respaldar config", DatabaseBackup],
+          ...(isIPad
+            ? ([
+                ["topology", "Topología", Network],
+                ["transfer", "Transferencias", ArrowDownUp],
+              ] as const)
+            : []),
+        ] as const
+      ).filter(([id]) => modules[id] !== false),
+    [modules],
   );
 
   return (
@@ -2126,7 +2195,10 @@ function EmptyState({
               <div className="ios-title text-[13px] font-medium text-fg truncate">
                 Buscar sesión o comando
               </div>
-              <div className="ios-sub text-[11px] text-muted truncate">Paleta de búsqueda rápida y atajos ({modLabel}K)</div>
+              <div className="ios-sub text-[11px] text-muted truncate">
+                {/* En iPhone no hay teclado físico habitual: el atajo no se muestra. */}
+                {isIOS && !isIPad ? "Paleta de búsqueda rápida y atajos" : `Paleta de búsqueda rápida y atajos (${modLabel}K)`}
+              </div>
             </div>
             <ChevronRight size={15} className="text-muted/40 shrink-0" />
           </button>
@@ -2145,13 +2217,36 @@ function EmptyState({
               <div className="ios-title text-[13px] font-medium text-fg truncate">
                 Herramientas de red
               </div>
-              <div className="ios-sub text-[11px] text-muted truncate">Subredes, Ping, TFTP, Syslog, SNMP y Topología</div>
+              <div className="ios-sub text-[11px] text-muted truncate">
+                {isIOS && !isIPad ? "Ping, Traceroute, Subredes, Syslog, SNMP y Respaldos" : "Subredes, Ping, TFTP, Syslog, SNMP y Topología"}
+              </div>
             </div>
             <ChevronRight size={15} className="text-muted/40 shrink-0" />
           </button>
+
+          {/* En iOS Ajustes no está en la tab bar: se abre desde aquí, el engranaje de Sesiones o la paleta. */}
+          {isIOS && (
+            <button
+              onClick={onSettings}
+              type="button"
+              title="Ajustes"
+              aria-label="Ajustes"
+              className="ios-row w-full flex items-center gap-3 px-3.5 py-3 hover:bg-hover active:bg-hover transition-colors text-left group touch-manipulation"
+            >
+              <span className="w-7.5 h-7.5 rounded-xl bg-hover text-muted group-hover:text-fg grid place-items-center shrink-0 transition-colors">
+                <SettingsIcon size={16} />
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="ios-title text-[13px] font-medium text-fg truncate">Ajustes</div>
+                <div className="ios-sub text-[11px] text-muted truncate">Apariencia, terminal, módulos y datos</div>
+              </div>
+              <ChevronRight size={15} className="text-muted/40 shrink-0" />
+            </button>
+          )}
         </div>
 
-        {/* Sección inferior para aprovechar el espacio: Sesiones guardadas o Accesos directos de diagnóstico */}
+        {/* Sección inferior para aprovechar el espacio: Sesiones guardadas o Accesos directos de diagnóstico.
+            En iOS los accesos directos van siempre, debajo de las sesiones. */}
         {recentSessions.length > 0 ? (
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between px-1">
@@ -2190,7 +2285,32 @@ function EmptyState({
               ))}
             </div>
           </div>
-        ) : (
+        ) : null}
+        {isIOS && quickTools.length > 0 && (
+          <div className="space-y-2 pt-1">
+            <div className="flex items-center justify-between px-1">
+              <span className="ios-section text-[11px] font-medium text-muted uppercase tracking-wider">
+                Utilidades de red rápidas
+              </span>
+            </div>
+            <div className="ios-quick-tools grid grid-cols-2 gap-2">
+              {quickTools.map(([id, label, Icon]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => onToolsModule(id)}
+                  className="ios-cell ios-cell-row ios-title flex items-center gap-2 px-3 py-2.5 rounded-xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left touch-manipulation text-[12px] font-medium text-fg shadow-xs"
+                >
+                  <span className="w-6.5 h-6.5 rounded-lg bg-hover grid place-items-center shrink-0 text-muted">
+                    <Icon size={13} />
+                  </span>
+                  <span className="ios-quick-label">{label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+        {!isIOS && recentSessions.length === 0 && (
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between px-1">
               <span className="ios-section text-[11px] font-medium text-muted uppercase tracking-wider">

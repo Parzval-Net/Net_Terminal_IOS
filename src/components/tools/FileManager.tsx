@@ -24,7 +24,7 @@ import type { Session } from "../../types";
 import { Btn, Console, Label, fmtBytes } from "./ui";
 
 import { plural } from "../../lib/plural";
-import { isMobile } from "../../lib/platform";
+import { isIOS, isMobile } from "../../lib/platform";
 import { SCP_EXIT_EVENT, type ScpExit, type ScpJob, busyRetry, isBusyError, scpOutcome } from "../../lib/scpVerify";
 export interface TerminalRef {
   connId: string;
@@ -529,11 +529,17 @@ export function FileManager({ terminals, settings: s, refreshRunning, onConfirm,
             <option value="http" disabled={profileId === "huawei"}>
               HTTP (solo envío, rápido)
             </option>
-            <option value="ftp" disabled={!profile.ftp}>
-              FTP (sin cifrar)
-            </option>
-            <option value="scp">SCP (cifrado)</option>
-            <option value="sftp">SFTP (cifrado)</option>
+            {/* En iOS el primer release no trae FTP ni SCP/SFTP (estos abren una pestaña con el ssh del
+                sistema, que iOS no tiene): solo TFTP y HTTP con el servidor de la app. */}
+            {!isIOS && (
+              <>
+                <option value="ftp" disabled={!profile.ftp}>
+                  FTP (sin cifrar)
+                </option>
+                <option value="scp">SCP (cifrado)</option>
+                <option value="sftp">SFTP (cifrado)</option>
+              </>
+            )}
           </select>
         </Label>
       </div>
@@ -647,7 +653,7 @@ export function FileManager({ terminals, settings: s, refreshRunning, onConfirm,
           <Btn
             disabled={!selRemote.size || !term || !canPull}
             onClick={() => enqueue("pull", [...selRemote])}
-            title={canPull ? "Trae los archivos seleccionados a este PC" : `No soportado por ${proto.toUpperCase()} en este equipo: usa SCP o SFTP`}
+            title={canPull ? "Trae los archivos seleccionados a este PC" : `No soportado por ${proto.toUpperCase()} en este equipo${isIOS ? "" : ": usa SCP o SFTP"}`}
             className="flex-1 sm:flex-initial"
           >
             <ArrowLeft size={14} className="hidden sm:inline" />
@@ -703,7 +709,7 @@ export function FileManager({ terminals, settings: s, refreshRunning, onConfirm,
                 : ""
           }
         >
-          {!term && <Empty text="Conecta una sesión SSH, Telnet o Serial con el equipo" />}
+          {!term && <Empty text={isIOS ? "Conecta una sesión SSH o Telnet con el equipo" : "Conecta una sesión SSH, Telnet o Serial con el equipo"} />}
           {term && !remote && !listing && <Empty text={`Pulsa "Leer archivos" para listar ${fs}`} />}
           {remote?.files.map((f) => (
             <Row

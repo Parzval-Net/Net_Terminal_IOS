@@ -7,7 +7,7 @@ import type { DeviceInfoMap } from "./lifecycle";
 import type { TopoSnapshot, TopoSources, Topology } from "./topology";
 import type { SnmpProfile } from "./snmp";
 import { type GhostColor, type GhostStyle, type ListKey, SUGGEST_DEFAULT, migrateSuggest } from "./suggest";
-import { isIPad, isMobile } from "./platform";
+import { isIOS, isIPad, isMobile } from "./platform";
 
 export type ModuleId = "monitor" | "diag" | "topology" | "subnet" | "perf" | "transfer" | "syslog" | "plugins" | "backup" | "snmp";
 
@@ -184,11 +184,14 @@ export const defaultSettings: Settings = {
   mcpToken: "",
   mcpApproval: true,
   mcpReadOnly: false,
-  modules: { monitor: true, diag: true, topology: true, subnet: true, perf: true, transfer: true, syslog: true, plugins: !isMobile, backup: true, snmp: true },
+  // Topología y Transferencias están pensadas para pantallas grandes: en iPhone vienen apagadas
+  // (se activan en Ajustes > Módulos); en iPad, Android y escritorio quedan activas.
+  modules: { monitor: true, diag: true, topology: isIPad || !isIOS, subnet: true, perf: true, transfer: isIPad || !isIOS, syslog: true, plugins: !isMobile, backup: true, snmp: true },
   monitors: [],
-  tftpPort: 69,
+  // En iOS una app no puede abrir puertos menores a 1024: se usan los de unprivileged_port (servers.rs).
+  tftpPort: isIOS ? 1069 : 69,
   httpPort: 8080,
-  syslogPort: 514,
+  syslogPort: isIOS ? 1514 : 514,
   syslogSave: false,
   speedHistory: [],
   updateDismissed: "",
@@ -205,9 +208,9 @@ export const defaultSettings: Settings = {
   logsDir: "",
   alertRules: exampleAlerts,
   snmpProfiles: [],
-  snmpTrapPort: 162,
+  snmpTrapPort: isIOS ? 1162 : 162,
   snmpTrapBind: "",
-  ftpPort: 21,
+  ftpPort: isIOS ? 2121 : 21,
 };
 
 /** Opciones de log que se pasan a set_logging. */

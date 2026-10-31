@@ -3,6 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { FolderSearch, Gauge, Play, RefreshCw, Square, Trash2 } from "lucide-react";
 import { SpeedResult } from "../../lib/settings";
+import { isIOS } from "../../lib/platform";
 import { LineChart, StatTile } from "./LineChart";
 import { Btn, Console, CopyText, Label, Section, Toggle } from "./ui";
 import { useJob } from "./useJob";
@@ -33,7 +34,8 @@ export function PerfTool(p: SpeedProps) {
   return (
     <div className="space-y-4">
       <SpeedTest {...p} />
-      <Iperf />
+      {/* iOS no permite ejecutar binarios externos como iperf3: se oculta la sección completa. */}
+      {!isIOS && <Iperf />}
     </div>
   );
 }

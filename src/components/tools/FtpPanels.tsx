@@ -114,7 +114,7 @@ export function FtpServerSection({
         <CopyText text={`file copy ftp://${cred}@${ip}/${file} /var/tmp/`} />
         {info?.write && <CopyText text={`copy running-config ftp://${cred}@${ip}/respaldo.cfg`} />}
       </div>
-      {s.ftpPort < 1024 && <p className="mt-2 text-[11.5px] text-muted">En Linux y macOS el puerto 21 puede requerir privilegios; si no inicia, usa 2121 (los equipos que no permiten indicar puerto necesitan el 21).</p>}
+      {s.ftpPort < 1024 && <p className="mt-2 text-[11.5px] text-muted">En Linux, macOS e iOS el puerto 21 puede requerir privilegios; si no inicia, usa 2121 (los equipos que no permiten indicar puerto necesitan el 21).</p>}
     </Section>
   );
 }

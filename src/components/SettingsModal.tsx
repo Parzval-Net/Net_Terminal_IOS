@@ -17,7 +17,7 @@ import { readText } from "@tauri-apps/plugin-clipboard-manager";
 import { Settings, UpdateInfo, defaultSettings } from "../lib/settings";
 import { Session } from "../types";
 import { TermPreset, fontStack, presets } from "../lib/theme";
-import { isMobile, zoomLabel } from "../lib/platform";
+import { isIOS, isIPad, isMobile, zoomLabel } from "../lib/platform";
 import { GHOST_COLORS, GHOST_STYLES, type GhostColor, type GhostStyle, LIST_KEYS, type ListKey, TIP_TIMES, clearUsage } from "../lib/suggest";
 
 import { plural } from "../lib/plural";
@@ -45,10 +45,10 @@ const MODULES: [ModuleId, string, string][] = [
   ["diag", "Diagnóstico", "Ping continuo, traceroute y verificación de puertos"],
   ["topology", "Topología", "Diagrama de vecinos CDP/LLDP y de ruteo, enlaces manuales y seguimiento de rutas"],
   ["subnet", "Subredes", "Calculadora IPv4/IPv6 y división de redes"],
-  ["perf", "Velocidad", "Speedtest (Cloudflare) e iperf3"],
-  ["transfer", "Transferencias", "TFTP, HTTP, FTP y SFTP: servir firmware y recibir respaldos desde equipos"],
+  ["perf", "Velocidad", isIOS ? "Speedtest (Cloudflare)" : "Speedtest (Cloudflare) e iperf3"],
+  ["transfer", "Transferencias", isIOS ? "TFTP y HTTP: servir firmware y recibir respaldos desde equipos" : "TFTP, HTTP, FTP y SFTP: servir firmware y recibir respaldos desde equipos"],
   ["syslog", "Syslog", "Recibir logs de equipos en vivo"],
-  ["snmp", "SNMP", "Consultas v1/v2c/v3, conjuntos de OIDs y receptor de traps"],
+  ["snmp", "SNMP", isIOS ? "Consultas v1/v2c/v3 y conjuntos de OIDs" : "Consultas v1/v2c/v3, conjuntos de OIDs y receptor de traps"],
   ["plugins", "Plugins", "Extensiones instalables en Python"],
   ["backup", "Respaldos", "Respaldo de configuración por fabricante y comparación de versiones"],
 ];
@@ -416,7 +416,12 @@ export function SettingsModal({
                   />
                 </Item>
                 {MODULES.filter(([id]) => !isMobile || id !== "plugins").map(([id, label, hint]) => (
-                  <Item key={id} label={label} hint={hint}>
+                  <Item
+                    key={id}
+                    label={label}
+                    // En iPhone Topología y Transferencias vienen apagadas: se explica por qué.
+                    hint={isIOS && !isIPad && (id === "topology" || id === "transfer") ? `${hint}. Pensado para iPad; en iPhone la pantalla queda chica` : hint}
+                  >
                     <Switch
                       checked={s.modules[id] !== false}
                       onChange={(v) => onChange({ modules: { ...s.modules, [id]: v } })}

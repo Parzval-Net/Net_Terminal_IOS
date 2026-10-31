@@ -3,6 +3,7 @@ import { BellOff, Pause, Pencil, Play, Plus, RotateCcw, Trash2, Volume2, VolumeX
 import { MonitorStatus, MonitorTarget, Sample, fmtDuration, stats } from "../../lib/monitors";
 import { LineChart, StatTile } from "./LineChart";
 import { Btn, Label, Section, StatusPill, Toggle, fmtMs } from "./ui";
+import { isIOS } from "../../lib/platform";
 
 interface Props {
   targets: MonitorTarget[];
@@ -67,6 +68,8 @@ export function MonitorTool({ targets, samples, status, onChange, onClear, onSil
         <p className="flex-1 min-w-[200px] text-[12px] text-muted">
           Vigila que un equipo responda (ICMP) o que un acceso esté disponible (TCP: 22, 23, 443…). Suena una alarma al
           caer y otra al recuperarse, aunque estés en otra pestaña.
+          {/* iOS suspende la app en segundo plano: las sondas no corren mientras no está visible. */}
+          {isIOS && <span className="block mt-1 text-warn">Las sondas se pausan cuando la app pasa a segundo plano.</span>}
         </p>
         <div className="flex flex-wrap items-center gap-2 shrink-0">
           <div className="flex p-0.5 rounded-lg bg-hover">

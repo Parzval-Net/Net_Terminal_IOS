@@ -5,6 +5,7 @@ import { Sample, stats } from "../../lib/monitors";
 import { LineChart, StatTile } from "./LineChart";
 import { Btn, Console, Label, Section, fmtMs } from "./ui";
 import { useJob } from "./useJob";
+import { isIOS } from "../../lib/platform";
 
 const QUICK = "quick-ping";
 
@@ -81,7 +82,10 @@ export function DiagTool({ samples }: { samples: Record<string, Sample[]> }) {
 
   return (
     <div className="space-y-4">
-      <Section title="Ping continuo" hint="Usa el ping del sistema; no requiere permisos de administrador.">
+      <Section
+        title="Ping continuo"
+        hint={isIOS ? "Echo ICMP nativo; si el sistema lo bloquea, mide con TCP a 443/80/22" : "Usa el ping del sistema; no requiere permisos de administrador."}
+      >
         <form
           className="flex gap-2 mb-3"
           onSubmit={(e) => {

@@ -1,4 +1,4 @@
-import { Suspense, lazy, memo, useCallback, useEffect, useState } from "react";
+import { Suspense, lazy, memo, useCallback, useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { Activity, ArrowDownUp, Calculator, DatabaseBackup, Gauge, Network, Puzzle, Radar, ScrollText, SquareTerminal, Waypoints, Wrench, X } from "lucide-react";
 import { TopologyTool } from "./TopologyTool";
@@ -12,7 +12,7 @@ import { PerfTool } from "./PerfTool";
 import { TransferTool } from "./TransferTool";
 import { SyslogTool } from "./SyslogTool";
 import type { ScpRequest, TabBrief, TerminalRef } from "./FileManager";
-import { persist, stored } from "../../lib/prefs";
+import { TOOLS_MODULE_EVENT, TOOLS_MODULE_KEY, persist, stored } from "../../lib/prefs";
 import { isMobile, modLabel } from "../../lib/platform";
 
 // Respaldos y diff: se cargan al abrir el módulo.
@@ -43,7 +43,7 @@ const GROUPS: { label: string; ids: ModuleId[] }[] = [
 ];
 
 /** Último módulo usado, para volver donde se estaba al reabrir Herramientas. */
-const LAST_KEY = "toolsModule";
+const LAST_KEY = TOOLS_MODULE_KEY;
 
 interface Props {
   active: boolean;
@@ -101,6 +101,19 @@ export const ToolsView = memo(function ToolsView({ active, onBack, onClose, sett
     if (!enabled.some((n) => n.id === current) && enabled[0]) go(enabled[0].id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings.modules]);
+
+  // Accesos directos del inicio: si Herramientas ya está montada, el módulo guardado en LAST_KEY no
+  // se vuelve a leer, así que App avisa con un evento para saltar a ese módulo.
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
+  useEffect(() => {
+    const on = (ev: Event) => {
+      const id = (ev as CustomEvent<ModuleId>).detail;
+      if (enabledRef.current.some((n) => n.id === id)) go(id);
+    };
+    window.addEventListener(TOOLS_MODULE_EVENT, on);
+    return () => window.removeEventListener(TOOLS_MODULE_EVENT, on);
+  }, []);
 
   const pane = (id: ModuleId) => {
     switch (id) {

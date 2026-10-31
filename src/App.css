@@ -280,7 +280,9 @@ html.ios #root:has(.ios-tabbar) {
 html.ios .ios-tabbar {
   height: auto;
   align-items: flex-start;
-  padding: 0 max(4px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(4px, env(safe-area-inset-left));
+  /* Sin padding inferior: cada pestaña llega hasta el borde (el inset va dentro del botón) para que
+     el toque cerca del home indicator también cuente, como en la tab bar del sistema. */
+  padding: 0 max(4px, env(safe-area-inset-right)) 0 max(4px, env(safe-area-inset-left));
   background: var(--ios-bar);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   backdrop-filter: saturate(180%) blur(20px);
@@ -292,7 +294,7 @@ html.ios.kb-open .ios-tabbar {
   display: none;
 }
 html.ios .ios-tab {
-  height: 49px;
+  height: calc(49px + env(safe-area-inset-bottom));
   min-width: 44px;
   justify-content: flex-start;
   padding-top: 5px;
@@ -540,6 +542,21 @@ html.ios .ios-home .ios-row .ios-title.truncate {
 /* iPhone: accesos rápidos en una columna; en dos, "Subredes & Ping" no cabe. */
 html.ios:not(.ipad) .ios-home .grid-cols-2:has(> .ios-cell-row) {
   grid-template-columns: 1fr;
+}
+/* Utilidades de red rápidas en iPhone: dos columnas solo si cada rótulo cabe en una línea. El ancho
+   mínimo de una celda es lo fijo (relleno de 24 px, ícono de 26 px y separación de 8 px) más el
+   rótulo más largo ("Respaldar config", unos 9 em). Va en em del texto de la celda, así que con
+   texto dinámico grande o en pantallas angostas el auto-fit pasa a una columna en vez de cortarlo. */
+html.ios:not(.ipad) .ios-home .ios-quick-tools.grid-cols-2 {
+  font: -apple-system-subheadline;
+  font-size: min(1em, 22px);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, calc(58px + 9em)), 1fr));
+}
+html.ios .ios-quick-label {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 html.ios .ios-row,
 html.ios .ios-cell-row {

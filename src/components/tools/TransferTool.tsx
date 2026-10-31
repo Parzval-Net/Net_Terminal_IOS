@@ -8,7 +8,7 @@ import { Btn, CopyText, IpSelect, Label, Section, StatusPill, Toggle, fmtBytes }
 import { useLocalIp } from "./useLocalIp";
 import { FileManager, ScpRequest, TerminalRef } from "./FileManager";
 import { FtpClientSection, FtpServerSection, SftpSection } from "./FtpPanels";
-import { isMobile } from "../../lib/platform";
+import { isIOS, isMobile } from "../../lib/platform";
 
 interface Transfer {
   id: string;
@@ -132,7 +132,11 @@ export function TransferTool({
     <div className="space-y-4">
       <Section
         title="Gestor de archivos"
-        hint="Selecciona o arrastra archivos entre este PC y el equipo. La app escribe el comando copy en la sesión, responde las confirmaciones y muestra el progreso."
+        hint={
+          isIOS
+            ? "Toca los archivos para seleccionarlos y usa Enviar o Traer entre este dispositivo y el equipo. La app escribe el comando copy en la sesión, responde las confirmaciones y muestra el progreso."
+            : "Selecciona o arrastra archivos entre este PC y el equipo. La app escribe el comando copy en la sesión, responde las confirmaciones y muestra el progreso."
+        }
       >
         <FileManager
           terminals={terminals}
@@ -147,7 +151,7 @@ export function TransferTool({
         <IpSelect ips={ips} ip={localIp} onChange={setIp} className="w-full sm:w-72" />
         <p className="flex-1 min-w-[200px] text-[12px] text-muted">
           Servidores: el gestor de archivos usa el que ya esté activo; si no hay uno, lo inicia para la operación y lo detiene al
-          terminar. Las subidas que necesita una extracción se habilitan en caliente, sin reiniciar ni cambiar la contraseña FTP,
+          terminar. Las subidas que necesita una extracción se habilitan en caliente, sin reiniciar{isIOS ? "" : " ni cambiar la contraseña FTP"},
           y se vuelven a quitar al final. Escuchan en la red solo mientras están activos; si el firewall del sistema pregunta,
           permite el acceso solo en redes privadas.
         </p>
@@ -175,7 +179,7 @@ export function TransferTool({
           </div>
           {s.tftpPort < 1024 && (
             <p className="mt-2 text-[11.5px] text-muted">
-              En Linux y macOS el puerto 69 puede requerir privilegios; si no inicia, usa 1069 y configura ese puerto en el equipo si lo soporta.
+              En Linux, macOS e iOS el puerto 69 puede requerir privilegios; si no inicia, usa 1069 y configura ese puerto en el equipo si lo soporta.
             </p>
           )}
         </Section>
@@ -197,16 +201,22 @@ export function TransferTool({
         </Section>
       </div>
 
-      <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
-        <FtpServerSection settings={s} running={running} onChange={onChange} refreshRunning={refreshRunning} ip={ip} file={file} />
-        <SftpSection terminals={terminals} onScp={onScp} />
-      </div>
+      {/* Servidor y cliente FTP y SFTP quedan para una versión posterior en iOS (SFTP depende del
+          OpenSSH del sistema, que iOS no trae). */}
+      {!isIOS && (
+        <>
+          <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr))]">
+            <FtpServerSection settings={s} running={running} onChange={onChange} refreshRunning={refreshRunning} ip={ip} file={file} />
+            <SftpSection terminals={terminals} onScp={onScp} />
+          </div>
 
-      <FtpClientSection files={files} onLocalChange={loadFiles} />
+          <FtpClientSection files={files} onLocalChange={loadFiles} />
+        </>
+      )}
 
       <Section
         title="Archivos compartidos"
-        hint="Clic en un archivo para usarlo en los comandos de arriba."
+        hint={isMobile ? "Toca un archivo para usarlo en los comandos de arriba." : "Clic en un archivo para usarlo en los comandos de arriba."}
         right={
           <div className="flex gap-1">
             <Btn onClick={addFile}>
@@ -224,7 +234,9 @@ export function TransferTool({
         }
       >
         {files.length === 0 ? (
-          <p className="text-[12px] text-muted">La carpeta está vacía. Agrega un firmware o abre la carpeta y copia archivos ahí.</p>
+          <p className="text-[12px] text-muted">
+            {isMobile ? "La carpeta está vacía. Agrega un firmware con el botón Agregar." : "La carpeta está vacía. Agrega un firmware o abre la carpeta y copia archivos ahí."}
+          </p>
         ) : (
           <table className="w-full text-[12px]">
             <tbody>
