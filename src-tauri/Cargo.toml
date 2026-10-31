@@ -22,7 +22,7 @@ tauri-plugin-clipboard-manager = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 portable-pty = "0.9"
-serialport = { version = "4.6", default-features = false }
+# serialport va por target: en iOS enlazaría IOKit (no público) y el link falla.
 uuid = { version = "1", features = ["v4", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 regex = "1"
@@ -66,6 +66,9 @@ tauri-plugin-updater = "2"
 [target.'cfg(target_os = "ios")'.dependencies]
 russh = { version = "0.65", default-features = false, features = ["ring", "rsa", "des", "dsa", "flate2"] }
 tokio = { version = "1", features = ["net", "sync", "time", "macros"] }
+
+[target.'cfg(not(target_os = "ios"))'.dependencies]
+serialport = { version = "4.6", default-features = false }
 
 [target.'cfg(all(target_os = "linux", not(target_env = "musl")))'.dependencies]
 serialport = { version = "4.6", features = ["libudev"] }

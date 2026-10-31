@@ -407,6 +407,8 @@ enum Transport {
         /// TCP crudo: sin IAC ni conversión de fin de línea.
         raw: bool,
     },
+    // serialport enlaza IOKit, que en iOS no es API pública: ni se compila ahí.
+    #[cfg(not(target_os = "ios"))]
     Serial {
         port: Box<dyn serialport::SerialPort>,
         stop: Arc<AtomicBool>,
@@ -546,6 +548,7 @@ impl ConnectionManager {
             Transport::Telnet { stream, raw, .. } => {
                 spawn_writer(Box::new(stream.try_clone().map_err(|e| e.to_string())?), !*raw)
             }
+            #[cfg(not(target_os = "ios"))]
             Transport::Serial { port, .. } => spawn_writer(Box::new(port.try_clone().map_err(|e| e.to_string())?), false),
             #[cfg(target_os = "ios")]
             Transport::NativeSsh(ssh) => spawn_writer(ssh.writer(), false),
@@ -632,6 +635,7 @@ impl ConnectionManager {
                 }
                 Ok(())
             }
+            #[cfg(not(target_os = "ios"))]
             Transport::Serial { .. } => Ok(()),
             #[cfg(target_os = "ios")]
             Transport::NativeSsh(ssh) => {
@@ -641,12 +645,14 @@ impl ConnectionManager {
         }
     }
 
+    #[cfg_attr(target_os = "ios", allow(unreachable_code))]
     pub fn send_break(&self, id: &str) -> Result<(), String> {
         // El lock se suelta antes de esperar: un Break serial tarda 300 ms.
         let port = {
             let map = lock(&self.conns);
             let conn = map.get(id).ok_or("Sesión no conectada")?;
             match &conn.transport {
+                #[cfg(not(target_os = "ios"))]
                 Transport::Serial { port, .. } => port.try_clone().map_err(|e| e.to_string())?,
                 Transport::Telnet { raw: true, .. } => return Err("Break no aplica a conexiones TCP crudas".into()),
                 Transport::Telnet { .. } => {
@@ -660,9 +666,15 @@ impl ConnectionManager {
                 Transport::NativeSsh(_) => return Err("Break solo aplica a Serial y Telnet".into()),
             }
         };
-        port.set_break().map_err(|e| e.to_string())?;
-        thread::sleep(Duration::from_millis(300));
-        port.clear_break().map_err(|e| e.to_string())
+        #[cfg(not(target_os = "ios"))]
+        {
+            port.set_break().map_err(|e| e.to_string())?;
+            thread::sleep(Duration::from_millis(300));
+            port.clear_break().map_err(|e| e.to_string())
+        }
+        // Sin Serial en iOS, el match siempre retorna antes.
+        #[cfg(target_os = "ios")]
+        port
     }
 
     /// Alertas por palabra clave, compartidas por todas las conexiones.
@@ -754,6 +766,7 @@ impl ConnectionManager {
             Transport::Telnet { stream, .. } => {
                 let _ = stream.shutdown(Shutdown::Both);
             }
+            #[cfg(not(target_os = "ios"))]
             Transport::Serial { stop, .. } => stop.store(true, Ordering::SeqCst),
             #[cfg(target_os = "ios")]
             Transport::NativeSsh(ssh) => ssh.close(),
@@ -1448,6 +1461,7 @@ fn open_telnet(s: &Session, cols: u16, rows: u16, sink: &Sink, raw: bool) -> Res
 
 // ---------- Serial ----------
 
+#[cfg(not(target_os = "ios"))]
 fn open_serial(s: &Session, sink: &Sink) -> Result<Transport, String> {
     use serialport::{DataBits, FlowControl, Parity, StopBits};
 
@@ -1506,6 +1520,12 @@ fn open_serial(s: &Session, sink: &Sink) -> Result<Transport, String> {
     Ok(Transport::Serial { port, stop })
 }
 
+#[cfg(target_os = "ios")]
+pub fn list_serial_ports() -> Vec<crate::models::SerialPortInfo> {
+    Vec::new()
+}
+
+#[cfg(not(target_os = "ios"))]
 pub fn list_serial_ports() -> Vec<crate::models::SerialPortInfo> {
     use serialport::SerialPortType;
     let mut ports: Vec<_> = serialport::available_ports()
