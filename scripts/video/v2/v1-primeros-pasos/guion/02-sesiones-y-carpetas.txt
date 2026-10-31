@@ -1,0 +1,12 @@
+# Sesiones y carpetas
+A la izquierda está el panel de sesiones, con carpetas y subcarpetas sin límite.
+Una regla para todo el video: cuando digamos Comando, en Windows y Linux usa Control Shift.
+Para crear una sesión, usa el botón más o ⌘N, y elige SSH, Telnet, Serial, TCP o terminal local.
+En Carpeta, una barra crea subcarpetas, por ejemplo Sucursales/Centro.
+Completa host, puerto y usuario, y pulsa Guardar.
+Doble clic conecta la sesión, y el punto verde indica que está abierta en una pestaña.
+Con clic derecho puedes conectar, editar, duplicar o eliminar. La copia no hereda la contraseña guardada.
+El menú de una carpeta ofrece Conectar todas, Nueva sesión aquí, Nueva subcarpeta y Renombrar, y para mover algo, arrástralo sobre otra carpeta.
+El filtro busca por nombre, IP, usuario o carpeta.
+Para traer tus equipos desde otro cliente, abre Ajustes, Importar y exportar, Desde archivo.
+Acepta ssh_config, PuTTY, SecureCRT, MobaXterm y CSV, con vista previa, y nunca importa contraseñas ni túneles.

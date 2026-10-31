@@ -1,0 +1,70 @@
+# Corpus de verificación de pronunciación (una oración por línea). Lo usa verificar_voz.py.
+Bienvenido a NetTerminal, el cliente de red para conectarte por SSH, Telnet y puerto serie.
+NetTerminal funciona en macOS, Windows y Linux con la misma configuración.
+Para descubrir la topología usamos CDP y LLDP, y si están apagados, SNMP.
+Con SNMPv3 el tráfico de gestión viaja autenticado con SHA y cifrado con AES.
+El agente admite las versiones v1, v2c y v3 del protocolo.
+En equipos antiguos todavía verás v1, pero en la red nueva configura solo v3.
+Si el equipo solo responde SNMP v2c, la comunidad viaja en texto plano.
+Las operaciones GET, GETNEXT, GETBULK y WALK leen la MIB sin cambiar nada.
+Cada OID de la MIB identifica un valor, y los OIDs se pueden copiar con un clic.
+El firmware se transfiere por TFTP o, mejor aún, por SFTP.
+Evita FTP cuando puedas, y si no queda otra, usa FTPS.
+El servidor HTTP integrado entrega el archivo por el puerto 8080.
+La prueba de puertos revisa TCP y UDP hacia el destino que indiques.
+El ping usa ICMP y muestra la pérdida y la latencia en ms, por ejemplo 12 ms.
+Las sesiones a FortiGate se cifran con TLS cuando usas la consola web.
+En un router Cisco, escribe show ip interface brief para ver el estado de cada interfaz.
+En Huawei el equivalente es display interface brief.
+Con show cdp neighbors ves los vecinos directos y el puerto por el que se conectan.
+Luego ejecuta show version y show interfaces para revisar el equipo.
+El plugin envía show version; reload solo si el usuario lo confirma.
+Presiona Ctrl más C para cortar el comando y Tab para autocompletar.
+Escribe el comando y presiona Enter para enviarlo.
+Abre una sesión nueva con ⌘N y la conexión rápida con ⌘O.
+En Windows y Linux, la conexión rápida se abre con Ctrl+Shift+O.
+Con ⌘K buscas una sesión guardada y con ⌘L abres el catálogo de comandos.
+Con ⌘J se abre Notas, y ⌘Enter envía la línea a la sesión activa.
+Herramientas se abre con ⌘E y Ajustes se abre con ⌘, como en otras apps.
+La red de la sucursal corre OSPF hacia el núcleo y BGP hacia el proveedor.
+Algunos equipos antiguos todavía usan EIGRP entre sucursales.
+Cada VLAN tiene su propia puerta de enlace, y las VLANs de usuarios están separadas de las de gestión.
+La VRF de gestión aísla el tráfico de administración del resto de la red.
+La dirección MAC aparece junto a su fabricante, que se obtiene del OUI.
+La tabla ARP relaciona cada IP con su dirección MAC.
+La puerta de enlace redundante usa HSRP en Cisco y VRRP en otros fabricantes.
+Antes del cambio revisa la ACL de la interfaz, porque las ACLs se aplican en orden.
+El NMS de la empresa recibe las alertas por SNMP.
+Si el nombre no resuelve, revisa el DNS y luego el DHCP.
+Cada sesión guarda la IP del equipo, y puedes importar muchas IPs desde un CSV.
+La herramienta calcula subredes IPv4 e IPv6 en el mismo panel.
+Todo lo que haces en la interfaz también está disponible desde la CLI.
+El diagrama se exporta a SVG, draw.io, CSV o Mermaid.
+El informe se puede guardar en PDF o en JSON.
+La API local permite automatizar tareas desde otros programas.
+Los colores cumplen el contraste que pide WCAG para que todo sea legible.
+El script de PowerShell y el de Python hacen lo mismo en cada plataforma.
+Los ejemplos están en GitHub, y necesitas Python 3 para ejecutarlos.
+La prueba de ancho de banda usa iperf3 y muestra 940 Mb/s en un enlace de un gigabit.
+En el núcleo el enlace llegó a 10 Gb/s, con un uso del 35 % en la hora punta.
+La importación de llaves es compatible con OpenSSH, y la app está construida con Tauri.
+En Juniper los comandos son distintos, porque Junos tiene su propia sintaxis.
+En Fortinet la consola de FortiGate usa los comandos de FortiOS.
+Antes de abrir el puerto, revisa la regla del firewall.
+También hay soporte para firewalls Check Point y WatchGuard.
+Si vienes de MobaXterm, SecureCRT o PuTTY, puedes importar tus sesiones.
+El catálogo tiene 1.776 comandos verificados con fuente oficial.
+Cada plugin tiene un archivo plugin.json y un main.py con el código.
+Los scripts terminan en .py y los plugins se instalan desde un archivo .zip.
+Los secretos se guardan cifrados y el archivo se verifica con SHA-256.
+Los ejemplos están en la carpeta docs/ejemplos, junto al README.
+La acción se recibe en la variable NT_ACTION, y wait_for espera un texto en la salida.
+El paquete pesa 20 MB y el texto debe estar en UTF-8.
+El servidor MCP permite que un agente de IA use NetTerminal con permisos de solo lectura.
+Con authPriv el agente exige usuario, autenticación y cifrado.
+NetTerminal lee tu ssh_config y respeta el archivo known_hosts.
+En la topología se ven los Port-channel, y el speedtest mide la salida a internet.
+El script parte con import netterminal as nt y el pack se llama netterminal-commands.
+El instalador deb deja un archivo .pth para que Python encuentre el módulo.
+La carpeta Sucursales/Centro agrupa las sesiones de esa zona.
+El módulo de Python se llama netterminal, en minúsculas.

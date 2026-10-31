@@ -1,0 +1,9 @@
+# Pestañas y vista dividida
+Cada conexión abre una pestaña que mantiene la sesión activa al cambiar de una a otra.
+Doble clic renombra la pestaña, y una marca te avisa cuando hay salida nueva en segundo plano.
+Con clic derecho la duplicas, reconectas, desconectas sin cerrarla o copias toda la salida.
+Desde ese mismo menú cambias a pestañas verticales, en una columna a la izquierda.
+La columna tiene ancho ajustable y un modo solo íconos.
+La vista dividida muestra varias terminales a la vez: dos en columnas, dos en filas o cuatro en cuadrícula.
+Cada panel tiene su selector para elegir qué pestaña mostrar.
+Es ideal para seguir varios equipos durante una ventana de cambio.

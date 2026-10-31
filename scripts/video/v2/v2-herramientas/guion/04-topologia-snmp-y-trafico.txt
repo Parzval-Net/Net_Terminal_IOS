@@ -1,0 +1,13 @@
+# Topología por SNMP y tráfico en enlaces
+
+Para descubrir sin consola, elige SNMP, perfil en Descubrir con. Necesitas un perfil v2c o v3 de Herramientas, SNMP, con sus secretos guardados en la bóveda.
+
+Pulsa Descubrir por SNMP. La app lee LLDP y CDP en solo lectura, y suma OSPF, BGP o la tabla MAC según las fuentes activas. EIGRP solo se lee por consola. Si el LLDP estándar vuelve vacío, prueba la MIB versión dos, y en Cisco, si la tabla MAC global viene vacía, la lee VLAN por VLAN. Si LLDP y CDP siguen vacíos, el protocolo está apagado en el equipo.
+
+Ahora el tráfico. Pulsa Tráfico o actívalo en Tráfico en enlaces. Cada 30 segundos por defecto, la app lee los contadores de los puertos con enlace de cada equipo explorado, solo mientras Topología está a la vista. Si el equipo no tiene perfil SNMP, activa También por consola: envía show interfaces a su sesión en cada lectura y la ocupa unos segundos.
+
+La tasa aparece desde la segunda lectura. Color, flechas y velocidad vienen activos y se apagan por separado; Animación viene apagada.
+
+El color sigue al sentido más cargado: verde bajo 70 por ciento, amarillo desde 70 y rojo desde 90. Violeta indica velocidad desconocida. Por consola manda la velocidad física del puerto; si solo se conoce el ancho de banda configurado, la utilización se marca como aproximada.
+
+Cada enlace tiene una flecha por sentido, y la etiqueta nombra al equipo de referencia: por ejemplo, core-sw01, flecha derecha 120 megabits, flecha izquierda 35. La derecha es lo que sale de ese equipo y la izquierda, lo que le llega. Al pasar el mouse, el detalle nombra los dos equipos.

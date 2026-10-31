@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <!-- Scaled to 0.78 around (512, 512) so the monitor fits comfortably inside Android's 66dp adaptive safe zone -->
+    <group
+        android:pivotX="512"
+        android:pivotY="512"
+        android:scaleX="0.78"
+        android:scaleY="0.78">
+        <!-- Soft drop shadow behind monitor & stand -->
+        <path
+            android:fillColor="#3A0A1440"
+            android:pathData="M264,280h496a42,42 0 0,1 42,42v314a42,42 0 0,1 -42,42h-496a42,42 0 0,1 -42,-42v-314a42,42 0 0,1 42,-42z" />
+        <path
+            android:fillColor="#3A0A1440"
+            android:pathData="M389,734h246a15,15 0 0,1 15,15v0a15,15 0 0,1 -15,15h-246a15,15 0 0,1 -15,-15v0a15,15 0 0,1 15,-15z" />
+
+        <!-- Stand neck -->
+        <path android:pathData="M466,640H558L586,728H438Z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="512"
+                    android:startY="640"
+                    android:endX="512"
+                    android:endY="728"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#FFAAB6CA" />
+                    <item android:offset="1.0" android:color="#FFCFD8E6" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Stand base -->
+        <path android:pathData="M389,718h246a15,15 0 0,1 15,15v0a15,15 0 0,1 -15,15h-246a15,15 0 0,1 -15,-15v0a15,15 0 0,1 15,-15z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="512"
+                    android:startY="718"
+                    android:endX="512"
+                    android:endY="748"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#FFF4F7FC" />
+                    <item android:offset="1.0" android:color="#FFD5DDEB" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Monitor outer bezel -->
+        <path android:pathData="M264,262h496a42,42 0 0,1 42,42v314a42,42 0 0,1 -42,42h-496a42,42 0 0,1 -42,-42v-314a42,42 0 0,1 42,-42z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="512"
+                    android:startY="262"
+                    android:endX="512"
+                    android:endY="660"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#FFF4F7FC" />
+                    <item android:offset="1.0" android:color="#FFD5DDEB" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Monitor inner screen -->
+        <path android:pathData="M272,290h480a22,22 0 0,1 22,22v286a22,22 0 0,1 -22,22h-480a22,22 0 0,1 -22,-22v-286a22,22 0 0,1 22,-22z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:startX="512"
+                    android:startY="290"
+                    android:endX="512"
+                    android:endY="620"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#FF121A2B" />
+                    <item android:offset="1.0" android:color="#FF0A0F1A" />
+                </gradient>
+            </aapt:attr>
+        </path>
+
+        <!-- Window dots -->
+        <path android:fillColor="#FFFF5F57" android:pathData="M286,324m-10,0a10,10 0 1,0 20,0a10,10 0 1,0 -20,0" />
+        <path android:fillColor="#FFFEBC2E" android:pathData="M318,324m-10,0a10,10 0 1,0 20,0a10,10 0 1,0 -20,0" />
+        <path android:fillColor="#FF28C840" android:pathData="M350,324m-10,0a10,10 0 1,0 20,0a10,10 0 1,0 -20,0" />
+
+        <!-- Prompt >_ -->
+        <path
+            android:pathData="M300,392L356,436L300,480"
+            android:strokeWidth="28"
+            android:strokeColor="#FF4ADE80"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#FF4ADE80"
+            android:pathData="M394,458h84a10,10 0 0,1 10,10v4a10,10 0 0,1 -10,10h-84a10,10 0 0,1 -10,-10v-4a10,10 0 0,1 10,-10z" />
+
+        <!-- Output lines -->
+        <path
+            android:fillColor="#BF5B8DEF"
+            android:pathData="M309,526h282a9,9 0 0,1 9,9v0a9,9 0 0,1 -9,9h-282a9,9 0 0,1 -9,-9v0a9,9 0 0,1 9,-9z" />
+        <path
+            android:fillColor="#735B8DEF"
+            android:pathData="M309,564h172a9,9 0 0,1 9,9v0a9,9 0 0,1 -9,9h-172a9,9 0 0,1 -9,-9v0a9,9 0 0,1 9,-9z" />
+        <path
+            android:fillColor="#8CC49BF2"
+            android:pathData="M519,564h102a9,9 0 0,1 9,9v0a9,9 0 0,1 -9,9h-102a9,9 0 0,1 -9,-9v0a9,9 0 0,1 9,-9z" />
+    </group>
+</vector>

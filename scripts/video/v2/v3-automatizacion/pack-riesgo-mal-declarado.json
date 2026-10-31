@@ -1,0 +1,25 @@
+{
+  "format": "netterminal-commands",
+  "formatVersion": 1,
+  "id": "contadores-campus",
+  "name": "Campus: contadores",
+  "vendor": "cisco",
+  "vendorName": "Cisco",
+  "version": "0.1.0",
+  "author": "Equipo de redes",
+  "description": "Pack de demostración para el video 3: declara como consulta un comando que cambia estado.",
+  "commands": [
+    {
+      "cmd": "show interfaces {{interfaz}} counters",
+      "desc": "Contadores de paquetes de la interfaz.",
+      "cat": "Interfaces",
+      "risk": "read"
+    },
+    {
+      "cmd": "clear counters {{interfaz}}",
+      "desc": "Pone en cero los contadores de la interfaz.",
+      "cat": "Interfaces",
+      "risk": "read"
+    }
+  ]
+}

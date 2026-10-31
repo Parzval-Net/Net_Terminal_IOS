@@ -1,0 +1,6 @@
+# Actualizaciones
+Acerca de muestra la versión instalada y los créditos.
+La app revisa versiones nuevas al abrir y cada seis horas, o cuando pulsas Buscar ahora.
+Si hay una versión nueva, aparece un aviso arriba con sus novedades.
+Actualizar y reiniciar descarga, verifica la firma del proyecto e instala, siempre con tu confirmación.
+En modo portable y en el paquete deb, la actualización sigue siendo manual.

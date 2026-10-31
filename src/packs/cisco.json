@@ -1,0 +1,5440 @@
+{
+  "vendor": "cisco",
+  "name": "Cisco",
+  "platforms": [
+    {
+      "id": "iosxr",
+      "label": "IOS-XR (ASR 9000, NCS, 8000)",
+      "detect": "Cisco IOS XR Software|IOS-XR",
+      "note": "Commit en dos fases: los cambios se aplican con commit. Evaluar antes que IOS/IOS-XE."
+    },
+    {
+      "id": "nxos",
+      "label": "NX-OS (Nexus 3k/5k/7k/9k)",
+      "detect": "Cisco Nexus Operating System|NX-OS",
+      "note": "Interfaces en singular (show interface). Gestión en VRF management."
+    },
+    {
+      "id": "iosxe",
+      "label": "IOS-XE (16.x/17.x)",
+      "detect": "IOS[ -]XE|IOSXE|X86_64_LINUX_IOSD",
+      "note": "Catalyst 9000, ISR 4000/1000, ASR 1000, CSR/C8000. Incluye 3.x (IOS-XE Software)."
+    },
+    {
+      "id": "ios",
+      "label": "IOS (12.x/15.x)",
+      "detect": "(?<![\\s\\S])(?![\\s\\S]*(IOS[ -]XE|IOSXE|IOS XR|NX-OS))[\\s\\S]*(Cisco IOS Software|IOS \\(tm\\))",
+      "note": "ISR G2, Catalyst 2960/3560/3750. Regex excluye XE/XR/NX-OS."
+    },
+    {
+      "id": "asa",
+      "label": "ASA (diagnóstico básico)",
+      "detect": "Cisco Adaptive Security Appliance Software",
+      "note": "Solo comandos de diagnóstico. FTD usa la misma CLI de diagnóstico vía system support diagnostic-cli; verificar."
+    }
+  ],
+  "detectCommand": "show version",
+  "commands": [
+    {
+      "cmd": "show version",
+      "desc": "Muestra versión de software, modelo, uptime, imagen de arranque y registro de configuración. Es el primer comando para identificar plataforma y release.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "terminal length 0",
+      "desc": "Desactiva la paginación (--More--) en la sesión actual. Útil para capturar salidas largas o automatizar.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "terminal pager 0"
+        }
+      ],
+      "note": "Solo afecta la sesión actual.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/slave_auto-sync_config_through_terminal-type.html"
+    },
+    {
+      "cmd": "terminal width 511",
+      "desc": "Amplía el ancho de la terminal para evitar cortes de línea en salidas largas.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "note": "Rango máximo varía por plataforma; verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/slave_auto-sync_config_through_terminal-type.html"
+    },
+    {
+      "cmd": "show clock",
+      "desc": "Muestra fecha y hora del equipo. Clave para correlacionar logs entre dispositivos.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/bsm/command/bsm-cr-book/bsm-cr-n1.html"
+    },
+    {
+      "cmd": "show users",
+      "desc": "Lista sesiones activas (consola, VTY) y su origen. Sirve para saber quién más está conectado antes de un cambio.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s5.html"
+    },
+    {
+      "cmd": "show processes cpu sorted",
+      "desc": "Muestra uso de CPU (5 s, 1 min, 5 min) ordenado por proceso. Base para diagnosticar CPU alta.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show processes cpu sort"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show processes cpu"
+        }
+      ],
+      "note": "En IOS-XE refleja solo el proceso IOSd; complementar con show platform software status control-processor brief.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_monitor_permit_list_through_show_process_memory.html"
+    },
+    {
+      "cmd": "show processes cpu history",
+      "desc": "Gráfico ASCII del uso de CPU de los últimos 60 s, 60 min y 72 h. Útil para detectar picos recurrentes.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_monitor_permit_list_through_show_process_memory.html"
+    },
+    {
+      "cmd": "show platform software status control-processor brief",
+      "desc": "Resumen de CPU por núcleo y memoria del plano de control con estado Healthy/Warning/Critical.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "note": "IOS-XE (ISR 4000/1000, ASR 1000, C8000, Cat9k).",
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/access/4400/software/configuration/xe-16-9/isr4400swcfg-xe-16-9-book/process_health_monitoring.html"
+    },
+    {
+      "cmd": "show platform resources",
+      "desc": "Resumen de CPU, memoria y TCAM/QFP del chasis con umbrales de alerta.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "note": "Disponible en IOS-XE 16.x/17.x en routers; verificar en Catalyst.",
+      "source": "https://www.cisco.com/c/en/us/support/docs/routers/asr-1000-series-aggregation-services-routers/212646-troubleshoot-high-cpu-on-asr1000-series.html"
+    },
+    {
+      "cmd": "show processes memory sorted",
+      "desc": "Lista procesos ordenados por consumo de memoria. Útil para detectar fugas (memory leak).",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_monitor_permit_list_through_show_process_memory.html"
+    },
+    {
+      "cmd": "show memory statistics",
+      "desc": "Resumen de memoria total, usada y libre por pool (Processor, I/O).",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show memory summary"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_gsr_through_show_monitor_event_trace.html"
+    },
+    {
+      "cmd": "show system resources",
+      "desc": "Resumen de carga, CPU, memoria y procesos del supervisor Nexus.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_s_showcmds.html"
+    },
+    {
+      "cmd": "dir",
+      "desc": "Lista el contenido del sistema de archivos por defecto (flash:, bootflash:, harddisk:) y el espacio libre.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr",
+        "asa"
+      ],
+      "note": "Para otro filesystem: dir bootflash: o dir flash:. En IOS-XR suele ser harddisk: o disk0:.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/D_through_E.html"
+    },
+    {
+      "cmd": "show file systems",
+      "desc": "Lista los sistemas de archivos disponibles con tamaño y espacio libre.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_through_show_fm_summary.html"
+    },
+    {
+      "cmd": "show boot",
+      "desc": "Muestra variables de arranque (imagen BOOT, config). Clave antes de un upgrade o reload.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "Formas de Catalyst y NX-OS. En routers IOS/IOS-XE (ISR, ASR) la referencia documenta show bootvar. En Cat9k en modo install apunta a packages.conf.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_through_show_fm_summary.html"
+    },
+    {
+      "cmd": "show install summary",
+      "desc": "Estado de paquetes instalados (activos, committed) en modo install.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show install active"
+        }
+      ],
+      "note": "IOS-XE 16.x/17.x en modo install. En modo bundle no aplica.",
+      "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/216231-upgrade-guide-for-cisco-catalyst-9000-sw.html"
+    },
+    {
+      "cmd": "show license summary",
+      "desc": "Estado de licenciamiento (Smart Licensing) y uso de licencias.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show license usage"
+        },
+        {
+          "platforms": [
+            "ios"
+          ],
+          "cmd": "show license"
+        }
+      ],
+      "note": "En IOS 15.x clásico usar show license. Sintaxis no confirmada en documentación oficial para ios (show license); verificar.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/sl_using_policy/b-sl-using-policy/cmd_ref.html"
+    },
+    {
+      "cmd": "show feature",
+      "desc": "Lista las features de NX-OS y si están habilitadas (feature bgp, feature vpc, etc.).",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_f_showcmds.html"
+    },
+    {
+      "cmd": "show hostname",
+      "desc": "Muestra el hostname del switch Nexus.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_h_showcmds.html"
+    },
+    {
+      "cmd": "show vdc",
+      "desc": "Lista los Virtual Device Contexts y su estado.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "note": "Solo Nexus 7000/7700.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_v_showcmds.html"
+    },
+    {
+      "cmd": "show ntp associations",
+      "desc": "Estado de los peers NTP y cuál está sincronizado (*). Hora errónea afecta logs y certificados.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show ntp peer-status"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/bsm/command/bsm-cr-book/bsm-cr-n1.html"
+    },
+    {
+      "cmd": "show ntp status",
+      "desc": "Muestra si el reloj está sincronizado, estrato y referencia NTP.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/bsm/command/bsm-cr-book/bsm-cr-n1.html"
+    },
+    {
+      "cmd": "show snmp",
+      "desc": "Resumen de contadores y estado del agente SNMP.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/snmp/command/nm-snmp-cr-book/nm-snmp-cr-book_CLT_chapter.html"
+    },
+    {
+      "cmd": "show tech-support",
+      "desc": "Volcado completo de diagnóstico para TAC. Salida muy extensa y con carga de CPU.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Preferir redirigir a archivo: show tech-support | redirect flash:tech.txt (IOS/IOS-XE). Ejecutar fuera de horario punta.",
+      "source": "https://www.cisco.com/c/en/us/support/docs/ip/ip-routing/216088-quick-start-guide-data-collection-for.html"
+    },
+    {
+      "cmd": "show inventory",
+      "desc": "Lista módulos, fuentes, ventiladores y ópticos con PID y número de serie. Base para RMA y control de activos.",
+      "cat": "Hardware",
+      "risk": "read",
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "admin show inventory"
+        }
+      ],
+      "note": "En IOS-XR 32-bit usar admin show inventory; en 64-bit (eXR) show inventory funciona directo. En Nexus 9000 existe show inventory all.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_gsr_through_show_monitor_event_trace.html"
+    },
+    {
+      "cmd": "show environment all",
+      "desc": "Estado de temperatura, fuentes y ventiladores.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show environment"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show environment"
+        }
+      ],
+      "note": "La sintaxis exacta varía por modelo (2960 vs Cat9k vs ISR). En IOS-XR 32-bit: admin show environment.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_through_show_fm_summary.html"
+    },
+    {
+      "cmd": "show environment temperature",
+      "desc": "Muestra sensores de temperatura y umbrales.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_through_show_fm_summary.html"
+    },
+    {
+      "cmd": "show environment power",
+      "desc": "Estado y consumo de las fuentes de poder.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_e_showcmds.html"
+    },
+    {
+      "cmd": "show power inline",
+      "desc": "Consumo PoE por puerto y potencia disponible del switch.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show module",
+      "desc": "Lista tarjetas de línea y supervisoras con estado, modelo y serie.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show platform"
+        }
+      ],
+      "note": "En Catalyst fijos (2960/9300) no aplica; usar show switch.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_m_showcmds.html"
+    },
+    {
+      "cmd": "show platform",
+      "desc": "Estado de slots, RP/ESP/SIP o tarjetas de línea y su estado operacional.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "iosxe",
+        "iosxr"
+      ],
+      "note": "En IOS-XR 32-bit usar admin show platform.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/hardware-redundancy-and-node-administration-commands.html"
+    },
+    {
+      "cmd": "show hardware",
+      "desc": "Detalle de hardware del Nexus: chasis, módulos, fuentes y versión de BIOS.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_h_showcmds.html"
+    },
+    {
+      "cmd": "show interfaces transceiver detail",
+      "desc": "Lecturas DOM de ópticos: temperatura, voltaje, corriente, potencia Tx/Rx y umbrales de alarma.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface transceiver details"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show controllers optics {{interfaz}}"
+        }
+      ],
+      "note": "NX-OS usa 'interface' singular y 'details' en plural. En IOS-XR {{interfaz}} va como R/S/I/P (ej. 0/0/0/0). En ISR 4000 puede requerir show hw-module subslot; verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces transceiver",
+      "desc": "Resumen DOM de todos los ópticos (potencia Tx/Rx) en una tabla.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface transceiver"
+        }
+      ],
+      "note": "Requiere ópticos con soporte DDM/DOM.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}} transceiver detail",
+      "desc": "DOM de un óptico específico. Útil para validar potencia Rx en un enlace con errores.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface {{interfaz}} transceiver details"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show controllers {{interfaz}} phy",
+      "desc": "Información de capa física del puerto en IOS-XR (estado del PHY y óptico).",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/interfaces/command/reference/b-interfaces-hardware-component-cr-asr9000/ethernet-interface-commands.html"
+    },
+    {
+      "cmd": "show controllers ethernet-controller {{interfaz}}",
+      "desc": "Contadores detallados del ASIC por puerto (colisiones, runts, giants, CRC) en Catalyst clásico.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Catalyst 2960/3560/3750 y Catalyst 9000. En Cat9k complementar con show platform hardware fed switch active; verificar la salida en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show ip interface brief",
+      "desc": "Resumen de interfaces con IP, estado administrativo y de protocolo. Primer chequeo de conectividad.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show ipv4 interface brief"
+        },
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show interface ip brief"
+        }
+      ],
+      "note": "En NX-OS muestra solo la VRF default; usar show ip interface brief vrf all.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipaddr/command/ipaddr-cr-book/ipaddr-r1.html"
+    },
+    {
+      "cmd": "show ip interface brief vrf all",
+      "desc": "Resumen de interfaces L3 en todas las VRF de NX-OS, incluida management.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show ipv6 interface brief",
+      "desc": "Resumen de interfaces con direcciones IPv6 y estado.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show interfaces status",
+      "desc": "Tabla de puertos de switch con estado, VLAN, duplex, velocidad y tipo de medio.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface status"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces description",
+      "desc": "Lista interfaces con estado y descripción. Útil para ubicar enlaces por nombre.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface description"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}}",
+      "desc": "Detalle de la interfaz: estado, MTU, velocidad, tasas de tráfico y contadores de error (CRC, drops, resets).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos",
+            "asa"
+          ],
+          "cmd": "show interface {{interfaz}}"
+        }
+      ],
+      "note": "NX-OS y ASA usan 'interface' en singular. En ASA {{interfaz}} acepta el ID físico o el nameif.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}} | include line protocol|rate|error|CRC|drops",
+      "desc": "Vista filtrada de estado, tasas y errores de una interfaz para revisión rápida.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface {{interfaz}} | include rate|error|CRC|discard"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces counters errors",
+      "desc": "Contadores de error por puerto (FCS, Align, Runts, Giants). Detecta cableado u ópticos defectuosos.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface counters errors"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces summary",
+      "desc": "Tabla resumen de interfaces con colas, drops y tasas.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interface brief",
+      "desc": "Resumen de interfaces. En NX-OS muestra estado, VLAN, modo, velocidad y port-channel. En IOS-XR muestra estado, encapsulación, MTU y ancho de banda.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show interfaces brief"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}} switchport",
+      "desc": "Modo del puerto (access/trunk), VLAN nativa, VLANs permitidas y voice VLAN.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface {{interfaz}} switchport"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces trunk",
+      "desc": "Trunks activos, encapsulación, VLAN nativa y VLANs permitidas/activas/en forwarding.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface trunk"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show interfaces status err-disabled",
+      "desc": "Puertos en err-disabled y la causa (bpduguard, psecure-violation, udld, etc.).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface status err-disabled"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "show errdisable recovery",
+      "desc": "Causas de err-disable con recuperación automática habilitada y su temporizador.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show ip interface {{interfaz}}",
+      "desc": "Detalle L3 de la interfaz: IP, ACL aplicadas, helper-address, proxy-arp, MTU IP.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show ipv4 interface {{interfaz}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipaddr/command/ipaddr-cr-book/ipaddr-r1.html"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}} capabilities",
+      "desc": "Capacidades del puerto: velocidades, duplex, tipos de trunk y QoS soportados.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface {{interfaz}} capabilities"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s4.html"
+    },
+    {
+      "cmd": "clear counters {{interfaz}}",
+      "desc": "Reinicia los contadores de la interfaz para medir errores desde cero.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "clear counters interface {{interfaz}}"
+        }
+      ],
+      "note": "Pide confirmación en IOS. No afecta el tráfico. En IOS-XR la sintaxis es clear counters <interfaz> (o all); la referencia de ASR 9000 documenta además clear interface <interfaz>.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-c1.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\ndescription {{texto}}\nend",
+      "desc": "Asigna una descripción a la interfaz para documentar el enlace.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "configure terminal\ninterface {{interfaz}}\ndescription {{texto}}\ncommit\nend"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-d1.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nshutdown\nend",
+      "desc": "Deshabilita administrativamente la interfaz. Corta el tráfico del enlace.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "configure terminal\ninterface {{interfaz}}\nshutdown\ncommit\nend"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s6.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nno shutdown\nend",
+      "desc": "Habilita administrativamente la interfaz.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "configure terminal\ninterface {{interfaz}}\nno shutdown\ncommit\nend"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-s6.html"
+    },
+    {
+      "cmd": "configure terminal\ndefault interface {{interfaz}}\nend",
+      "desc": "Devuelve la interfaz a configuración de fábrica. Elimina IP, VLAN y demás parámetros.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "En NX-OS se pueden seleccionar como máximo 8 puertos y no aplica a mgmt0 (puede dejar el equipo inalcanzable). Considerar un checkpoint previo.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/interface/command/ir-cr-book/ir-d1.html"
+    },
+    {
+      "cmd": "show vlan brief",
+      "desc": "Lista VLANs con nombre, estado y puertos de acceso asignados.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show vlan id {{vlan}}",
+      "desc": "Detalle de una VLAN específica y sus puertos.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show mac address-table",
+      "desc": "Tabla de direcciones MAC aprendidas por VLAN y puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "En IOS 12.1/12.2 antiguo (Catalyst 2950/3550) la sintaxis es show mac-address-table.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/system_management_commands.html"
+    },
+    {
+      "cmd": "show mac-address-table",
+      "desc": "Sintaxis legacy de la tabla MAC en Catalyst con IOS 12.x antiguo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios"
+      ],
+      "note": "Reemplazada por show mac address-table en releases posteriores; verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/system_management_commands.html"
+    },
+    {
+      "cmd": "show mac address-table address {{mac}}",
+      "desc": "Ubica en qué VLAN y puerto se aprendió una MAC (formato xxxx.xxxx.xxxx).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/system_management_commands.html"
+    },
+    {
+      "cmd": "show mac address-table interface {{interfaz}}",
+      "desc": "MACs aprendidas en un puerto específico.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/system_management_commands.html"
+    },
+    {
+      "cmd": "show mac address-table count",
+      "desc": "Cantidad de MACs aprendidas por VLAN y total. Útil para detectar flooding o tablas llenas.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/system_management_commands.html"
+    },
+    {
+      "cmd": "clear mac address-table dynamic",
+      "desc": "Borra las MAC dinámicas para forzar reaprendizaje.",
+      "cat": "Capa 2",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "Provoca flooding unicast temporal y puede afectar el tráfico mientras se reaprenden las MAC. Preferir acotar con vlan o interface.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/security_commands.html"
+    },
+    {
+      "cmd": "show spanning-tree summary",
+      "desc": "Modo STP, root por VLAN y protecciones globales (PortFast, BPDU Guard, Loop Guard).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show spanning-tree vlan {{vlan}}",
+      "desc": "Root bridge, costos, roles y estado de cada puerto para una VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show spanning-tree root",
+      "desc": "Root bridge, costo y puerto raíz por instancia/VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show spanning-tree detail | include ieee|occurr|from|is exec",
+      "desc": "Cuenta y origen de Topology Changes por VLAN. Sirve para rastrear inestabilidad STP.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Filtro clásico de troubleshooting de TCN; validar formato de salida en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show spanning-tree inconsistentports",
+      "desc": "Puertos bloqueados por inconsistencia (Root Guard, Loop Guard, PVID).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show spanning-tree blockedports",
+      "desc": "Puertos en estado blocking por VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show etherchannel summary",
+      "desc": "Estado de port-channels y miembros (P=bundled, s=suspended, D=down) y protocolo LACP/PAgP.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show port-channel summary"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bundle"
+        },
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show port-channel summary"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show etherchannel {{port_channel}} detail",
+      "desc": "Detalle de un port-channel: miembros, estado LACP y balanceo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show lacp neighbor",
+      "desc": "Partner LACP por puerto: system ID, key y flags. Detecta mismatch con el otro extremo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show lacp"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show bundle bundle-ether {{id_bundle}}",
+      "desc": "Estado del Bundle-Ether, miembros y estado LACP en IOS-XR.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/interfaces/command/reference/b-interfaces-hardware-component-cr-asr9000/link-bundling-commands.html"
+    },
+    {
+      "cmd": "show cdp neighbors",
+      "desc": "Vecinos Cisco conectados: dispositivo, puerto local, puerto remoto y plataforma.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/cdp/command/cdp-cr-book/cdp-cr-a1.html"
+    },
+    {
+      "cmd": "show cdp neighbors detail",
+      "desc": "Detalle de vecinos CDP incluyendo IP de gestión y versión de software.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/cdp/command/cdp-cr-book/cdp-cr-a1.html"
+    },
+    {
+      "cmd": "show lldp neighbors",
+      "desc": "Vecinos LLDP (multivendor) con puerto local y remoto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "note": "LLDP debe estar habilitado (lldp run en IOS/IOS-XE, feature lldp en NX-OS, lldp en XR).",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/cether/command/ce-cr-book/ce-s1.html"
+    },
+    {
+      "cmd": "show lldp neighbors detail",
+      "desc": "Detalle de vecinos LLDP: IP de gestión, capacidades y descripción del sistema.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/cether/command/ce-cr-book/ce-s1.html"
+    },
+    {
+      "cmd": "show vtp status",
+      "desc": "Modo VTP, dominio, versión y revisión de configuración. Clave para evitar borrado de VLANs.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/vlan_commands.html"
+    },
+    {
+      "cmd": "show udld neighbors",
+      "desc": "Estado UDLD por puerto y vecino. Detecta enlaces de fibra unidireccionales.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show ip arp",
+      "desc": "Tabla ARP (IP a MAC) de la VRF default.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show arp"
+        },
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show arp"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipaddr/command/ipaddr-cr-book/ipaddr-r1.html"
+    },
+    {
+      "cmd": "show ip arp vrf {{vrf}}",
+      "desc": "Tabla ARP de una VRF específica.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show arp vrf {{vrf}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipaddr/command/ipaddr-cr-book/ipaddr-r1.html"
+    },
+    {
+      "cmd": "show ip arp {{ip}}",
+      "desc": "Entrada ARP de una IP específica.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipaddr/command/ipaddr-cr-book/ipaddr-r1.html"
+    },
+    {
+      "cmd": "clear ip arp {{ip}}",
+      "desc": "Elimina una entrada ARP para forzar su reaprendizaje.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "En NX-OS es la forma documentada (admite vrf). Sintaxis no confirmada en documentación oficial para ios/iosxe (clear ip arp); verificar. La referencia IOS documenta clear arp-cache, que borra todas las entradas dinámicas.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/104x/command-reference/config/b_n9k_config_commands_104x/m_c_cmds.html"
+    },
+    {
+      "cmd": "show ipv6 neighbors",
+      "desc": "Tabla de vecinos IPv6 (ND) con estado de alcanzabilidad.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show ipv6 neighbor"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show fex",
+      "desc": "Fabric Extenders (Nexus 2000) asociados, estado y modelo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "note": "Nexus 5k/7k/9k con FEX.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/93x/fex/configuration/guide/b-cisco-nexus-2000-nx-os-fabric-extender-configuration-guide-for-nexus-9000-switches-93x/b-cisco-nexus-2000-nx-os-fabric-extender-configuration-guide-for-nexus-9000-switches-93x_chapter_011.html"
+    },
+    {
+      "cmd": "show ip route",
+      "desc": "Tabla de enrutamiento IPv4 de la VRF default con origen de cada ruta.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show route"
+        },
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show route"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_pi/command/iri-cr-book/iri-cr-s1.html"
+    },
+    {
+      "cmd": "show ip route {{ip}}",
+      "desc": "Ruta más específica para un destino, next-hop y protocolo de origen.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show route {{ip}}"
+        },
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show route {{ip}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_pi/command/iri-cr-book/iri-cr-s1.html"
+    },
+    {
+      "cmd": "show ip route vrf {{vrf}}",
+      "desc": "Tabla de enrutamiento de una VRF.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show route vrf {{vrf}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_pi/command/iri-cr-book/iri-cr-s1.html"
+    },
+    {
+      "cmd": "show ip route summary",
+      "desc": "Cantidad de rutas por protocolo y memoria usada.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show route summary"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_pi/command/iri-cr-book/iri-cr-s1.html"
+    },
+    {
+      "cmd": "show ipv6 route",
+      "desc": "Tabla de enrutamiento IPv6.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show route ipv6"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show ip cef {{ip}}",
+      "desc": "Entrada CEF (plano de forwarding) para un destino. Valida que la RIB se programó en FIB.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show cef {{ip}}"
+        },
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show forwarding ipv4 route {{ip}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/ipswitch/command/reference/isw_book/isw_s1.html"
+    },
+    {
+      "cmd": "show ip protocols",
+      "desc": "Protocolos de ruteo activos, redes anunciadas, vecinos, filtros y distancia administrativa.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show protocols"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_pi/command/iri-cr-book/iri-cr-s1.html"
+    },
+    {
+      "cmd": "show ip ospf neighbor",
+      "desc": "Vecinos OSPF con estado (FULL, 2WAY, INIT), DR/BDR e interfaz.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show ospf neighbor"
+        },
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show ip ospf neighbors"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/command/iro-cr-book/ospf-s1.html"
+    },
+    {
+      "cmd": "show ip ospf neighbor detail",
+      "desc": "Detalle de adyacencias OSPF: área, tiempo arriba, contadores de retransmisión.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show ospf neighbor detail"
+        },
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show ip ospf neighbors detail"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/command/iro-cr-book/ospf-s1.html"
+    },
+    {
+      "cmd": "show ip ospf neighbors vrf all",
+      "desc": "Vecinos OSPF en todas las VRF de NX-OS.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show ip ospf interface brief",
+      "desc": "Interfaces OSPF con área, costo, estado y cantidad de vecinos.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show ospf interface brief"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/command/iro-cr-book/ospf-s1.html"
+    },
+    {
+      "cmd": "show ip ospf",
+      "desc": "Parámetros del proceso OSPF: router-id, áreas, SPF y timers.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show ospf"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/command/iro-cr-book/ospf-s1.html"
+    },
+    {
+      "cmd": "show ip ospf database",
+      "desc": "Resumen de la LSDB por tipo de LSA y área.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show ospf database"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/command/iro-cr-book/ospf-s1.html"
+    },
+    {
+      "cmd": "clear ip ospf process",
+      "desc": "Reinicia el proceso OSPF. Cae y se reestablecen todas las adyacencias.",
+      "cat": "Enrutamiento",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "clear ospf process"
+        },
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "clear ip ospf neighbor *"
+        }
+      ],
+      "note": "Pide confirmación. Usar solo en ventana de mantenimiento.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_ospf/command/iro-cr-book/m_ospf-a1.html"
+    },
+    {
+      "cmd": "show ip bgp summary",
+      "desc": "Vecinos BGP IPv4 unicast, estado, uptime y prefijos recibidos.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bgp ipv4 unicast summary"
+        }
+      ],
+      "note": "Sintaxis legacy. En IOS-XR no existe la forma 'ip bgp'.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-s1.html"
+    },
+    {
+      "cmd": "show bgp ipv4 unicast summary",
+      "desc": "Sintaxis por address-family del resumen BGP. Funciona de forma homogénea en IOS 15, IOS-XE, NX-OS e IOS-XR.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "note": "En IOS 12.x antiguo puede no estar disponible; verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-n1.html"
+    },
+    {
+      "cmd": "show bgp ipv4 unicast summary vrf all",
+      "desc": "Resumen BGP de todas las VRF en NX-OS.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bgp vrf all ipv4 unicast summary"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_b_showcmds.html"
+    },
+    {
+      "cmd": "show ip bgp neighbors {{ip}}",
+      "desc": "Detalle de una sesión BGP: estado, capacidades, timers, mensajes y último error.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bgp neighbors {{ip}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-s1.html"
+    },
+    {
+      "cmd": "show ip bgp neighbors {{ip}} advertised-routes",
+      "desc": "Prefijos que se anuncian a un vecino BGP después de políticas de salida.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bgp neighbors {{ip}} advertised-routes"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-s1.html"
+    },
+    {
+      "cmd": "show ip bgp neighbors {{ip}} received-routes",
+      "desc": "Prefijos recibidos de un vecino antes de políticas de entrada.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "Requiere soft-reconfiguration inbound en el vecino.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-s1.html"
+    },
+    {
+      "cmd": "show ip bgp {{prefijo}}",
+      "desc": "Paths BGP disponibles para un prefijo, mejor path y atributos (AS-path, local-pref, MED).",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bgp {{prefijo}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-s1.html"
+    },
+    {
+      "cmd": "clear ip bgp {{ip}} soft",
+      "desc": "Refresca políticas BGP con un vecino sin tumbar la sesión (route refresh).",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "clear bgp ipv4 unicast {{ip}} soft"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-c1.html"
+    },
+    {
+      "cmd": "clear ip bgp *",
+      "desc": "Reinicia todas las sesiones BGP. Provoca reconvergencia completa y pérdida de tráfico.",
+      "cat": "Enrutamiento",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "clear bgp *"
+        }
+      ],
+      "note": "Usar clear soft salvo que sea estrictamente necesario.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-c1.html"
+    },
+    {
+      "cmd": "show ip eigrp neighbors",
+      "desc": "Vecinos EIGRP con uptime, SRTT y contadores de cola.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show eigrp neighbors"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/iproute_eigrp/command/reference/ire_book/ire_s1.html"
+    },
+    {
+      "cmd": "show ip eigrp topology",
+      "desc": "Tabla de topología EIGRP con successors y feasible successors.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/iproute_eigrp/command/reference/ire_book/ire_s1.html"
+    },
+    {
+      "cmd": "show ip eigrp interfaces",
+      "desc": "Interfaces que participan en EIGRP y cantidad de peers.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/iproute_eigrp/command/reference/ire_book/ire_s1.html"
+    },
+    {
+      "cmd": "show isis neighbors",
+      "desc": "Adyacencias IS-IS con nivel (L1/L2), estado e interfaz.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show isis adjacency"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/iproute_isis/command/reference/irs_book/irs_is2.html"
+    },
+    {
+      "cmd": "show isis database",
+      "desc": "LSDB de IS-IS por nivel.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/iproute_isis/command/reference/irs_book/irs_is2.html"
+    },
+    {
+      "cmd": "show vrf",
+      "desc": "Lista VRFs configuradas, RD e interfaces asociadas.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show vrf all"
+        }
+      ],
+      "note": "En IOS clásico también existe show ip vrf (forma heredada documentada en la misma referencia MPLS).",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s3.html"
+    },
+    {
+      "cmd": "show vrf detail {{vrf}}",
+      "desc": "Detalle de una VRF: RD, route-targets import/export e interfaces.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show vrf {{vrf}} detail"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show vrf {{vrf}} detail"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s3.html"
+    },
+    {
+      "cmd": "show ip vrf interfaces",
+      "desc": "Interfaces asignadas a cada VRF con su IP.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show vrf interface"
+        }
+      ],
+      "note": "Forma heredada documentada en la referencia MPLS.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s2.html"
+    },
+    {
+      "cmd": "show ip prefix-list",
+      "desc": "Prefix-lists configuradas y contadores de hits.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show rpl prefix-set"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-s1.html"
+    },
+    {
+      "cmd": "show route-map",
+      "desc": "Route-maps configurados, cláusulas match/set y contadores de uso.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show rpl route-policy"
+        }
+      ],
+      "note": "IOS-XR usa RPL (route-policy) en lugar de route-map.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_pi/command/iri-cr-book/iri-cr-s1.html"
+    },
+    {
+      "cmd": "show bfd neighbors",
+      "desc": "Sesiones BFD, estado y protocolo cliente (OSPF, BGP, estáticas).",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bfd session"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-15/command_reference/b_1715_9500_cr/ip_routing_commands.html"
+    },
+    {
+      "cmd": "show ip pim neighbor",
+      "desc": "Vecinos PIM por interfaz (multicast).",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show pim neighbor"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/c9000/multicast/multicast-configuration-guide/pim.html"
+    },
+    {
+      "cmd": "show ip mroute",
+      "desc": "Tabla de rutas multicast (S,G) y (*,G) con interfaces de entrada y salida.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show mrib route"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/ip_multicast_routing.html"
+    },
+    {
+      "cmd": "show ip nat translations",
+      "desc": "Traducciones NAT activas (inside/outside, local/global).",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipaddr_nat/configuration/xe-16/nat-xe-16-book/iadnat-monmain.html"
+    },
+    {
+      "cmd": "show ip nat statistics",
+      "desc": "Contadores NAT: traducciones activas, hits, misses e interfaces inside/outside.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipaddr_nat/configuration/xe-16/nat-xe-16-book/iadnat-monmain.html"
+    },
+    {
+      "cmd": "show mpls ldp neighbor",
+      "desc": "Sesiones LDP con peers, estado y direcciones descubiertas.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s2.html"
+    },
+    {
+      "cmd": "show mpls ldp neighbor brief",
+      "desc": "Resumen de vecinos LDP en IOS-XR.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/mpls/command/reference/b-mpls-cr-asr9000/mpls-label-distribution-protocol-commands.html"
+    },
+    {
+      "cmd": "show mpls ldp discovery",
+      "desc": "Interfaces donde LDP envía/recibe hellos y peers descubiertos.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s2.html"
+    },
+    {
+      "cmd": "show mpls ldp bindings",
+      "desc": "Etiquetas locales y remotas asignadas por LDP a cada prefijo (LIB).",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s2.html"
+    },
+    {
+      "cmd": "show mpls interfaces",
+      "desc": "Interfaces con MPLS habilitado y protocolo de etiquetas (LDP, TE).",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "note": "Sintaxis no confirmada en documentación oficial para nxos (show mpls interfaces); verificar.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s2.html"
+    },
+    {
+      "cmd": "show mpls forwarding-table",
+      "desc": "LFIB: etiqueta entrante, saliente, prefijo e interfaz de salida.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show mpls forwarding"
+        },
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show mpls switching"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s2.html"
+    },
+    {
+      "cmd": "show mpls traffic-eng tunnels brief",
+      "desc": "Resumen de túneles MPLS-TE con estado y path.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s3.html"
+    },
+    {
+      "cmd": "show bgp vpnv4 unicast all summary",
+      "desc": "Vecinos BGP VPNv4 (L3VPN) y prefijos intercambiados.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bgp vpnv4 unicast summary"
+        },
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show bgp vpnv4 unicast summary"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-n1.html"
+    },
+    {
+      "cmd": "show bgp vpnv4 unicast vrf {{vrf}} {{prefijo}}",
+      "desc": "Paths VPNv4 para un prefijo en una VRF, con RD, RT y etiqueta.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show bgp vrf {{vrf}} {{prefijo}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-n1.html"
+    },
+    {
+      "cmd": "show ip bgp vpnv4 vrf {{vrf}}",
+      "desc": "Tabla BGP de una VRF en un PE (sintaxis legacy).",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-s1.html"
+    },
+    {
+      "cmd": "show mpls l2transport vc",
+      "desc": "Pseudowires (AToM/EoMPLS) con estado y peer.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show l2vpn xconnect"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/mpls/command/mp-cr-book/mp-s2.html"
+    },
+    {
+      "cmd": "show l2vpn bridge-domain",
+      "desc": "Bridge-domains L2VPN/VPLS en IOS-XR con ACs y PWs.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/lxvpn/command/reference/b-lxvpn-cr-asr9000/multipoint-layer-2-services-commands.html"
+    },
+    {
+      "cmd": "show bgp l2vpn evpn summary",
+      "desc": "Vecinos BGP EVPN (VXLAN o MPLS) y prefijos intercambiados.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/iproute_bgp/command/irg-cr-book/bgp-n1.html"
+    },
+    {
+      "cmd": "show nve peers",
+      "desc": "Peers VTEP de VXLAN con estado y tiempo arriba.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "nxos",
+        "iosxe"
+      ],
+      "note": "En IOS-XE solo en Catalyst 9000 con BGP EVPN VXLAN.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/configuration_guide/vxlan/b_1716_bgp_evpn_vxlan_9300_cg/troubleshooting_bgp_evpn_vxlan.html"
+    },
+    {
+      "cmd": "show nve vni",
+      "desc": "VNIs configuradas, estado y modo de replicación.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "nxos",
+        "iosxe"
+      ],
+      "note": "En IOS-XE solo en Catalyst 9000 con BGP EVPN VXLAN.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/configuration_guide/vxlan/b_1716_bgp_evpn_vxlan_9300_cg/troubleshooting_bgp_evpn_vxlan.html"
+    },
+    {
+      "cmd": "show dmvpn",
+      "desc": "Estado de túneles DMVPN (NHRP) por peer.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s4.html"
+    },
+    {
+      "cmd": "show access-lists",
+      "desc": "ACLs configuradas con sus entradas y contadores de hits.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show access-list"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s2.html"
+    },
+    {
+      "cmd": "show ip access-lists {{nombre}}",
+      "desc": "Detalle de una ACL IPv4 específica y sus hits.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show access-lists ipv4 {{nombre}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s4.html"
+    },
+    {
+      "cmd": "show ip ssh",
+      "desc": "Versión SSH habilitada, timeout e intentos de autenticación.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show ssh server"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show ssh"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s4.html"
+    },
+    {
+      "cmd": "show aaa servers",
+      "desc": "Estado de servidores AAA (RADIUS/TACACS+), contadores y tiempo de respuesta.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s2.html"
+    },
+    {
+      "cmd": "show tacacs",
+      "desc": "Estadísticas de servidores TACACS+ (conexiones, fallas).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show tacacs-server"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s5.html"
+    },
+    {
+      "cmd": "show login failures",
+      "desc": "Intentos fallidos de login registrados (requiere login block-for o login on-failure).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s4.html"
+    },
+    {
+      "cmd": "show privilege",
+      "desc": "Nivel de privilegio de la sesión actual.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s5.html"
+    },
+    {
+      "cmd": "show port-security",
+      "desc": "Resumen de port-security por puerto: máximo de MACs, violaciones y acción.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s5.html"
+    },
+    {
+      "cmd": "show port-security interface {{interfaz}}",
+      "desc": "Detalle de port-security en un puerto, incluida la última MAC infractora.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s5.html"
+    },
+    {
+      "cmd": "show authentication sessions",
+      "desc": "Sesiones 802.1X/MAB activas por puerto con estado y método.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s2.html"
+    },
+    {
+      "cmd": "show authentication sessions interface {{interfaz}} details",
+      "desc": "Detalle de la sesión 802.1X/MAB de un puerto: usuario, VLAN y políticas aplicadas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s2.html"
+    },
+    {
+      "cmd": "show dot1x all",
+      "desc": "Estado global de 802.1X y por interfaz.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s4.html"
+    },
+    {
+      "cmd": "show ip dhcp snooping binding",
+      "desc": "Tabla de bindings DHCP snooping (MAC, IP, VLAN, puerto).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s4.html"
+    },
+    {
+      "cmd": "show ip arp inspection",
+      "desc": "Estado de Dynamic ARP Inspection por VLAN y contadores de paquetes descartados.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s4.html"
+    },
+    {
+      "cmd": "show crypto isakmp sa",
+      "desc": "SAs IKEv1 fase 1 con estado (QM_IDLE indica OK).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show crypto isakmp sa"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s3.html"
+    },
+    {
+      "cmd": "show crypto ikev2 sa",
+      "desc": "SAs IKEv2 activas con estado y peer.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show crypto ikev2 sa"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s3.html"
+    },
+    {
+      "cmd": "show crypto ipsec sa",
+      "desc": "SAs IPsec fase 2 con contadores encaps/decaps. Si decaps no sube, el problema está en el otro extremo.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "show crypto ipsec sa"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s3.html"
+    },
+    {
+      "cmd": "show crypto session",
+      "desc": "Resumen de sesiones crypto por peer (UP-ACTIVE, DOWN).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s3.html"
+    },
+    {
+      "cmd": "clear crypto sa peer {{ip}}",
+      "desc": "Elimina las SAs IPsec con un peer y fuerza renegociación. Corta el túnel brevemente.",
+      "cat": "Seguridad",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Sin el argumento peer borra todas las SA IPsec del equipo. Usar con un peer específico y en ventana acordada.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/a1/sec-a1-cr-book/sec-cr-c1.html"
+    },
+    {
+      "cmd": "show crypto pki certificates",
+      "desc": "Certificados instalados (CA e identidad) con validez y emisor.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/security/s1/sec-s1-cr-book/sec-cr-s3.html"
+    },
+    {
+      "cmd": "show control-plane host open-ports",
+      "desc": "Puertos TCP/UDP abiertos en el plano de control del equipo.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos_plcshp/configuration/15-mt/qos-plcshp-15-mt-book/qos-plcshp-cpp.html"
+    },
+    {
+      "cmd": "show snmp user",
+      "desc": "Usuarios SNMPv3 configurados con métodos de autenticación y privacidad.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/snmp/command/nm-snmp-cr-book/nm-snmp-cr-book_CLT_chapter.html"
+    },
+    {
+      "cmd": "show running-config | include username|aaa|snmp-server",
+      "desc": "Audita rápidamente usuarios locales, AAA y SNMP configurados.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "La salida puede contener hashes y comunidades; no compartir sin sanitizar.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "show standby brief",
+      "desc": "Grupos HSRP con estado (Active/Standby), prioridad, preempt y VIP.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show hsrp brief"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show hsrp brief"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipapp_fhrp/command/fhp-cr-book/fhp-s1.html"
+    },
+    {
+      "cmd": "show standby",
+      "desc": "Detalle HSRP: timers, tracking, router activo y standby.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show hsrp"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show hsrp"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipapp_fhrp/command/fhp-cr-book/fhp-s1.html"
+    },
+    {
+      "cmd": "show vrrp brief",
+      "desc": "Grupos VRRP con estado, prioridad y master.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show vrrp"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show vrrp"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipapp_fhrp/command/fhp-cr-book/fhp-s1.html"
+    },
+    {
+      "cmd": "show glbp brief",
+      "desc": "Grupos GLBP con AVG/AVF y estado.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ipapp_fhrp/command/fhp-cr-book/fhp-s1.html"
+    },
+    {
+      "cmd": "show track brief",
+      "desc": "Objetos de tracking (IP SLA, interfaz, ruta) y su estado.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_t_showcmds.html"
+    },
+    {
+      "cmd": "show redundancy",
+      "desc": "Estado de redundancia de supervisoras/RP (SSO, NSF), uptime y switchovers.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show system redundancy status"
+        }
+      ],
+      "note": "En IOS clásico aplica a chasis con doble supervisora (Cat4500/6500).",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ha/command/ha-cr-book/show_call-home_through_vrrp_sso.html"
+    },
+    {
+      "cmd": "show redundancy states",
+      "desc": "Estado peer de la RP/supervisora standby (STANDBY HOT esperado).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ha/command/ha-cr-book/show_call-home_through_vrrp_sso.html"
+    },
+    {
+      "cmd": "show switch",
+      "desc": "Miembros del stack (StackWise), rol (Active/Standby/Member), prioridad y estado.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Catalyst 3750/3850/9200/9300.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-11/configuration_guide/stck_mgr_ha/b_1711_stck_mgr_ha_9300_cg/managing_switch_stacks.html"
+    },
+    {
+      "cmd": "show switch stack-ports summary",
+      "desc": "Estado de los cables y puertos de stack por miembro.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-11/configuration_guide/stck_mgr_ha/b_1711_stck_mgr_ha_9300_cg/managing_switch_stacks.html"
+    },
+    {
+      "cmd": "show switch virtual",
+      "desc": "Estado de VSS (Virtual Switching System) en Catalyst 6500/4500.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "En Catalyst 9000 con StackWise Virtual el comando es show stackwise-virtual. Documentado en la Cisco IOS Virtual Switch Command Reference (Catalyst 6500/4500 VSS).",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/vswitch/command/reference/vs_book.pdf"
+    },
+    {
+      "cmd": "show vpc",
+      "desc": "Estado vPC: peer-link, peer-keepalive, consistencia y estado por vPC.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_v_showcmds.html"
+    },
+    {
+      "cmd": "show vpc brief",
+      "desc": "Resumen vPC con rol (primary/secondary) y estado de cada vPC.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_v_showcmds.html"
+    },
+    {
+      "cmd": "show vpc consistency-parameters global",
+      "desc": "Parámetros de consistencia tipo 1 y 2 entre peers vPC.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_v_showcmds.html"
+    },
+    {
+      "cmd": "show vpc peer-keepalive",
+      "desc": "Estado y estadísticas del enlace peer-keepalive (por defecto en VRF management).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_v_showcmds.html"
+    },
+    {
+      "cmd": "redundancy force-switchover",
+      "desc": "Fuerza la conmutación de la supervisora/RP activa a la standby.",
+      "cat": "Alta disponibilidad",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "system switchover"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "redundancy switchover"
+        }
+      ],
+      "note": "Validar antes STANDBY HOT. Usar solo en ventana de mantenimiento.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/ha/command/ha-cr-book/ha-mail-server-through-service.html"
+    },
+    {
+      "cmd": "show failover",
+      "desc": "Estado de failover ASA (Active/Standby), interfaces monitoreadas y último evento.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/show-f-to-show-ipu-commands.html"
+    },
+    {
+      "cmd": "show policy-map interface {{interfaz}}",
+      "desc": "Contadores por clase (matches, drops, colas) de la política aplicada a la interfaz. Clave para validar QoS.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos/command/qos-cr-book/qos-s4.html"
+    },
+    {
+      "cmd": "show policy-map",
+      "desc": "Políticas QoS configuradas con sus clases y acciones.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos/command/qos-cr-book/qos-s4.html"
+    },
+    {
+      "cmd": "show class-map",
+      "desc": "Class-maps configurados y criterios de match.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos/command/qos-cr-book/qos-s2.html"
+    },
+    {
+      "cmd": "show policy-map control-plane",
+      "desc": "Contadores de CoPP (Control Plane Policing) por clase.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show policy-map interface control-plane"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos/command/qos-cr-book/qos-s4.html"
+    },
+    {
+      "cmd": "show mls qos",
+      "desc": "Estado global de QoS (MLS) en Catalyst clásico.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "ios"
+      ],
+      "note": "Catalyst 2960/3560/3750. No existe en Cat9k (IOS-XE usa MQC).",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos/command/qos-cr-book/qos-s4.html"
+    },
+    {
+      "cmd": "show mls qos interface {{interfaz}} statistics",
+      "desc": "Contadores de DSCP/CoS y drops por cola en Catalyst clásico.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "ios"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos/command/qos-cr-book/qos-s4.html"
+    },
+    {
+      "cmd": "show queueing interface {{interfaz}}",
+      "desc": "Configuración y estado de colas de salida del puerto.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show queuing interface {{interfaz}}"
+        }
+      ],
+      "note": "NX-OS escribe 'queuing'. Disponibilidad en IOS/IOS-XE depende del modelo; verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/qos/command/qos-cr-book/qos-s4.html"
+    },
+    {
+      "cmd": "show platform hardware fed switch active qos queue stats interface {{interfaz}}",
+      "desc": "Drops y encolamiento por cola en el ASIC de Catalyst 9000.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "note": "Solo Catalyst 9000. En stack, reemplazar active por número de switch si aplica.",
+      "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-switch/216236-troubleshoot-output-drops-on-catalyst-90.html"
+    },
+    {
+      "cmd": "show qos interface {{interfaz}} output",
+      "desc": "Parámetros QoS programados en hardware para la interfaz en IOS-XR.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/qos/command/reference/b-qos-cr-asr9k/Congestion_Management_Commands.html"
+    },
+    {
+      "cmd": "ping {{ip}}",
+      "desc": "Prueba básica de alcanzabilidad ICMP.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/monitor_event-trace_through_Q.html"
+    },
+    {
+      "cmd": "ping",
+      "desc": "Ping extendido interactivo: permite definir origen, tamaño, repeticiones, DF-bit y VRF.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/monitor_event-trace_through_Q.html"
+    },
+    {
+      "cmd": "ping {{ip}} source {{ip_origen}} repeat 100 size 1500",
+      "desc": "Ping con origen definido y 100 paquetes de 1500 bytes para medir pérdida.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "ping {{ip}} source {{ip_origen}} count 100 packet-size 1472"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "ping {{ip}} source {{ip_origen}} count 100 size 1500"
+        }
+      ],
+      "note": "En NX-OS packet-size excluye cabeceras IP/ICMP.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/monitor_event-trace_through_Q.html"
+    },
+    {
+      "cmd": "ping {{ip}} size 1500 df-bit",
+      "desc": "Prueba MTU de path con bit DF activo. Si falla, hay un salto con MTU menor.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "ping {{ip}} packet-size 1472 df-bit"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "ping {{ip}} size 1500 donnotfrag"
+        }
+      ],
+      "note": "Sintaxis no confirmada en documentación oficial para iosxr (palabra clave donotfrag/donnotfrag de ping); verificar. Validar con ping ? en el equipo.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/monitor_event-trace_through_Q.html"
+    },
+    {
+      "cmd": "ping vrf {{vrf}} {{ip}}",
+      "desc": "Ping dentro de una VRF.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "ping {{ip}} vrf {{vrf}}"
+        }
+      ],
+      "note": "En NX-OS la VRF va al final.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/monitor_event-trace_through_Q.html"
+    },
+    {
+      "cmd": "ping {{ip}} vrf management",
+      "desc": "Ping desde la VRF de gestión (mgmt0) en Nexus. Sin 'vrf management' sale por la VRF default.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/104x/command-reference/config/b_n9k_config_commands_104x/m_p_cmds.html"
+    },
+    {
+      "cmd": "traceroute {{ip}}",
+      "desc": "Traza los saltos hasta el destino.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr",
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/test_cable-diagnostics_through_xmodem.html"
+    },
+    {
+      "cmd": "traceroute {{ip}} source {{ip_origen}} numeric",
+      "desc": "Traceroute con origen definido y sin resolución DNS (más rápido).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "traceroute {{ip}} source {{ip_origen}}"
+        },
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "traceroute {{ip}} source {{ip_origen}} numeric"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/test_cable-diagnostics_through_xmodem.html"
+    },
+    {
+      "cmd": "traceroute vrf {{vrf}} {{ip}}",
+      "desc": "Traceroute dentro de una VRF.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "traceroute {{ip}} vrf {{vrf}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/test_cable-diagnostics_through_xmodem.html"
+    },
+    {
+      "cmd": "telnet {{ip}} {{puerto}}",
+      "desc": "Prueba apertura de un puerto TCP remoto desde el equipo.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Solo como prueba de puerto; cerrar con Ctrl+Shift+6 x y luego disconnect.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/slave_auto-sync_config_through_terminal-type.html"
+    },
+    {
+      "cmd": "show ip traffic",
+      "desc": "Estadísticas IP/ICMP/UDP/TCP del plano de control (errores, fragmentos, drops).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show ip sla summary",
+      "desc": "Resumen de operaciones IP SLA con último RTT y estado.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/ipsla/command/reference/sla_book/sla_04.html"
+    },
+    {
+      "cmd": "show ip sla statistics",
+      "desc": "Estadísticas detalladas de operaciones IP SLA (éxitos, fallas, RTT).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios/ipsla/command/reference/sla_book/sla_04.html"
+    },
+    {
+      "cmd": "monitor capture CAP interface {{interfaz}} both\nmonitor capture CAP match ipv4 any any\nmonitor capture CAP start",
+      "desc": "Define y arranca una captura de paquetes embebida (EPC) en la interfaz, con filtro ipv4 any any.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "platforms": [
+        "iosxe"
+      ],
+      "note": "Detener con monitor capture CAP stop y ver con show monitor capture CAP buffer brief. Acotar el filtro y limitar paquetes y duración para no cargar la CPU. Sintaxis varía entre 16.x y 17.x; verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/epc/command/epc-cr-book/epc-cr-m1.html"
+    },
+    {
+      "cmd": "monitor capture CAP stop\nshow monitor capture CAP buffer brief",
+      "desc": "Detiene la captura EPC y muestra el resumen de paquetes capturados.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "platforms": [
+        "iosxe"
+      ],
+      "note": "Eliminar luego con no monitor capture CAP.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/epc/command/epc-cr-book/epc-cr-m1.html"
+    },
+    {
+      "cmd": "ethanalyzer local interface inband limit-captured-frames 100",
+      "desc": "Captura tráfico dirigido a la CPU del Nexus (plano de control).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "note": "Mantener limit-captured-frames para acotar la captura y el impacto en CPU. Usar mgmt en lugar de inband para la interfaz de gestión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/93x/troubleshooting/guide/b-cisco-nexus-9000-nx-os-troubleshooting-guide-93x/b-cisco-nexus-9000-nx-os-troubleshooting-guide-93x_chapter_010001.html"
+    },
+    {
+      "cmd": "test cable-diagnostics tdr interface {{interfaz}}",
+      "desc": "Ejecuta TDR sobre un puerto de cobre para detectar cortes o pares dañados.",
+      "cat": "Diagnóstico",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "La interfaz debe estar up y no se debe ejecutar en ambos extremos a la vez. Puede interrumpir el enlace en puertos de cobre durante la prueba. Ver resultado con show cable-diagnostics tdr interface {{interfaz}}.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/test_cable-diagnostics_through_xmodem.html"
+    },
+    {
+      "cmd": "show cable-diagnostics tdr interface {{interfaz}}",
+      "desc": "Resultado de la prueba TDR: largo y estado por par.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/17-16/command_reference/b_1716_9400_cr/system_management_commands.html"
+    },
+    {
+      "cmd": "terminal monitor",
+      "desc": "Envía logs y salida de debug a la sesión SSH/Telnet actual.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/slave_auto-sync_config_through_terminal-type.html"
+    },
+    {
+      "cmd": "terminal no monitor",
+      "desc": "Deja de mostrar logs y debug en la sesión actual.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "terminal monitor disable"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/slave_auto-sync_config_through_terminal-type.html"
+    },
+    {
+      "cmd": "show debugging",
+      "desc": "Lista los debugs activos. Revisar siempre antes de cerrar la sesión.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr",
+            "nxos"
+          ],
+          "cmd": "show debug"
+        }
+      ],
+      "note": "Sintaxis no confirmada en documentación oficial para nxos (show debug); verificar.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_through_show_fm_summary.html"
+    },
+    {
+      "cmd": "debug ip ospf adj",
+      "desc": "Debug de formación de adyacencias OSPF (MTU, área, autenticación).",
+      "cat": "Diagnóstico",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Todo debug puede saturar la CPU y dejar el equipo inutilizable (Cisco lo advierte). Usar con acceso por consola y detener con undebug all.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/debug/command/i1/db-i1-cr-book/db-i2.html"
+    },
+    {
+      "cmd": "debug ip bgp {{ip}} updates",
+      "desc": "Debug de updates BGP acotado a un vecino.",
+      "cat": "Diagnóstico",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Acotar siempre por vecino; con tablas grandes puede saturar la CPU. Detener con undebug all.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/debug/command/i1/db-i1-cr-book/db-i1.html"
+    },
+    {
+      "cmd": "debug ip icmp",
+      "desc": "Debug de paquetes ICMP procesados por la CPU del equipo.",
+      "cat": "Diagnóstico",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Solo ve tráfico dirigido a la CPU, pero igual consume CPU en equipos cargados. Detener con undebug all.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/debug/command/i1/db-i1-cr-book/db-i2.html"
+    },
+    {
+      "cmd": "undebug all",
+      "desc": "Detiene todos los debugs activos. Ejecutar siempre al terminar un troubleshooting.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "note": "Equivalente a no debug all en IOS/IOS-XE. Verificar con show debugging.",
+      "source": "https://www.cisco.com/c/en/us/support/docs/dial-access/integrated-services-digital-networks-isdn-channel-associated-signaling-cas/10374-debug.html"
+    },
+    {
+      "cmd": "show logging",
+      "desc": "Configuración de logging y buffer de logs del equipo.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr",
+        "asa"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show logging logfile"
+        }
+      ],
+      "note": "En NX-OS show logging muestra la configuración; los eventos están en show logging logfile.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_gsr_through_show_monitor_event_trace.html"
+    },
+    {
+      "cmd": "show logging | include {{texto}}",
+      "desc": "Filtra el buffer de logs por palabra clave (ej. LINEPROTO, BGP, OSPF).",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show logging logfile | include {{texto}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_gsr_through_show_monitor_event_trace.html"
+    },
+    {
+      "cmd": "show logging last 100",
+      "desc": "Últimas 100 líneas del log.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_l_showcmds.html"
+    },
+    {
+      "cmd": "clear logging",
+      "desc": "Vacía el buffer de logs local.",
+      "cat": "Logs",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "iosxr"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "clear logging logfile"
+        }
+      ],
+      "note": "Se pierde evidencia; respaldar antes si hay incidente abierto.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/C_commands.html"
+    },
+    {
+      "cmd": "show archive log config all",
+      "desc": "Historial de comandos de configuración ingresados con usuario y sesión (requiere archive log config).",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-7/configuration_guide/sys_mgmt/b_177_sys_mgmt_9500_cg/configuration_replace_and_configuration_rollback.html"
+    },
+    {
+      "cmd": "configure terminal\narchive\nlog config\nlogging enable\nnotify syslog contenttype plaintext\nhidekeys\nend",
+      "desc": "Habilita auditoría de cambios de configuración por usuario y envío a syslog.",
+      "cat": "Logs",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-7/configuration_guide/sys_mgmt/b_177_sys_mgmt_9500_cg/configuration_replace_and_configuration_rollback.html"
+    },
+    {
+      "cmd": "show accounting log",
+      "desc": "Registro de comandos ejecutados por usuario en NX-OS.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_a_showcmds.html"
+    },
+    {
+      "cmd": "show configuration commit list",
+      "desc": "Historial de commits en IOS-XR con ID, usuario, fecha y línea.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "show configuration commit changes {{commit_id}}",
+      "desc": "Cambios aplicados en un commit específico de IOS-XR.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "show logging onboard",
+      "desc": "Logs persistentes (OBFL) de hardware: temperatura, voltajes y errores.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "Sintaxis y opciones varían por plataforma; verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_l_showcmds.html"
+    },
+    {
+      "cmd": "configure terminal",
+      "desc": "Entra al modo de configuración global.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "En IOS-XR los cambios quedan en buffer hasta hacer commit.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/C_commands.html"
+    },
+    {
+      "cmd": "copy running-config startup-config",
+      "desc": "Guarda la configuración activa en la de arranque.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "asa"
+          ],
+          "cmd": "write memory"
+        }
+      ],
+      "note": "En IOS-XR no aplica: la configuración se persiste con commit.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/C_commands.html"
+    },
+    {
+      "cmd": "write memory",
+      "desc": "Forma abreviada clásica de guardar la configuración.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "asa"
+      ],
+      "note": "En NX-OS no existe por defecto; usar copy running-config startup-config.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/test_cable-diagnostics_through_xmodem.html"
+    },
+    {
+      "cmd": "show running-config",
+      "desc": "Configuración activa completa.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "show startup-config",
+      "desc": "Configuración guardada que se cargará en el próximo arranque.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "show running-config interface {{interfaz}}",
+      "desc": "Configuración activa de una interfaz.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr",
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "show running-config | section {{texto}}",
+      "desc": "Muestra solo el bloque de configuración que coincide (ej. router bgp, line vty).",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iosxr"
+          ],
+          "cmd": "show running-config {{texto}}"
+        }
+      ],
+      "note": "En NX-OS e IOS-XE el filtro section muestra la línea que coincide y las líneas subordinadas. En IOS-XR usar show running-config <bloque> (ej. router bgp).",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "show running-config | include {{texto}}",
+      "desc": "Filtra líneas de la configuración que contienen el texto.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr",
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "show running-config | begin {{texto}}",
+      "desc": "Muestra la configuración desde la primera coincidencia.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "show archive config differences nvram:startup-config system:running-config",
+      "desc": "Diff entre configuración guardada y activa. Valida qué cambió antes de guardar.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show running-config diff"
+        }
+      ],
+      "note": "En NX-OS ver la nota de show running-config diff.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-7/configuration_guide/sys_mgmt/b_177_sys_mgmt_9500_cg/configuration_replace_and_configuration_rollback.html"
+    },
+    {
+      "cmd": "show running-config diff",
+      "desc": "Diferencias entre running y startup en NX-OS.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "note": "Sintaxis no confirmada en documentación oficial para nxos 9.3/10.x (show running-config diff); verificar. La referencia 10.x documenta show diff running-config; esta forma figura en la referencia 7.x.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/7-x/command_references/show_commands/b_Using_Show_Commands/b_Using_Show_Commands_chapter_010001.html"
+    },
+    {
+      "cmd": "show archive",
+      "desc": "Lista los archivos de configuración archivados y el más reciente.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_through_show_fm_summary.html"
+    },
+    {
+      "cmd": "configure terminal\narchive\npath flash:archive-config\nmaximum 14\nwrite-memory\nend",
+      "desc": "Configura el archivo automático de configuraciones (base para configure replace y rollback).",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "En Cat9k y routers IOS-XE usar bootflash: o flash: según el equipo.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-7/configuration_guide/sys_mgmt/b_177_sys_mgmt_9500_cg/configuration_replace_and_configuration_rollback.html"
+    },
+    {
+      "cmd": "archive config",
+      "desc": "Guarda manualmente una copia de la configuración activa en el archive (punto de rollback).",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Requiere archive path configurado.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-7/configuration_guide/sys_mgmt/b_177_sys_mgmt_9500_cg/configuration_replace_and_configuration_rollback.html"
+    },
+    {
+      "cmd": "reload in {{minutos}}",
+      "desc": "Programa un reload como red de seguridad antes de un cambio remoto riesgoso. Si se pierde acceso, el equipo vuelve a la startup-config.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "No guardar la configuración hasta confirmar el cambio. Cancelar con reload cancel.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/R_through_setup.html"
+    },
+    {
+      "cmd": "reload cancel",
+      "desc": "Cancela un reload programado. Ejecutar apenas se valide el cambio.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/R_through_setup.html"
+    },
+    {
+      "cmd": "show reload",
+      "desc": "Muestra si hay un reload programado y a qué hora.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/show_protocols_through_showmon.html"
+    },
+    {
+      "cmd": "configure replace flash:{{archivo}} list",
+      "desc": "Reemplaza la running-config por un archivo guardado aplicando solo las diferencias, y lista los comandos aplicados.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "configure replace bootflash:{{archivo}}"
+        }
+      ],
+      "note": "Sintaxis no confirmada en documentación oficial para nxos (configure replace); verificar. Requiere archive configurado en IOS/IOS-XE.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/c9000/mgmt/config-replace/configuration-replace.html"
+    },
+    {
+      "cmd": "configure replace flash:{{archivo}} time {{minutos}}",
+      "desc": "Reemplazo de configuración con rollback automático si no se confirma dentro del plazo (minutos).",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "note": "Requiere archive configurado. Confirmar con configure confirm. En releases antiguos (IOS-XE 3.x/16.4) el valor de time se documenta en segundos; verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/syst-mgmt/b-system-management/m_cm-config-rollback-confirmed-change.html"
+    },
+    {
+      "cmd": "configure confirm",
+      "desc": "Confirma un configure replace con temporizador y cancela el rollback automático.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/syst-mgmt/b-system-management/m_cm-config-rollback-confirmed-change.html"
+    },
+    {
+      "cmd": "configure revert now",
+      "desc": "Ejecuta de inmediato el rollback pendiente de un configure replace con temporizador.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/syst-mgmt/b-system-management/m_cm-config-rollback-confirmed-change.html"
+    },
+    {
+      "cmd": "configure revert timer {{minutos}}",
+      "desc": "Ajusta el temporizador del rollback pendiente.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/ios/config/17-x/syst-mgmt/b-system-management/m_cm-config-rollback-confirmed-change.html"
+    },
+    {
+      "cmd": "commit",
+      "desc": "Aplica a la running-config los cambios en buffer de la sesión de configuración (modelo de dos fases).",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "commit confirmed minutes {{minutos}}",
+      "desc": "Aplica los cambios con rollback automático si no se ejecuta un nuevo commit dentro del plazo.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "iosxr"
+      ],
+      "note": "Sin 'minutes' el valor es en segundos (30 a 300). Confirmar con commit.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "commit comment {{texto}}",
+      "desc": "Aplica los cambios dejando un comentario en el historial de commits (ej. número de ticket).",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "commit replace",
+      "desc": "Reemplaza toda la running-config por la configuración del buffer.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "iosxr"
+      ],
+      "note": "Lo no presente en el buffer se elimina. Usar con extremo cuidado.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "show configuration",
+      "desc": "Muestra los cambios pendientes (no commiteados) de la sesión de configuración.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "show configuration failed",
+      "desc": "Muestra los comandos que fallaron en el último commit y el motivo.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "abort",
+      "desc": "Descarta los cambios pendientes y sale del modo configuración sin aplicar.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "show configuration rollback changes last 1",
+      "desc": "Previsualiza qué cambiaría al revertir el último commit.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "rollback configuration last {{num_commits}}",
+      "desc": "Revierte los últimos N commits.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "rollback configuration to {{commit_id}}",
+      "desc": "Revierte la configuración al estado de un commit ID específico.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "iosxr"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr9000/software/system_management/command/reference/b-system-managment-cr-asr9000/configuration-management-commands.html"
+    },
+    {
+      "cmd": "checkpoint {{nombre}}",
+      "desc": "Crea un checkpoint (snapshot) de la running-config en NX-OS como punto de rollback.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "nxos"
+      ],
+      "note": "El nombre debe ser único (máx. 80 caracteres, sin empezar con 'system'). Se permiten hasta 10 checkpoints de usuario. Sobreviven al reload, pero se eliminan si se ejecuta write erase y luego reload.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/104x/command-reference/config/b_n9k_config_commands_104x/m_c_cmds.html"
+    },
+    {
+      "cmd": "show checkpoint summary",
+      "desc": "Lista los checkpoints disponibles en NX-OS.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_c_showcmds.html"
+    },
+    {
+      "cmd": "rollback running-config checkpoint {{nombre}}",
+      "desc": "Restaura la running-config a un checkpoint de NX-OS sin reload.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "nxos"
+      ],
+      "note": "Modos opcionales: atomic (default), best-effort, stop-at-first-failure.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/104x/command-reference/config/b_n9k_config_commands_104x/m_r_cmds.html"
+    },
+    {
+      "cmd": "copy running-config flash:{{archivo}}",
+      "desc": "Respalda la running-config en un archivo local.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "copy running-config bootflash:{{archivo}}"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/C_commands.html"
+    },
+    {
+      "cmd": "verify /md5 flash:{{archivo}}",
+      "desc": "Calcula el MD5 de un archivo (ej. imagen) para validar integridad antes de un upgrade.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show file bootflash:{{archivo}} md5sum"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/test_cable-diagnostics_through_xmodem.html"
+    },
+    {
+      "cmd": "delete flash:{{archivo}}",
+      "desc": "Elimina un archivo del filesystem local.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "delete bootflash:{{archivo}}"
+        }
+      ],
+      "note": "Verificar con show boot que no sea la imagen de arranque.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/D_through_E.html"
+    },
+    {
+      "cmd": "write erase",
+      "desc": "Borra la startup-config. El equipo arranca sin configuración en el próximo reload.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "note": "En IOS equivale a erase startup-config.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/104x/command-reference/config/b_n9k_config_commands_104x/m_w_cmds.html"
+    },
+    {
+      "cmd": "reload",
+      "desc": "Reinicia el equipo. Corte total de servicio.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos",
+        "iosxr",
+        "asa"
+      ],
+      "note": "En IOS-XR reinicia el nodo; para el chasis completo usar reload location all (64-bit) o admin reload location all (32-bit); verificar en tu versión.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/fundamentals/command/cf_command_ref/R_through_setup.html"
+    },
+    {
+      "cmd": "show conn count",
+      "desc": "Cantidad de conexiones activas en el firewall.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/show-b-to-show-cq-commands.html"
+    },
+    {
+      "cmd": "show xlate count",
+      "desc": "Cantidad de traducciones NAT activas en el ASA.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/m_show_u-show_z.html"
+    },
+    {
+      "cmd": "show asp drop",
+      "desc": "Contadores de paquetes descartados por el Accelerated Security Path con su motivo.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/show-asp-to-show-az-commands.html"
+    },
+    {
+      "cmd": "packet-tracer input {{interfaz}} tcp {{ip_origen}} 12345 {{ip}} {{puerto}} detailed",
+      "desc": "Simula un paquete y muestra cada fase (ruta, ACL, NAT, inspección) y el resultado allow/drop.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "note": "{{interfaz}} es el nameif (ej. inside).",
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/I-R/asa-command-ref-I-R/pa-pn-commands.html"
+    },
+    {
+      "cmd": "show cpu usage",
+      "desc": "Uso de CPU del ASA (5 s, 1 min, 5 min).",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/show-b-to-show-cq-commands.html"
+    },
+    {
+      "cmd": "show memory",
+      "desc": "Memoria libre y usada del ASA.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/m_show_is-show_m.html"
+    },
+    {
+      "cmd": "show nameif",
+      "desc": "Interfaces con nombre lógico (nameif) y nivel de seguridad.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/m_show_n-show_o.html"
+    },
+    {
+      "cmd": "capture CAP interface {{interfaz}} match ip host {{ip_origen}} host {{ip}}",
+      "desc": "Captura de paquetes en el ASA filtrada por origen y destino.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "platforms": [
+        "asa"
+      ],
+      "note": "Ver con show capture CAP. Eliminar con no capture CAP.",
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/A-H/asa-command-ref-A-H/ca-cld-commands.html"
+    },
+    {
+      "cmd": "show vpn-sessiondb summary",
+      "desc": "Resumen de sesiones VPN activas (site-to-site y acceso remoto).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/m_show_u-show_z.html"
+    },
+    {
+      "cmd": "show service-policy",
+      "desc": "Contadores de la política de inspección (MPF) aplicada.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "asa"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/security/asa/asa-cli-reference/S/asa-command-ref-S/show-s-commands.html"
+    },
+    {
+      "cmd": "show interfaces counters",
+      "desc": "Muestra contadores de paquetes unicast, multicast y broadcast de entrada y salida por puerto. Útil para detectar tormentas o puertos con tráfico anómalo.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface counters"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}} counters",
+      "desc": "Muestra contadores de tráfico de una interfaz específica.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show interfaces switchport",
+      "desc": "Muestra modo administrativo y operativo (access/trunk), VLAN de acceso, voz y nativa de todos los puertos de capa 2.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show interface switchport"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show interface status",
+      "desc": "Lista puertos con estado, VLAN, dúplex, velocidad y tipo en NX-OS. Equivalente a show interfaces status de IOS.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show interface status err-disabled",
+      "desc": "Lista puertos en estado err-disabled en NX-OS y la causa.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show interface trunk",
+      "desc": "Muestra troncales, VLAN nativa, VLAN permitidas y en forwarding en NX-OS.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show interface counters errors",
+      "desc": "Muestra errores por puerto (FCS, align, runts, giants) en NX-OS.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_i_showcmds.html"
+    },
+    {
+      "cmd": "show interface transceiver details",
+      "desc": "Muestra datos del transceptor y lecturas DOM (temperatura, voltaje, potencia Tx/Rx) en NX-OS.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Fuente comunitaria: la referencia oficial lista show interface transceiver; la opción details es de uso habitual en N9K. Verificar en tu versión.",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://community.cisco.com/t5/switching/how-to-display-transceiver-cisco-pid-in-nexus-platform/m-p/2655489/highlight/true"
+    },
+    {
+      "cmd": "show errdisable detect",
+      "desc": "Muestra qué causas de err-disable están habilitadas para detección y su modo.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "clear errdisable interface {{interfaz}} vlan",
+      "desc": "Rehabilita un puerto o VLANs puestas en err-disable sin hacer shutdown/no shutdown.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Se puede agregar la lista de VLAN al final. Corregir la causa antes de rehabilitar.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_ieee_802_1x_port_based_authentication.html"
+    },
+    {
+      "cmd": "configure terminal\nerrdisable recovery cause {{causa}}\nerrdisable recovery interval {{segundos}}\nend",
+      "desc": "Activa la recuperación automática de puertos err-disabled para una causa (bpduguard, psecure-violation, udld, link-flap, inline-power, arp-inspection, all) y define el intervalo.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Intervalo de 30 a 86400 s. Verificar con show errdisable recovery.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_dynamic_arp_inspection.html"
+    },
+    {
+      "cmd": "show controllers ethernet-controller {{interfaz}} phy",
+      "desc": "Muestra registros del PHY de la interfaz. Útil para problemas de negociación o enlace físico.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_interface_characteristics.html"
+    },
+    {
+      "cmd": "clear counters",
+      "desc": "Reinicia los contadores de todas las interfaces para medir errores desde cero.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "No reinicia contadores SNMP. Pide confirmación.",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_interface_characteristics.html"
+    },
+    {
+      "cmd": "show vlan summary",
+      "desc": "Muestra cantidad de VLAN existentes, normales y extendidas.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vlans.html"
+    },
+    {
+      "cmd": "show vlan name {{nombre}}",
+      "desc": "Muestra una VLAN por su nombre y los puertos asignados.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vlans.html"
+    },
+    {
+      "cmd": "show vtp counters",
+      "desc": "Muestra contadores de mensajes VTP enviados y recibidos y errores de revisión.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vtp.html"
+    },
+    {
+      "cmd": "show vtp devices",
+      "desc": "Lista los dispositivos VTPv3 del dominio. Con conflict muestra conflictos de primary server.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Solo VTP versión 3.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vtp.html"
+    },
+    {
+      "cmd": "configure terminal\nvtp mode transparent\nend",
+      "desc": "Pasa el switch a VTP transparente para que no aplique cambios de VLAN recibidos del dominio. Práctica habitual para evitar borrados masivos de VLAN.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vtp.html"
+    },
+    {
+      "cmd": "configure terminal\nvlan {{vlan}}\nname {{nombre}}\nend",
+      "desc": "Crea una VLAN y le asigna nombre.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "En VTP client no se pueden crear VLAN.",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vlans.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nswitchport mode access\nswitchport access vlan {{vlan}}\nend",
+      "desc": "Configura un puerto de acceso en la VLAN indicada.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vlans.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nswitchport mode access\nswitchport access vlan {{vlan}}\nswitchport voice vlan {{vlan_voz}}\nend",
+      "desc": "Configura puerto de acceso con VLAN de datos y VLAN de voz para teléfono IP.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Verificar con show interfaces {{interfaz}} switchport.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_voice_vlans.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nswitchport mode trunk\nswitchport trunk native vlan {{vlan_nativa}}\nswitchport trunk allowed vlan {{lista_vlan}}\nend",
+      "desc": "Configura un troncal 802.1Q con VLAN nativa y lista de VLAN permitidas.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "En 3560/3750 y algunos IOS-XE con ISL se requiere antes switchport trunk encapsulation dot1q. allowed vlan sin add reemplaza la lista completa.",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vlan_trunks.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nswitchport trunk allowed vlan add {{vlan}}\nend",
+      "desc": "Agrega una VLAN a la lista permitida de un troncal sin borrar las existentes.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Omitir add reemplaza toda la lista y puede cortar servicio.",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vlan_trunks.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nswitchport trunk allowed vlan remove {{vlan}}\nend",
+      "desc": "Quita una VLAN de la lista permitida de un troncal.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vlan_trunks.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nswitchport nonegotiate\nend",
+      "desc": "Desactiva DTP en el puerto. Recomendado en troncales y accesos estáticos.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/vlan/b_1712_vlan_9300_cg/configuring_vlan_trunks.html"
+    },
+    {
+      "cmd": "show spanning-tree interface {{interfaz}}",
+      "desc": "Muestra rol, estado, costo y prioridad STP de la interfaz por VLAN o instancia.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show spanning-tree mst",
+      "desc": "Muestra el estado de las instancias MST, root y puertos.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_optional_spanning_tree_features.html"
+    },
+    {
+      "cmd": "show spanning-tree mst configuration",
+      "desc": "Muestra nombre de región, revisión y mapeo VLAN a instancia MST. Debe coincidir en toda la región.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show spanning-tree active",
+      "desc": "Muestra STP solo de interfaces activas. Reduce el ruido en switches de acceso.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_optional_spanning_tree_features.html"
+    },
+    {
+      "cmd": "clear spanning-tree detected-protocols",
+      "desc": "Fuerza la renegociación del modo STP (RSTP/MST) en los puertos tras retirar un vecino legacy.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nspanning-tree portfast\nspanning-tree bpduguard enable\nend",
+      "desc": "Configura un puerto de borde (PC, teléfono, impresora) con PortFast y BPDU Guard.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Solo en puertos hacia hosts. Si llega una BPDU el puerto pasa a err-disabled.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_optional_spanning_tree_features.html"
+    },
+    {
+      "cmd": "configure terminal\nspanning-tree portfast default\nspanning-tree portfast bpduguard default\nend",
+      "desc": "Activa PortFast y BPDU Guard por defecto en todos los puertos access.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "En releases IOS-XE recientes la CLI puede mostrar portfast edge. Verificar en tu versión.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_optional_spanning_tree_features.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nspanning-tree guard root\nend",
+      "desc": "Activa Root Guard para impedir que un switch aguas abajo se convierta en root.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_optional_spanning_tree_features.html"
+    },
+    {
+      "cmd": "configure terminal\nspanning-tree loopguard default\nend",
+      "desc": "Activa Loop Guard global para evitar bucles por pérdida unidireccional de BPDU.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_optional_spanning_tree_features.html"
+    },
+    {
+      "cmd": "show etherchannel load-balance",
+      "desc": "Muestra el método de balanceo de carga de EtherChannel.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_etherchannels.html"
+    },
+    {
+      "cmd": "show lacp internal",
+      "desc": "Muestra estado LACP local por puerto (flags, prioridad, key, estado).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show lacp counters",
+      "desc": "Muestra contadores de LACPDU enviadas y recibidas por puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show pagp neighbor",
+      "desc": "Muestra vecinos PAgP por puerto del channel.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/layer_2_3_commands.html"
+    },
+    {
+      "cmd": "show port-channel summary",
+      "desc": "Muestra port-channels de NX-OS, protocolo y estado de miembros. Equivalente a show etherchannel summary.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_p_showcmds.html"
+    },
+    {
+      "cmd": "show port-channel load-balance",
+      "desc": "Muestra el algoritmo de balanceo de port-channel en NX-OS.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/dcn/nx-os/nexus9000/102x/command-reference/show/b_n9k_show_commands_1021/m_p_showcmds.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nchannel-group {{num_grupo}} mode active\nend",
+      "desc": "Agrega la interfaz a un EtherChannel LACP en modo active.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Configurar igual velocidad, VLAN y modo en todos los miembros antes de agrupar.",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_etherchannels.html"
+    },
+    {
+      "cmd": "show switch detail",
+      "desc": "Muestra detalle del stack: roles, prioridad, MAC, versión y estado de puertos de stack.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/stck_mgr_ha/b_1712_stck_mgr_ha_9300_cg/managing_switch_stacks.html"
+    },
+    {
+      "cmd": "show switch neighbors",
+      "desc": "Muestra los vecinos de cada miembro del stack.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/stck_mgr_ha/b_1712_stck_mgr_ha_9300_cg/managing_switch_stacks.html"
+    },
+    {
+      "cmd": "show switch stack-ports detail",
+      "desc": "Muestra estado de enlaces de stack, errores CRC y tasas. Útil para cables de stack defectuosos.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/stck_mgr_ha/b_1712_stck_mgr_ha_9300_cg/managing_switch_stacks.html"
+    },
+    {
+      "cmd": "switch {{num_miembro}} priority {{prioridad}}",
+      "desc": "Define la prioridad de elección del miembro del stack (1 a 15). El mayor valor gana la elección de active.",
+      "cat": "Alta disponibilidad",
+      "risk": "change",
+      "note": "En 2960-X/3750 se ejecuta en modo configuración global. Se aplica en la próxima elección; no provoca switchover inmediato.",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/stck_mgr_ha/b_1712_stck_mgr_ha_9300_cg/managing_switch_stacks.html"
+    },
+    {
+      "cmd": "switch {{num_miembro}} renumber {{nuevo_num}}",
+      "desc": "Cambia el número de miembro del stack.",
+      "cat": "Alta disponibilidad",
+      "risk": "change",
+      "note": "En 2960-X/3750 se ejecuta en modo configuración global. Requiere recargar el miembro y cambia el nombre de sus interfaces.",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/stck_mgr_ha/b_1712_stck_mgr_ha_9300_cg/managing_switch_stacks.html"
+    },
+    {
+      "cmd": "reload slot {{num_miembro}}",
+      "desc": "Recarga solo un miembro del stack.",
+      "cat": "Alta disponibilidad",
+      "risk": "disruptive",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/stck_mgr_ha/b_1712_stck_mgr_ha_9300_cg/managing_switch_stacks.html"
+    },
+    {
+      "cmd": "show stackwise-virtual",
+      "desc": "Muestra dominio StackWise Virtual, miembros y puertos SVL.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Catalyst 9400/9500/9600 y 9300X/9200 según release.",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-9/configuration_guide/ha/b_179_ha_9500_cg/configuring_cisco_stackwise_virtual.html"
+    },
+    {
+      "cmd": "show stackwise-virtual link",
+      "desc": "Muestra estado de los enlaces SVL por miembro.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-9/configuration_guide/ha/b_179_ha_9500_cg/configuring_cisco_stackwise_virtual.html"
+    },
+    {
+      "cmd": "show stackwise-virtual dual-active-detection",
+      "desc": "Muestra los puertos de detección dual-active (DAD).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-9/configuration_guide/ha/b_179_ha_9500_cg/configuring_cisco_stackwise_virtual.html"
+    },
+    {
+      "cmd": "show stackwise-virtual neighbors",
+      "desc": "Muestra los vecinos locales y remotos de los enlaces SVL.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-9/configuration_guide/ha/b_179_ha_9500_cg/configuring_cisco_stackwise_virtual.html"
+    },
+    {
+      "cmd": "show power inline {{interfaz}} detail",
+      "desc": "Muestra detalle PoE del puerto: clase, potencia asignada y consumida, detección y errores.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_poe.html"
+    },
+    {
+      "cmd": "show power inline police",
+      "desc": "Muestra el power policing por puerto (potencia máxima vs consumo real).",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_poe.html"
+    },
+    {
+      "cmd": "show power inline priority",
+      "desc": "Muestra la prioridad PoE administrativa por puerto.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_poe.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\npower inline never\npower inline auto\nend",
+      "desc": "Corta y restablece la energía PoE del puerto para reiniciar un AP, cámara o teléfono.",
+      "cat": "Hardware",
+      "risk": "disruptive",
+      "note": "El dispositivo alimentado se reinicia.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_poe.html"
+    },
+    {
+      "cmd": "show environment fan",
+      "desc": "Muestra estado de ventiladores.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show env power all",
+      "desc": "Muestra estado de fuentes de poder de todos los miembros en Catalyst con IOS clásico.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "ios"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960x/software/15_2_6_e/command_reference/b_1526_2960x_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show environment stack",
+      "desc": "Muestra estado de ambiente de los miembros del stack.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/interface_and_hardware_commands.html"
+    },
+    {
+      "cmd": "show monitor",
+      "desc": "Muestra sesiones SPAN, RSPAN y ERSPAN configuradas: origen, destino y dirección.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "nxos"
+          ],
+          "cmd": "show monitor session all"
+        }
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/nmgmt/b_1712_nmgmt_9300_cg/configuring_span_and_rspan.html"
+    },
+    {
+      "cmd": "configure terminal\nmonitor session {{sesion}} source interface {{interfaz}} both\nmonitor session {{sesion}} destination interface {{interfaz_destino}}\nend",
+      "desc": "Crea una sesión SPAN local que copia el tráfico de una interfaz hacia un puerto de captura.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "El puerto destino deja de operar como puerto normal mientras dure la sesión.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/nmgmt/b_1712_nmgmt_9300_cg/configuring_span_and_rspan.html"
+    },
+    {
+      "cmd": "configure terminal\nno monitor session {{sesion}}\nend",
+      "desc": "Elimina una sesión SPAN.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/nmgmt/b_1712_nmgmt_9300_cg/configuring_span_and_rspan.html"
+    },
+    {
+      "cmd": "show udld",
+      "desc": "Muestra estado UDLD global y por puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_unidirectional_link_detection.html"
+    },
+    {
+      "cmd": "show udld {{interfaz}}",
+      "desc": "Muestra estado UDLD y vecino de una interfaz.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_unidirectional_link_detection.html"
+    },
+    {
+      "cmd": "udld reset",
+      "desc": "Rehabilita los puertos deshabilitados por UDLD.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_unidirectional_link_detection.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nudld port aggressive\nend",
+      "desc": "Activa UDLD agresivo en un enlace de fibra.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/lyr2/b_1712_lyr2_9300_cg/configuring_unidirectional_link_detection.html"
+    },
+    {
+      "cmd": "show lldp traffic",
+      "desc": "Muestra contadores LLDP enviados, recibidos, descartados y TLV desconocidos.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_lldp__lldp_med__and_wired_location_service.html"
+    },
+    {
+      "cmd": "show lldp entry {{nombre}}",
+      "desc": "Muestra el detalle LLDP de un vecino por nombre.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_lldp__lldp_med__and_wired_location_service.html"
+    },
+    {
+      "cmd": "configure terminal\nlldp run\nend",
+      "desc": "Habilita LLDP global. En Catalyst viene deshabilitado por defecto.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_lldp__lldp_med__and_wired_location_service.html"
+    },
+    {
+      "cmd": "show cdp traffic",
+      "desc": "Muestra contadores CDP y errores de checksum.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/nmgmt/b_1712_nmgmt_9300_cg/configuring_the_cisco_discovery_protocol.html"
+    },
+    {
+      "cmd": "show cdp entry {{nombre}}",
+      "desc": "Muestra detalle CDP de un vecino (IP, plataforma, versión).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/nmgmt/b_1712_nmgmt_9300_cg/configuring_the_cisco_discovery_protocol.html"
+    },
+    {
+      "cmd": "clear cdp table",
+      "desc": "Borra la tabla de vecinos CDP para que se vuelva a aprender.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/nmgmt/b_1712_nmgmt_9300_cg/configuring_the_cisco_discovery_protocol.html"
+    },
+    {
+      "cmd": "clear lldp table",
+      "desc": "Borra la tabla de vecinos LLDP.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/int_hw/b_1712_int_and_hw_9300_cg/configuring_lldp__lldp_med__and_wired_location_service.html"
+    },
+    {
+      "cmd": "show mac address-table dynamic",
+      "desc": "Muestra solo MAC aprendidas dinámicamente.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/administering_the_device.html"
+    },
+    {
+      "cmd": "show mac address-table vlan {{vlan}}",
+      "desc": "Muestra las MAC aprendidas en una VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/administering_the_device.html"
+    },
+    {
+      "cmd": "show mac address-table aging-time",
+      "desc": "Muestra el tiempo de envejecimiento de la tabla MAC.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/administering_the_device.html"
+    },
+    {
+      "cmd": "show mac address-table static",
+      "desc": "Muestra entradas MAC estáticas.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/administering_the_device.html"
+    },
+    {
+      "cmd": "clear mac address-table dynamic interface {{interfaz}}",
+      "desc": "Borra las MAC dinámicas aprendidas en una interfaz.",
+      "cat": "Capa 2",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/administering_the_device.html"
+    },
+    {
+      "cmd": "clear mac address-table dynamic vlan {{vlan}}",
+      "desc": "Borra las MAC dinámicas de una VLAN.",
+      "cat": "Capa 2",
+      "risk": "disruptive",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/administering_the_device.html"
+    },
+    {
+      "cmd": "show port-security address",
+      "desc": "Lista MAC seguras por puerto (estáticas, sticky, dinámicas) y su aging.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/port_security.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nswitchport mode access\nswitchport port-security maximum {{max_mac}}\nswitchport port-security violation restrict\nswitchport port-security mac-address sticky\nswitchport port-security\nend",
+      "desc": "Activa port-security con límite de MAC, aprendizaje sticky y acción restrict ante violación.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Con violation shutdown (default) el puerto pasa a err-disabled.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/port_security.html"
+    },
+    {
+      "cmd": "clear port-security dynamic interface {{interfaz}}",
+      "desc": "Borra las MAC seguras dinámicas de un puerto para permitir un nuevo equipo.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Opciones all, configured, dynamic y sticky según release. Sticky también requiere guardar config.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2955/software/release/12_1_12c_ea1/command/reference/cr2955.pdf"
+    },
+    {
+      "cmd": "show ip dhcp snooping",
+      "desc": "Muestra VLAN con DHCP snooping, puertos trusted, rate limit y option 82.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/ip/dynamic-host-configuration-protocol-dhcp-dhcpv6/217055-operate-and-troubleshoot-dhcp-snooping.html"
+    },
+    {
+      "cmd": "show ip dhcp snooping statistics",
+      "desc": "Muestra paquetes DHCP procesados y descartados por snooping.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/ip/dynamic-host-configuration-protocol-dhcp-dhcpv6/217055-operate-and-troubleshoot-dhcp-snooping.html"
+    },
+    {
+      "cmd": "show ip dhcp snooping database",
+      "desc": "Muestra el estado del agente de base de datos de bindings.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/ip/dynamic-host-configuration-protocol-dhcp-dhcpv6/217055-operate-and-troubleshoot-dhcp-snooping.html"
+    },
+    {
+      "cmd": "configure terminal\nip dhcp snooping vlan {{vlan}}\nno ip dhcp snooping information option\nip dhcp snooping\ninterface {{interfaz_uplink}}\nip dhcp snooping trust\nend",
+      "desc": "Habilita DHCP snooping en una VLAN y marca el uplink hacia el servidor DHCP como trusted.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Sin trust en el uplink los clientes dejan de recibir IP. Option 82 desactivada evita rechazos en servidores que no la soportan.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/ip/dynamic-host-configuration-protocol-dhcp-dhcpv6/217055-operate-and-troubleshoot-dhcp-snooping.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nip dhcp snooping limit rate {{pps}}\nend",
+      "desc": "Limita los paquetes DHCP por segundo en un puerto untrusted.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Exceder el límite deja el puerto err-disabled (dhcp-rate-limit).",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/ip/dynamic-host-configuration-protocol-dhcp-dhcpv6/217055-operate-and-troubleshoot-dhcp-snooping.html"
+    },
+    {
+      "cmd": "show ip arp inspection interfaces",
+      "desc": "Muestra estado trust y rate limit de DAI por interfaz.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_dynamic_arp_inspection.html"
+    },
+    {
+      "cmd": "show ip arp inspection statistics",
+      "desc": "Muestra ARP reenviados, descartados y fallas de validación DAI por VLAN.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_dynamic_arp_inspection.html"
+    },
+    {
+      "cmd": "show ip arp inspection log",
+      "desc": "Muestra el buffer de log de DAI con paquetes descartados.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_dynamic_arp_inspection.html"
+    },
+    {
+      "cmd": "clear ip arp inspection statistics",
+      "desc": "Reinicia los contadores de DAI.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_dynamic_arp_inspection.html"
+    },
+    {
+      "cmd": "configure terminal\nip arp inspection vlan {{vlan}}\ninterface {{interfaz_uplink}}\nip arp inspection trust\nend",
+      "desc": "Habilita Dynamic ARP Inspection en una VLAN y marca el uplink como trusted.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Requiere DHCP snooping o ARP ACL para hosts estáticos. Sin trust en uplinks se corta tráfico.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_dynamic_arp_inspection.html"
+    },
+    {
+      "cmd": "show ip verify source",
+      "desc": "Muestra el filtrado de IP Source Guard por interfaz.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_ip_source_guard.html"
+    },
+    {
+      "cmd": "show ip source binding",
+      "desc": "Muestra bindings IP-MAC-VLAN-puerto estáticos y aprendidos por DHCP snooping.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/ip/dynamic-host-configuration-protocol-dhcp-dhcpv6/217055-operate-and-troubleshoot-dhcp-snooping.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nip verify source\nend",
+      "desc": "Activa IP Source Guard en el puerto. Filtra tráfico IP que no coincide con el binding.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Requiere DHCP snooping activo en la VLAN o bindings estáticos.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_ip_source_guard.html"
+    },
+    {
+      "cmd": "show device-tracking database",
+      "desc": "Muestra la base SISF de device-tracking (IP, MAC, puerto, estado).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_ip_source_guard.html"
+    },
+    {
+      "cmd": "show storm-control",
+      "desc": "Muestra niveles de storm-control y estado del filtro por interfaz.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_port_based_traffic_control.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nstorm-control broadcast level {{nivel}}\nstorm-control action trap\nend",
+      "desc": "Limita el broadcast del puerto a un porcentaje del ancho de banda y genera trap al excederlo.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Con action shutdown el puerto pasa a err-disabled.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_port_based_traffic_control.html"
+    },
+    {
+      "cmd": "show access-session",
+      "desc": "Lista sesiones de autenticación (802.1X, MAB, webauth) por puerto con MAC, método y estado.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Fuente comunitaria: comando de IBNS 2.0 (new-style). En modo legacy usar show authentication sessions.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://community.cisco.com/t5/network-access-control/ios-xe-03-10-02-e-has-no-show-authentication-command/td-p/4096884"
+    },
+    {
+      "cmd": "show access-session interface {{interfaz}} details",
+      "desc": "Muestra detalle de la sesión en un puerto: usuario, VLAN, ACL, método y política aplicada.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/nmgmt/b_1712_nmgmt_9300_cg/configuring_identity_control_policies.html"
+    },
+    {
+      "cmd": "show policy-map type control subscriber all",
+      "desc": "Muestra las políticas de control IBNS 2.0 configuradas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/nmgmt/b_1712_nmgmt_9300_cg/configuring_identity_control_policies.html"
+    },
+    {
+      "cmd": "dot1x test eapol-capable interface {{interfaz}}",
+      "desc": "Verifica si el equipo conectado al puerto responde EAPOL (soporta 802.1X).",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sec/b_1712_sec_9300_cg/configuring_ieee_802_1x_port_based_authentication.html"
+    },
+    {
+      "cmd": "test aaa group {{grupo}} {{usuario}} {{clave}} new-code",
+      "desc": "Prueba autenticación contra el grupo RADIUS/TACACS desde el switch.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "La clave queda en el historial de la sesión. Usar cuenta de prueba.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/lan-switching/8021x/220919-troubleshoot-dot1x-on-catalyst-9000-seri.html"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\nswitchport mode access\nauthentication port-control auto\ndot1x pae authenticator\nmab\nend",
+      "desc": "Habilita 802.1X con fallback MAB en un puerto (modo legacy).",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Requiere aaa new-model, aaa authentication dot1x y dot1x system-auth-control. En IBNS 2.0 usar access-session port-control auto.",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/lan-switching/8021x/220919-troubleshoot-dot1x-on-catalyst-9000-seri.html"
+    },
+    {
+      "cmd": "show ip igmp snooping",
+      "desc": "Muestra configuración global y por VLAN de IGMP snooping.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-1/command_reference/b_171_9300_cr/ip_multicast_routing.html"
+    },
+    {
+      "cmd": "show ip igmp snooping groups",
+      "desc": "Muestra grupos multicast aprendidos por VLAN y puertos receptores.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe",
+        "nxos"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-1/command_reference/b_171_9300_cr/ip_multicast_routing.html"
+    },
+    {
+      "cmd": "show ip igmp snooping mrouter",
+      "desc": "Muestra puertos hacia routers multicast por VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-1/command_reference/b_171_9300_cr/ip_multicast_routing.html"
+    },
+    {
+      "cmd": "show ip igmp snooping querier",
+      "desc": "Muestra el querier IGMP detectado por VLAN. Sin querier los grupos expiran.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-1/command_reference/b_171_9300_cr/ip_multicast_routing.html"
+    },
+    {
+      "cmd": "show sdm prefer",
+      "desc": "Muestra la plantilla SDM en uso y la que aplicará tras recargar.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "ios",
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-12/configuration_guide/sys_mgmt/b_1712_sys_mgmt_9300_cg/configuring_sdm_templates.html"
+    },
+    {
+      "cmd": "show license usage",
+      "desc": "Muestra uso de licencias por feature (Smart Licensing Using Policy).",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "IOS-XE 17.3.2 o superior.",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/sl_using_policy/b-sl-using-policy/cmd_ref.html"
+    },
+    {
+      "cmd": "show license status",
+      "desc": "Muestra estado de Smart Licensing, transporte y último reporte.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/routers/sl_using_policy/b-sl-using-policy/cmd_ref.html"
+    },
+    {
+      "cmd": "show install inactive",
+      "desc": "Lista paquetes instalados no activos que ocupan flash.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Solo en install mode.",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/216231-upgrade-guide-for-cisco-catalyst-9000-sw.html"
+    },
+    {
+      "cmd": "show install uncommitted",
+      "desc": "Muestra paquetes activados sin commit. Si no se hace commit, el rollback automático revierte.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/216231-upgrade-guide-for-cisco-catalyst-9000-sw.html"
+    },
+    {
+      "cmd": "install remove inactive",
+      "desc": "Elimina paquetes inactivos de flash para liberar espacio antes de un upgrade.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Pide confirmación.",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/216231-upgrade-guide-for-cisco-catalyst-9000-sw.html"
+    },
+    {
+      "cmd": "install add file flash:{{archivo}} activate commit",
+      "desc": "Instala, activa y confirma una nueva imagen en install mode.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Recarga el switch o stack completo.",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/216231-upgrade-guide-for-cisco-catalyst-9000-sw.html"
+    },
+    {
+      "cmd": "show platform hardware fed switch active qos queue config interface {{interfaz}}",
+      "desc": "Muestra la configuración de colas y buffers en hardware de la interfaz en Catalyst 9000.",
+      "cat": "QoS",
+      "risk": "read",
+      "platforms": [
+        "iosxe"
+      ],
+      "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/17-16/command_reference/b_1716_9300_cr/qos_commands.html"
+    }
+  ]
+}

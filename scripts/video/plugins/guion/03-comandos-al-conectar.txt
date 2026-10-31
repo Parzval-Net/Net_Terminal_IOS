@@ -1,0 +1,7 @@
+# Comandos al conectar
+
+Cada sesión remota puede tener comandos al conectar. Edita la sesión, abre Opciones de terminal y escribe un comando por línea.
+
+Al conectar, la app espera el prompt, con hasta dos minutos para que escribas la contraseña, y envía cada línea esperando el prompt entre una y otra.
+
+Tampoco pasan por el motor de riesgo, así que úsalos solo para preparar la sesión. Y por seguridad, nunca se importan desde otros clientes ni desde archivos JSON.

@@ -1,0 +1,20 @@
+# Sugerencias de comandos
+Ahora, el autocompletado. Se llama Sugerencias de comandos y viene encendido.
+Funciona en sesiones SSH, Telnet, Serial y TCP, cuando la plataforma está detectada o fijada en el catálogo.
+Si no la conoce, la primera vez que escribes en esa pestaña aparece un aviso que te dice cómo detectarla.
+Mientras escribes una consulta, la app muestra en gris el resto del comando.
+Con flecha derecha aceptas todo el texto gris.
+Con Control y flecha derecha aceptas solo la siguiente palabra. En macOS es Option y flecha derecha.
+Control punto abre una lista de hasta ocho comandos: flechas para elegir, Enter para escribir y Escape para cerrar.
+En Linux esa tecla puede abrir el selector de emojis: cámbiala por Alt barra en Ajustes, Terminal.
+Tab no cambia: siempre va al equipo, así conservas el autocompletado de la CLI.
+Puedes escribir abreviado, como en el equipo: la abreviatura de show ip interface brief se reconoce igual.
+Esto funciona con Cisco, Huawei, Juniper y Fortinet.
+En modo configuración no hay texto gris, porque ahí una abreviatura puede ser otro comando.
+Por ejemplo, en una interfaz Cisco, las letras ese y hache ya no son show, sino shutdown.
+Para consultar desde configuración, escribe do antes del comando en Cisco, o run en Junos, y las sugerencias vuelven.
+El texto gris solo ofrece consultas. Si lo escrito ya puede ser un comando con riesgo, como reload, no aparece.
+Los comandos que cambian configuración o pueden cortar servicio solo están en la lista, con un distintivo rojo, y piden confirmación antes de escribirse.
+Ninguna sugerencia envía Enter: tú decides cuándo ejecutar.
+Lo que aceptas o ejecutas sube en la lista, igual que tus favoritos. Ese historial es local, solo guarda la plantilla del catálogo y se borra en Ajustes, Terminal.
+Las sugerencias no funcionan en la terminal local.

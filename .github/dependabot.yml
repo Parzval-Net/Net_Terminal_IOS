@@ -1,0 +1,36 @@
+# Actualizaciones semanales agrupadas. Cada PR debe revisarse antes de hacer merge:
+# en las acciones de GitHub Dependabot actualiza el SHA fijado y el comentario de versión.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      npm-menores:
+        update-types: ["minor", "patch"]
+      tauri-npm:
+        patterns: ["@tauri-apps/*"]
+
+  - package-ecosystem: cargo
+    directory: /src-tauri
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      cargo-menores:
+        update-types: ["minor", "patch"]
+      tauri-cargo:
+        patterns: ["tauri", "tauri-*"]

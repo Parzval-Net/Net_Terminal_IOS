@@ -1,0 +1,13 @@
+# Sesiones, carpetas e importación
+Las sesiones se guardan en carpetas y subcarpetas, sin límite.
+Para crear una sesión, usa el botón más del panel o ⌘N.
+Elige el tipo, el nombre y la carpeta; con una barra creas subcarpetas, por ejemplo Sucursales/Centro.
+Completa host, puerto y usuario, y con Guardar la sesión aparece en el panel.
+Doble clic en una sesión la conecta, y el punto verde indica que tiene una pestaña abierta.
+Con clic derecho en una sesión puedes conectar, editar, duplicar o eliminar.
+En una carpeta, el menú ofrece conectar todas, nueva sesión aquí y renombrar.
+Puedes arrastrar sesiones entre carpetas y filtrar la lista por nombre, IP o carpeta.
+Para traer sesiones de otro cliente, abre Ajustes, Importar y exportar, y elige Desde archivo.
+Acepta ssh_config, PuTTY, SecureCRT, MobaXterm y CSV, con vista previa antes de importar.
+Nunca importa contraseñas, comandos al conectar, proxies ni túneles.
+Exportar e Importar copian tus sesiones como JSON por el portapapeles.

@@ -1,0 +1,1727 @@
+{
+  "vendor": "windows",
+  "name": "Windows",
+  "detectCommand": "(Get-CimInstance Win32_OperatingSystem).Caption",
+  "platforms": [
+    {
+      "id": "win10",
+      "label": "Windows 10",
+      "detect": "Windows 10",
+      "note": "Fin de soporte general en octubre de 2025 (salvo ESU). Pktmon desde 1809; --capture y etl2pcap desde 2004. Sin cmdlets DoH."
+    },
+    {
+      "id": "win11",
+      "label": "Windows 11",
+      "detect": "Windows 11",
+      "note": "WMIC deshabilitado por defecto desde 23H2/24H2 y removido de las versiones soportadas (ya no es característica a petición); usar Get-CimInstance. Incluye cmdlets DoH (Get-DnsClientDohServerAddress)."
+    },
+    {
+      "id": "winserver",
+      "label": "Windows Server 2016-2025",
+      "detect": "Windows Server",
+      "note": "El shell por defecto de OpenSSH es CMD; los cmdlets requieren powershell -Command. Pktmon desde Server 2019. DoH desde Server 2022. Desde 2022 LBFO no se soporta bajo vSwitch Hyper-V (usar SET)."
+    }
+  ],
+  "commands": [
+    {
+      "cmd": "(Get-CimInstance Win32_OperatingSystem).Caption",
+      "desc": "Muestra el nombre comercial de la edición de Windows instalada. Es el comando que usa NetTerminal para detectar la plataforma.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "PowerShell. En una sesión SSH con shell CMD anteponer powershell -Command.",
+      "source": "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-operatingsystem"
+    },
+    {
+      "cmd": "Get-CimInstance Win32_OperatingSystem | Select-Object Caption,Version,BuildNumber,LastBootUpTime",
+      "desc": "Muestra edición, versión, build y último arranque del sistema. Útil para validar parches y tiempo en servicio.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/cimcmdlets/get-ciminstance"
+    },
+    {
+      "cmd": "systeminfo",
+      "desc": "Resume sistema operativo, build, dominio, hotfixes instalados y adaptadores de red con sus IP. Entrega una foto rápida del equipo.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/systeminfo"
+    },
+    {
+      "cmd": "hostname",
+      "desc": "Muestra el nombre de host del equipo.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/hostname"
+    },
+    {
+      "cmd": "Get-CimInstance Win32_ComputerSystem | Select-Object Name,Domain,PartOfDomain,Workgroup",
+      "desc": "Indica si el equipo pertenece a un dominio de Active Directory o a un grupo de trabajo, y cuál.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-computersystem"
+    },
+    {
+      "cmd": "whoami /all",
+      "desc": "Muestra el usuario actual, sus grupos y privilegios. Sirve para confirmar si la sesión tiene derechos de administrador.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/whoami"
+    },
+    {
+      "cmd": "Get-HotFix | Sort-Object InstalledOn -Descending | Select-Object -First 15",
+      "desc": "Lista las actualizaciones instaladas más recientes. Ayuda a correlacionar problemas de red con un parche reciente.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-hotfix"
+    },
+    {
+      "cmd": "$PSVersionTable",
+      "desc": "Muestra la versión de PowerShell en uso. Define qué parámetros de cmdlets están disponibles.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "PowerShell. Windows trae Windows PowerShell 5.1; PowerShell 7 se instala aparte.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_automatic_variables"
+    },
+    {
+      "cmd": "Get-Service Dnscache,Dhcp,NlaSvc,LanmanWorkstation,W32Time,WlanSvc -ErrorAction SilentlyContinue",
+      "desc": "Revisa el estado de los servicios clave de red: cliente DNS, cliente DHCP, reconocimiento de red, estación de trabajo SMB, hora y WLAN.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "PowerShell. WlanSvc no existe en Server salvo que se instale la característica Wireless LAN Service.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-service"
+    },
+    {
+      "cmd": "w32tm /query /status",
+      "desc": "Muestra el estado de sincronización de hora: fuente, stratum y última sincronización. Un desfase mayor a 5 minutos rompe la autenticación Kerberos.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. La documentación de w32tm indica que la herramienta exige pertenecer a Administradores locales.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings"
+    },
+    {
+      "cmd": "w32tm /query /source",
+      "desc": "Muestra la fuente de hora que usa el equipo.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. La documentación de w32tm indica que la herramienta exige pertenecer a Administradores locales.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings"
+    },
+    {
+      "cmd": "w32tm /query /peers",
+      "desc": "Lista los servidores de hora configurados y su estado.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. La documentación de w32tm indica que la herramienta exige pertenecer a Administradores locales.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings"
+    },
+    {
+      "cmd": "w32tm /query /configuration",
+      "desc": "Muestra la configuración del servicio de hora (tipo de cliente, NtpServer, intervalos).",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. La documentación de w32tm indica que la herramienta exige pertenecer a Administradores locales.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings"
+    },
+    {
+      "cmd": "w32tm /stripchart /computer:{{host}} /samples:5 /dataonly",
+      "desc": "Mide el desfase de hora contra un servidor NTP específico.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. La documentación de w32tm indica que la herramienta exige pertenecer a Administradores locales.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings"
+    },
+    {
+      "cmd": "w32tm /resync",
+      "desc": "Fuerza la resincronización inmediata de la hora con su fuente.",
+      "cat": "Sistema",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows-server/networking/windows-time-service/windows-time-service-tools-and-settings"
+    },
+    {
+      "cmd": "Get-NetAdapterHardwareInfo",
+      "desc": "Muestra la información de hardware de cada adaptador físico: ubicación PCI, capacidades PCI y MSI.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapterhardwareinfo"
+    },
+    {
+      "cmd": "Get-NetAdapter -Physical | Select-Object Name,InterfaceDescription,DriverProvider,DriverVersion,DriverDate",
+      "desc": "Lista los adaptadores físicos con fabricante, versión y fecha del driver. Permite detectar drivers desactualizados.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapter"
+    },
+    {
+      "cmd": "Get-PnpDevice -Class Net",
+      "desc": "Lista los dispositivos de red detectados por Plug and Play con su estado. Detecta adaptadores con error o deshabilitados a nivel de dispositivo.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/pnpdevice/get-pnpdevice"
+    },
+    {
+      "cmd": "Get-NetAdapterPowerManagement -Name \"{{interfaz}}\"",
+      "desc": "Muestra la configuración de ahorro de energía del adaptador. Las opciones de suspensión pueden causar cortes intermitentes.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapterpowermanagement"
+    },
+    {
+      "cmd": "getmac /v",
+      "desc": "Lista las direcciones MAC de cada adaptador con su nombre de conexión y transporte.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/getmac"
+    },
+    {
+      "cmd": "ipconfig /all",
+      "desc": "Muestra la configuración IP completa de todos los adaptadores: IP, máscara, gateway, DNS, MAC, DHCP y concesión.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+    },
+    {
+      "cmd": "ipconfig",
+      "desc": "Resume IP, máscara y gateway por adaptador.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+    },
+    {
+      "cmd": "Get-NetIPConfiguration",
+      "desc": "Resume por interfaz la IP, gateway y servidores DNS en formato de objetos PowerShell.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netipconfiguration"
+    },
+    {
+      "cmd": "Get-NetIPConfiguration -Detailed",
+      "desc": "Igual que Get-NetIPConfiguration pero agrega MTU, DHCP, perfil de red y datos del adaptador por interfaz.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netipconfiguration"
+    },
+    {
+      "cmd": "Get-NetIPAddress -AddressFamily IPv4 | Select-Object InterfaceAlias,IPAddress,PrefixLength,PrefixOrigin",
+      "desc": "Lista las direcciones IPv4 configuradas con su prefijo y origen (manual, DHCP, WellKnown).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netipaddress"
+    },
+    {
+      "cmd": "Get-NetIPAddress -AddressFamily IPv6",
+      "desc": "Lista las direcciones IPv6 de cada interfaz, incluidas link-local y temporales.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netipaddress"
+    },
+    {
+      "cmd": "Get-NetAdapter",
+      "desc": "Lista los adaptadores con su estado, velocidad de enlace y MAC.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapter"
+    },
+    {
+      "cmd": "Get-NetAdapter | Select-Object Name,Status,LinkSpeed,FullDuplex,MediaConnectionState",
+      "desc": "Muestra velocidad negociada y dúplex por adaptador. Primer paso ante problemas de rendimiento o negociación.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapter"
+    },
+    {
+      "cmd": "Get-NetAdapter -Name \"{{interfaz}}\" | Format-List *",
+      "desc": "Muestra todas las propiedades de un adaptador específico, incluidos driver, índice y MTU.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapter"
+    },
+    {
+      "cmd": "Get-NetIPInterface | Select-Object InterfaceAlias,AddressFamily,NlMtu,InterfaceMetric,Dhcp,ConnectionState",
+      "desc": "Muestra MTU, métrica, DHCP y estado por interfaz y familia de direcciones. La métrica define qué interfaz se prefiere.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netipinterface"
+    },
+    {
+      "cmd": "netsh interface ipv4 show subinterfaces",
+      "desc": "Muestra el MTU y los contadores de bytes por subinterfaz IPv4.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+    },
+    {
+      "cmd": "netsh interface ipv4 show config",
+      "desc": "Muestra la configuración IPv4 por interfaz: DHCP, IP, gateway, métricas y DNS.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+    },
+    {
+      "cmd": "Get-NetAdapterAdvancedProperty -Name \"{{interfaz}}\"",
+      "desc": "Lista las propiedades avanzadas del driver (Jumbo Packet, VLAN ID, offloads, velocidad y dúplex forzados).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapteradvancedproperty"
+    },
+    {
+      "cmd": "Get-NetAdapterBinding -Name \"{{interfaz}}\"",
+      "desc": "Muestra qué protocolos están habilitados en el adaptador (IPv4, IPv6, cliente SMB, LLDP, etc.).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapterbinding"
+    },
+    {
+      "cmd": "Get-NetAdapterRss -Name \"{{interfaz}}\"",
+      "desc": "Muestra la configuración de Receive Side Scaling del adaptador. Relevante en servidores con alto tráfico.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapterrss"
+    },
+    {
+      "cmd": "Get-CimInstance Win32_NetworkAdapterConfiguration -Filter \"IPEnabled=true\" | Select-Object Description,IPAddress,DefaultIPGateway,DNSServerSearchOrder,MACAddress",
+      "desc": "Lista la configuración IP por adaptador vía CIM. Reemplaza a wmic nicconfig, que está deprecado.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "PowerShell. WMIC está deprecado: deshabilitado por defecto en Windows 11 23H2 y 24H2, y removido de las versiones soportadas de Windows 11 (ya no está disponible como característica a petición). Get-CimInstance no se ve afectado.",
+      "source": "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-networkadapterconfiguration"
+    },
+    {
+      "cmd": "Set-NetIPInterface -InterfaceAlias \"{{interfaz}}\" -InterfaceMetric {{metrica}}",
+      "desc": "Cambia la métrica de la interfaz para influir en la preferencia de rutas.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "PowerShell. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/set-netipinterface"
+    },
+    {
+      "cmd": "Set-NetIPInterface -InterfaceAlias \"{{interfaz}}\" -AddressFamily IPv4 -NlMtuBytes {{mtu}}",
+      "desc": "Cambia el MTU IPv4 de la interfaz. Útil para ajustar túneles o enlaces con overhead.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "PowerShell. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/set-netipinterface"
+    },
+    {
+      "cmd": "Enable-NetAdapter -Name \"{{interfaz}}\"",
+      "desc": "Habilita un adaptador de red deshabilitado.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "PowerShell. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/enable-netadapter"
+    },
+    {
+      "cmd": "Disable-NetAdapter -Name \"{{interfaz}}\" -Confirm:$false",
+      "desc": "Deshabilita el adaptador y corta toda la conectividad que pasa por él.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "note": "PowerShell. Requiere consola elevada (administrador). Si es la interfaz de la sesión remota, se pierde el acceso.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/disable-netadapter"
+    },
+    {
+      "cmd": "Restart-NetAdapter -Name \"{{interfaz}}\"",
+      "desc": "Deshabilita y vuelve a habilitar el adaptador. Corta la conectividad durante unos segundos.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "note": "PowerShell. Requiere consola elevada (administrador). Puede cortar la sesión SSH si pasa por esa interfaz.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/restart-netadapter"
+    },
+    {
+      "cmd": "netsh wlan show interfaces",
+      "desc": "Muestra la red Wi-Fi conectada: SSID, BSSID, canal, banda, señal, velocidad y autenticación.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "Funciona en PowerShell y CMD. En Server requiere la característica Wireless LAN Service.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-wlan"
+    },
+    {
+      "cmd": "netsh wlan show networks mode=bssid",
+      "desc": "Lista las redes Wi-Fi visibles con cada BSSID, canal y señal. Útil para detectar interferencia de canal.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "Funciona en PowerShell y CMD. En Server requiere la característica Wireless LAN Service.",
+      "source": "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc755301(v=ws.10)"
+    },
+    {
+      "cmd": "netsh wlan show profiles",
+      "desc": "Lista los perfiles Wi-Fi guardados en el equipo.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "Funciona en PowerShell y CMD. En Server requiere la característica Wireless LAN Service.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-wlan"
+    },
+    {
+      "cmd": "netsh wlan show profiles name=\"{{perfil}}\"",
+      "desc": "Muestra la configuración de un perfil Wi-Fi (seguridad, conexión automática) sin mostrar la clave.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "Funciona en PowerShell y CMD. En Server requiere la característica Wireless LAN Service. No agregar key=clear en sesiones compartidas porque muestra la clave en texto plano. Sintaxis no confirmada en documentación oficial para Windows 10/11 (parámetro name= de show profiles); verificar.",
+      "source": "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/cc755301(v=ws.10)"
+    },
+    {
+      "cmd": "netsh wlan show drivers",
+      "desc": "Muestra el driver Wi-Fi y las capacidades soportadas (estándares 802.11, cifrados, hosted network).",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "Funciona en PowerShell y CMD. En Server requiere la característica Wireless LAN Service.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-wlan"
+    },
+    {
+      "cmd": "netsh wlan show wlanreport",
+      "desc": "Genera un reporte HTML de las sesiones Wi-Fi recientes con desconexiones y errores.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "Funciona en PowerShell y CMD. En Server requiere la característica Wireless LAN Service. Requiere consola elevada (administrador). El archivo queda en C:\\ProgramData\\Microsoft\\Windows\\WlanReport.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-wlan"
+    },
+    {
+      "cmd": "netsh wlan connect name=\"{{perfil}}\"",
+      "desc": "Conecta la interfaz Wi-Fi usando un perfil guardado. Si ya está conectada a otra red, la desconecta antes de conectar a la nueva.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "Funciona en PowerShell y CMD. En Server requiere la característica Wireless LAN Service. name es el nombre del perfil, que suele coincidir con el SSID. Con más de una interfaz Wi-Fi hay que agregar interface=.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-wlan"
+    },
+    {
+      "cmd": "netsh wlan disconnect",
+      "desc": "Desconecta la interfaz Wi-Fi de la red actual.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "Funciona en PowerShell y CMD. En Server requiere la característica Wireless LAN Service.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-wlan"
+    },
+    {
+      "cmd": "Get-DnsClientServerAddress -AddressFamily IPv4",
+      "desc": "Lista los servidores DNS configurados por interfaz.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclientserveraddress"
+    },
+    {
+      "cmd": "Get-DnsClientCache",
+      "desc": "Muestra la caché del resolver DNS local con nombre, tipo, TTL y dato.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclientcache"
+    },
+    {
+      "cmd": "ipconfig /displaydns",
+      "desc": "Muestra la caché del resolver DNS, incluidas las entradas cargadas desde el archivo hosts.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+    },
+    {
+      "cmd": "Resolve-DnsName {{dominio}}",
+      "desc": "Resuelve un nombre usando el resolver de Windows y muestra los registros A, AAAA o CNAME obtenidos.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname"
+    },
+    {
+      "cmd": "Resolve-DnsName {{dominio}} -Server {{ip}}",
+      "desc": "Consulta un nombre directamente a un servidor DNS específico. Permite comparar respuestas entre servidores.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname"
+    },
+    {
+      "cmd": "Resolve-DnsName {{dominio}} -Type MX",
+      "desc": "Consulta los registros MX (servidores de correo) de un dominio.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname"
+    },
+    {
+      "cmd": "Resolve-DnsName {{dominio}} -Type TXT",
+      "desc": "Consulta los registros TXT, útiles para revisar SPF, DMARC o validaciones de dominio.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname"
+    },
+    {
+      "cmd": "Resolve-DnsName _ldap._tcp.dc._msdcs.{{dominio}} -Type SRV",
+      "desc": "Lista los controladores de dominio publicados en DNS para el dominio de Active Directory.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname"
+    },
+    {
+      "cmd": "Resolve-DnsName {{ip}} -Type PTR",
+      "desc": "Hace la resolución inversa de una IP para obtener su nombre.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname"
+    },
+    {
+      "cmd": "Resolve-DnsName {{dominio}} -DnsOnly -NoHostsFile",
+      "desc": "Resuelve usando solo DNS, sin LLMNR, NetBIOS ni archivo hosts. Aísla si el problema está en el servidor DNS.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname"
+    },
+    {
+      "cmd": "nslookup {{dominio}}",
+      "desc": "Consulta un nombre al servidor DNS predeterminado de la interfaz.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. nslookup no usa la caché ni el archivo hosts del resolver de Windows.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup"
+    },
+    {
+      "cmd": "nslookup {{dominio}} {{ip}}",
+      "desc": "Consulta un nombre a un servidor DNS específico.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup"
+    },
+    {
+      "cmd": "nslookup -type=MX {{dominio}}",
+      "desc": "Consulta registros de un tipo específico (MX, NS, SOA, TXT, SRV) con nslookup.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nslookup-set-type"
+    },
+    {
+      "cmd": "Get-DnsClient | Select-Object InterfaceAlias,ConnectionSpecificSuffix,RegisterThisConnectionsAddress,UseSuffixWhenRegistering",
+      "desc": "Muestra el sufijo DNS por interfaz y si la interfaz se registra dinámicamente en DNS.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclient"
+    },
+    {
+      "cmd": "Get-DnsClientGlobalSetting",
+      "desc": "Muestra la lista de búsqueda de sufijos DNS y la configuración de devolución de sufijos.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclientglobalsetting"
+    },
+    {
+      "cmd": "Get-Content $env:SystemRoot\\System32\\drivers\\etc\\hosts",
+      "desc": "Muestra el archivo hosts local. Una entrada aquí tiene prioridad sobre la resolución DNS.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell. En CMD: type %SystemRoot%\\System32\\drivers\\etc\\hosts.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-content"
+    },
+    {
+      "cmd": "Get-DnsClientNrptPolicy",
+      "desc": "Muestra la Name Resolution Policy Table efectiva, que define qué servidores DNS se usan por espacio de nombres (DirectAccess, VPN, DNSSEC).",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclientnrptpolicy"
+    },
+    {
+      "cmd": "Get-DnsClientNrptRule",
+      "desc": "Lista las reglas NRPT configuradas localmente.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclientnrptrule"
+    },
+    {
+      "cmd": "Get-DnsClientDohServerAddress",
+      "desc": "Lista los servidores DNS sobre HTTPS (DoH) conocidos por el cliente y su plantilla.",
+      "cat": "DNS",
+      "risk": "read",
+      "platforms": [
+        "win11",
+        "winserver"
+      ],
+      "note": "PowerShell. Disponible desde Windows 11 y Windows Server 2022; no existe en Windows 10 ni en Server 2016/2019.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/get-dnsclientdohserveraddress"
+    },
+    {
+      "cmd": "Clear-DnsClientCache",
+      "desc": "Vacía la caché del resolver DNS local.",
+      "cat": "DNS",
+      "risk": "change",
+      "note": "PowerShell. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/clear-dnsclientcache"
+    },
+    {
+      "cmd": "ipconfig /flushdns",
+      "desc": "Vacía la caché del resolver DNS local.",
+      "cat": "DNS",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+    },
+    {
+      "cmd": "ipconfig /registerdns",
+      "desc": "Fuerza el registro dinámico manual de los nombres e IP del equipo en DNS. Sirve para resolver fallas de registro sin reiniciar.",
+      "cat": "DNS",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+    },
+    {
+      "cmd": "Set-DnsClientServerAddress -InterfaceAlias \"{{interfaz}}\" -ServerAddresses (\"{{dns1}}\",\"{{dns2}}\")",
+      "desc": "Configura manualmente los servidores DNS de una interfaz. Un DNS incorrecto interrumpe la resolución de nombres.",
+      "cat": "DNS",
+      "risk": "disruptive",
+      "note": "PowerShell. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/set-dnsclientserveraddress"
+    },
+    {
+      "cmd": "Set-DnsClientServerAddress -InterfaceAlias \"{{interfaz}}\" -ResetServerAddresses",
+      "desc": "Elimina los DNS manuales y vuelve a los entregados por DHCP. Si el DHCP no entrega DNS, se pierde la resolución de nombres.",
+      "cat": "DNS",
+      "risk": "disruptive",
+      "note": "PowerShell. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/set-dnsclientserveraddress"
+    },
+    {
+      "cmd": "Get-NetIPAddress -PrefixOrigin Dhcp | Select-Object InterfaceAlias,IPAddress,ValidLifetime,PreferredLifetime",
+      "desc": "Lista las IP obtenidas por DHCP y el tiempo de vida restante de la concesión.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netipaddress"
+    },
+    {
+      "cmd": "Get-CimInstance Win32_NetworkAdapterConfiguration -Filter \"DHCPEnabled=true\" | Select-Object Description,DHCPServer,DHCPLeaseObtained,DHCPLeaseExpires",
+      "desc": "Muestra el servidor DHCP y las fechas de obtención y expiración de la concesión por adaptador.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/win32-networkadapterconfiguration"
+    },
+    {
+      "cmd": "ipconfig /renew",
+      "desc": "Renueva la concesión DHCP IPv4 de todos los adaptadores, o del indicado si se agrega su nombre.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+    },
+    {
+      "cmd": "ipconfig /renew6",
+      "desc": "Renueva la concesión DHCPv6.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+    },
+    {
+      "cmd": "ipconfig /release",
+      "desc": "Libera la concesión DHCP IPv4 y deja el adaptador sin IP hasta un renew.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador). En sesión remota se pierde el acceso; si es inevitable, ejecutar /release y /renew en la misma línea.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig"
+    },
+    {
+      "cmd": "netsh interface portproxy show all",
+      "desc": "Lista las reglas de port forwarding configuradas con portproxy. Revela redirecciones de puertos que no aparecen en el firewall.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+    },
+    {
+      "cmd": "netsh interface ipv4 show excludedportrange protocol=tcp",
+      "desc": "Muestra los rangos de puertos TCP reservados por el sistema (Hyper-V, WinNAT). Explica errores de bind en puertos aparentemente libres.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+    },
+    {
+      "cmd": "netsh interface ipv4 show dynamicportrange protocol=tcp",
+      "desc": "Muestra el rango de puertos efímeros TCP usado para conexiones salientes.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+    },
+    {
+      "cmd": "Get-NetTCPSetting | Select-Object SettingName,CongestionProvider,AutoTuningLevelLocal,InitialRtoMs",
+      "desc": "Muestra los perfiles de configuración TCP: algoritmo de congestión, autotuning y RTO inicial.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-nettcpsetting"
+    },
+    {
+      "cmd": "netsh interface tcp show global",
+      "desc": "Muestra los parámetros TCP globales (autotuning, RSS, ECN, timestamps).",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+    },
+    {
+      "cmd": "Get-NetOffloadGlobalSetting",
+      "desc": "Muestra el estado global de offloads (RSS, RSC, NetworkDirect).",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netoffloadglobalsetting"
+    },
+    {
+      "cmd": "netsh winhttp show proxy",
+      "desc": "Muestra el proxy WinHTTP usado por servicios del sistema (Windows Update, agentes). Es independiente del proxy del navegador.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. La documentación marca show proxy como obsoleto en favor de show advproxy; verificar disponibilidad en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows/win32/winhttp/netsh-exe-commands"
+    },
+    {
+      "cmd": "Get-ItemProperty 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings' | Select-Object ProxyEnable,ProxyServer,ProxyOverride,AutoConfigURL",
+      "desc": "Muestra el proxy de usuario (WinINet) configurado: servidor, excepciones y script PAC.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "PowerShell. Refleja al usuario de la sesión actual.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-itemproperty"
+    },
+    {
+      "cmd": "netsh winhttp reset proxy",
+      "desc": "Elimina el proxy WinHTTP y deja acceso directo para los servicios del sistema.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows/win32/winhttp/netsh-exe-commands"
+    },
+    {
+      "cmd": "netsh winhttp import proxy source=ie",
+      "desc": "Copia al contexto WinHTTP el proxy configurado para el usuario actual.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows/win32/winhttp/netsh-exe-commands"
+    },
+    {
+      "cmd": "netsh winsock show catalog",
+      "desc": "Lista los proveedores Winsock instalados. Un LSP de terceros puede interferir con la conectividad.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-winsock"
+    },
+    {
+      "cmd": "netsh interface ipv4 reset",
+      "desc": "Elimina toda la configuración IPv4 definida por el usuario y vuelve a los valores por defecto. Se pierde la IP estática.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador). Requiere reinicio. Es la forma documentada del clásico netsh int ip reset. Respaldar antes la configuración IP estática.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+    },
+    {
+      "cmd": "netsh winsock reset",
+      "desc": "Restablece el catálogo Winsock a su estado por defecto, eliminando LSP instalados.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador). Requiere reinicio.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-winsock"
+    },
+    {
+      "cmd": "route print",
+      "desc": "Muestra la tabla de rutas IPv4 e IPv6, la lista de interfaces y las rutas persistentes.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/route_ws2008"
+    },
+    {
+      "cmd": "route print -4",
+      "desc": "Muestra solo la tabla de rutas IPv4.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/route_ws2008"
+    },
+    {
+      "cmd": "Get-NetRoute -AddressFamily IPv4 | Sort-Object RouteMetric",
+      "desc": "Lista las rutas IPv4 con interfaz, next hop y métricas.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netroute"
+    },
+    {
+      "cmd": "Get-NetRoute -DestinationPrefix 0.0.0.0/0",
+      "desc": "Muestra las rutas por defecto IPv4 y su métrica. Detecta gateways duplicados.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netroute"
+    },
+    {
+      "cmd": "Find-NetRoute -RemoteIPAddress {{ip}}",
+      "desc": "Indica qué IP de origen y qué ruta usará el equipo para llegar a una IP destino.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/find-netroute"
+    },
+    {
+      "cmd": "netsh interface ipv4 show route",
+      "desc": "Muestra la tabla de rutas IPv4 con origen, tipo y métrica.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-interface"
+    },
+    {
+      "cmd": "route add {{red}} mask {{mascara}} {{gateway}}",
+      "desc": "Agrega una ruta estática IPv4 no persistente; se pierde al reiniciar.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/route_ws2008"
+    },
+    {
+      "cmd": "route -p add {{red}} mask {{mascara}} {{gateway}} metric {{metrica}}",
+      "desc": "Agrega una ruta estática IPv4 persistente con métrica.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/route_ws2008"
+    },
+    {
+      "cmd": "route delete {{red}}",
+      "desc": "Elimina una ruta de la tabla de enrutamiento. Puede cortar el tráfico que dependía de esa ruta.",
+      "cat": "Enrutamiento",
+      "risk": "disruptive",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador). Borrar la ruta por defecto corta la conectividad remota.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/route_ws2008"
+    },
+    {
+      "cmd": "New-NetRoute -DestinationPrefix {{prefijo}} -InterfaceAlias \"{{interfaz}}\" -NextHop {{gateway}}",
+      "desc": "Agrega una ruta estática persistente usando PowerShell.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "note": "PowerShell. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/new-netroute"
+    },
+    {
+      "cmd": "Remove-NetRoute -DestinationPrefix {{prefijo}} -Confirm:$false",
+      "desc": "Elimina una ruta estática usando PowerShell. Puede cortar el tráfico que dependía de esa ruta.",
+      "cat": "Enrutamiento",
+      "risk": "disruptive",
+      "note": "PowerShell. Requiere consola elevada (administrador). Borrar la ruta por defecto corta la conectividad remota.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/remove-netroute"
+    },
+    {
+      "cmd": "arp -a",
+      "desc": "Muestra la tabla ARP (IP a MAC) de todas las interfaces.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/arp"
+    },
+    {
+      "cmd": "arp -a -N {{ip}}",
+      "desc": "Muestra la tabla ARP solo de la interfaz con la IP indicada.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/arp"
+    },
+    {
+      "cmd": "Get-NetNeighbor -AddressFamily IPv4",
+      "desc": "Lista la caché de vecinos IPv4 (ARP) con su estado (Reachable, Stale, Permanent).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netneighbor"
+    },
+    {
+      "cmd": "Get-NetNeighbor -AddressFamily IPv6",
+      "desc": "Lista la caché de vecinos IPv6 (Neighbor Discovery).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netneighbor"
+    },
+    {
+      "cmd": "Get-NetNeighbor -IPAddress {{ip}}",
+      "desc": "Muestra la MAC y el estado de un vecino específico.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netneighbor"
+    },
+    {
+      "cmd": "arp -d {{ip}}",
+      "desc": "Elimina una entrada de la tabla ARP para forzar una nueva resolución.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador). Con * en lugar de la IP se vacía toda la tabla ARP, lo que sí es disruptivo: no usarlo en sesión remota.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/arp"
+    },
+    {
+      "cmd": "Remove-NetNeighbor -IPAddress {{ip}} -Confirm:$false",
+      "desc": "Elimina una entrada de la caché de vecinos con PowerShell.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "PowerShell. Requiere consola elevada (administrador).",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/remove-netneighbor"
+    },
+    {
+      "cmd": "nbtstat -n",
+      "desc": "Lista los nombres NetBIOS registrados localmente.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nbtstat"
+    },
+    {
+      "cmd": "nbtstat -c",
+      "desc": "Muestra la caché de nombres NetBIOS remotos resueltos.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nbtstat"
+    },
+    {
+      "cmd": "nbtstat -A {{ip}}",
+      "desc": "Consulta la tabla de nombres NetBIOS de un equipo remoto por IP.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/nbtstat"
+    },
+    {
+      "cmd": "netstat -ano",
+      "desc": "Lista todas las conexiones y puertos en escucha con el PID del proceso dueño, sin resolver nombres.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netstat"
+    },
+    {
+      "cmd": "netstat -abno",
+      "desc": "Igual que -ano pero agrega el ejecutable dueño de cada conexión.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador). Puede tardar en equipos con muchas conexiones.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netstat"
+    },
+    {
+      "cmd": "netstat -ano | findstr :{{puerto}}",
+      "desc": "Filtra las conexiones que usan un puerto específico.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netstat"
+    },
+    {
+      "cmd": "netstat -e",
+      "desc": "Muestra estadísticas Ethernet: bytes, unicast, no unicast, descartes y errores.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netstat"
+    },
+    {
+      "cmd": "netstat -s",
+      "desc": "Muestra estadísticas por protocolo (IP, ICMP, TCP, UDP), incluidos segmentos retransmitidos y conexiones fallidas.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netstat"
+    },
+    {
+      "cmd": "netstat -s -p tcp",
+      "desc": "Muestra estadísticas solo del protocolo TCP.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netstat"
+    },
+    {
+      "cmd": "Get-NetTCPConnection -State Listen | Sort-Object LocalPort",
+      "desc": "Lista los puertos TCP en escucha con la dirección local y el PID dueño.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-nettcpconnection"
+    },
+    {
+      "cmd": "Get-NetTCPConnection -State Established",
+      "desc": "Lista las conexiones TCP establecidas con IP y puerto remoto.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-nettcpconnection"
+    },
+    {
+      "cmd": "Get-NetTCPConnection -LocalPort {{puerto}}",
+      "desc": "Muestra las conexiones asociadas a un puerto local.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-nettcpconnection"
+    },
+    {
+      "cmd": "Get-NetTCPConnection -RemoteAddress {{ip}}",
+      "desc": "Muestra las conexiones hacia una IP remota.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-nettcpconnection"
+    },
+    {
+      "cmd": "Get-NetTCPConnection -State Listen | Select-Object LocalAddress,LocalPort,OwningProcess,@{n='Proceso';e={(Get-Process -Id $_.OwningProcess).ProcessName}}",
+      "desc": "Lista los puertos en escucha junto con el nombre del proceso dueño.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-nettcpconnection"
+    },
+    {
+      "cmd": "Get-NetTCPConnection -State Established | Group-Object RemoteAddress | Sort-Object Count -Descending | Select-Object -First 10 Count,Name",
+      "desc": "Muestra las 10 IP remotas con más conexiones establecidas.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-nettcpconnection"
+    },
+    {
+      "cmd": "Get-NetUDPEndpoint | Sort-Object LocalPort",
+      "desc": "Lista los puertos UDP abiertos con el PID dueño.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/get-netudpendpoint"
+    },
+    {
+      "cmd": "Get-Process -Id {{pid}}",
+      "desc": "Muestra el proceso asociado a un PID obtenido con netstat o Get-NetTCPConnection.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/get-process"
+    },
+    {
+      "cmd": "tasklist /svc /fi \"PID eq {{pid}}\"",
+      "desc": "Muestra el proceso y los servicios hospedados en un PID. Útil cuando el PID corresponde a un svchost.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tasklist"
+    },
+    {
+      "cmd": "Get-NetAdapterStatistics",
+      "desc": "Muestra bytes y paquetes enviados y recibidos por adaptador.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapterstatistics"
+    },
+    {
+      "cmd": "Get-NetAdapterStatistics -Name \"{{interfaz}}\" | Format-List *",
+      "desc": "Muestra todos los contadores del adaptador, incluidos errores y descartes de recepción y envío.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapterstatistics"
+    },
+    {
+      "cmd": "Get-Counter '\\Network Interface(*)\\Bytes Total/sec' -SampleInterval 1 -MaxSamples 10",
+      "desc": "Mide el throughput por interfaz durante 10 segundos.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell. Los nombres de contadores están localizados; en Windows en español usar el nombre traducido.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-counter"
+    },
+    {
+      "cmd": "Get-Counter '\\Network Interface(*)\\Packets Received Errors','\\Network Interface(*)\\Packets Outbound Discarded'",
+      "desc": "Muestra errores de recepción y descartes de salida por interfaz.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell. Los nombres de contadores están localizados; en Windows en español usar el nombre traducido.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-counter"
+    },
+    {
+      "cmd": "Get-Counter '\\TCPv4\\Segments Retransmitted/sec' -SampleInterval 1 -MaxSamples 10",
+      "desc": "Mide la tasa de retransmisiones TCP. Un valor sostenido alto indica pérdida o congestión.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "PowerShell. Los nombres de contadores están localizados; en Windows en español usar el nombre traducido.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-counter"
+    },
+    {
+      "cmd": "typeperf \"\\Network Interface(*)\\Bytes Total/sec\" -si 1 -sc 10",
+      "desc": "Muestra el throughput por interfaz cada segundo durante 10 muestras.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. Nombres de contadores localizados según idioma.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/typeperf"
+    },
+    {
+      "cmd": "ping {{host}}",
+      "desc": "Envía 4 ICMP Echo Request y muestra latencia y pérdida.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+    },
+    {
+      "cmd": "ping -n {{cantidad}} {{host}}",
+      "desc": "Envía la cantidad de pings indicada.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+    },
+    {
+      "cmd": "ping -t {{host}}",
+      "desc": "Hace ping continuo hasta presionar Ctrl+C. Útil para monitorear cortes.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+    },
+    {
+      "cmd": "ping -f -l {{tamano}} {{host}}",
+      "desc": "Envía pings con bit Don't Fragment y tamaño de payload definido. Permite descubrir el MTU del camino.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. Payload 1472 más 28 bytes de cabecera equivale a 1500.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+    },
+    {
+      "cmd": "ping -S {{ip}} {{host}}",
+      "desc": "Hace ping usando una IP de origen específica del equipo.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. Sintaxis no confirmada en documentación oficial para IPv4 (la página de ping indica -S solo para IPv6); verificar.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+    },
+    {
+      "cmd": "ping -a {{ip}}",
+      "desc": "Hace ping y resuelve el nombre de la IP destino.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+    },
+    {
+      "cmd": "ping -6 {{host}}",
+      "desc": "Fuerza el ping sobre IPv6.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ping"
+    },
+    {
+      "cmd": "Test-Connection {{host}} -Count 4",
+      "desc": "Hace ping con salida en objetos PowerShell.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "PowerShell. En PowerShell 7 agrega -TcpPort, -Traceroute y -MtuSize; Windows PowerShell 5.1 no los tiene.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/test-connection"
+    },
+    {
+      "cmd": "Test-NetConnection {{host}}",
+      "desc": "Prueba ping y resolución DNS, e indica la interfaz y la IP de origen usadas.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+    },
+    {
+      "cmd": "Test-NetConnection {{host}} -Port {{puerto}}",
+      "desc": "Prueba si un puerto TCP remoto está abierto. Reemplaza a telnet para validar reglas de firewall.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+    },
+    {
+      "cmd": "Test-NetConnection {{host}} -CommonTCPPort RDP",
+      "desc": "Prueba un puerto conocido por nombre (HTTP, RDP, SMB, WINRM).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+    },
+    {
+      "cmd": "Test-NetConnection {{host}} -TraceRoute",
+      "desc": "Hace un traceroute y lista los saltos hasta el destino.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+    },
+    {
+      "cmd": "Test-NetConnection {{host}} -Port {{puerto}} -InformationLevel Detailed",
+      "desc": "Prueba el puerto y muestra detalle de interfaz, IP de origen, next hop y resolución DNS.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+    },
+    {
+      "cmd": "Test-NetConnection {{host}} -Port {{puerto}} -InformationLevel Quiet",
+      "desc": "Devuelve solo True o False según responda el puerto. Útil en scripts.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+    },
+    {
+      "cmd": "tracert {{host}}",
+      "desc": "Traza la ruta hasta el destino mostrando cada salto y su latencia.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tracert"
+    },
+    {
+      "cmd": "tracert -d {{host}}",
+      "desc": "Traza la ruta sin resolver nombres, lo que acelera el resultado.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tracert"
+    },
+    {
+      "cmd": "tracert -h {{saltos}} -w {{timeout_ms}} {{host}}",
+      "desc": "Traza la ruta con número máximo de saltos y timeout por respuesta personalizados.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/tracert"
+    },
+    {
+      "cmd": "pathping -n {{host}}",
+      "desc": "Combina traceroute con estadísticas de pérdida por salto durante un periodo. Ubica en qué salto se produce la pérdida.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD. Tarda varios minutos: tras listar la ruta calcula estadísticas por salto (el ejemplo oficial muestra 125 segundos).",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pathping"
+    },
+    {
+      "cmd": "pathping -n -q {{consultas}} {{host}}",
+      "desc": "Ejecuta pathping con menos consultas por salto para obtener un resultado más rápido.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pathping"
+    },
+    {
+      "cmd": "pktmon list",
+      "desc": "Lista los componentes de red (adaptadores, switches virtuales, filtros) que pktmon puede monitorear.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-list"
+    },
+    {
+      "cmd": "pktmon filter add -p {{puerto}}",
+      "desc": "Agrega un filtro de captura por puerto para limitar el tráfico registrado.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-filter-add"
+    },
+    {
+      "cmd": "pktmon filter add -i {{ip}}",
+      "desc": "Agrega un filtro de captura por IP o subred en notación CIDR.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-filter-add"
+    },
+    {
+      "cmd": "pktmon filter list",
+      "desc": "Muestra los filtros de captura activos.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-filter"
+    },
+    {
+      "cmd": "pktmon filter remove",
+      "desc": "Elimina todos los filtros de captura.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-filter"
+    },
+    {
+      "cmd": "pktmon start --capture --pkt-size 0 --file-name {{archivo}}.etl",
+      "desc": "Inicia la captura de paquetes completos en un archivo ETL.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión. La sintaxis --capture aplica desde Windows 10 2004; builds anteriores usan otra sintaxis.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-start"
+    },
+    {
+      "cmd": "pktmon status",
+      "desc": "Muestra si hay una captura en curso y sus parámetros.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon"
+    },
+    {
+      "cmd": "pktmon counters",
+      "desc": "Muestra contadores de paquetes por componente durante la captura. Identifica en qué componente se descartan paquetes.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-counters"
+    },
+    {
+      "cmd": "pktmon stop",
+      "desc": "Detiene la captura de pktmon.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon"
+    },
+    {
+      "cmd": "pktmon etl2pcap {{archivo}}.etl --out {{archivo}}.pcapng",
+      "desc": "Convierte la captura ETL a formato pcapng para abrirla en Wireshark.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "CMD o PowerShell. Requiere consola elevada (administrador). Pktmon viene incluido desde Windows 10 1809 y Server 2019; en Server 2016 verificar en tu versión. Disponible desde Windows 10 2004.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/pktmon-pcapng"
+    },
+    {
+      "cmd": "netsh trace start capture=yes tracefile={{archivo}}.etl maxsize=512",
+      "desc": "Inicia una captura de paquetes con netsh en un archivo ETL de tamaño máximo definido en MB.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador). Disponible en todas las versiones soportadas, incluido Server 2016.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-trace"
+    },
+    {
+      "cmd": "netsh trace show capturefilterhelp",
+      "desc": "Lista los filtros de captura soportados por netsh trace (IP, protocolo, puerto) y su sintaxis.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-trace"
+    },
+    {
+      "cmd": "netsh trace stop",
+      "desc": "Detiene la captura de netsh trace y genera el archivo ETL y el informe CAB.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Funciona en PowerShell y CMD. Requiere consola elevada (administrador). Puede tardar varios minutos en consolidar.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-trace"
+    },
+    {
+      "cmd": "Get-NetFirewallProfile | Select-Object Name,Enabled,DefaultInboundAction,DefaultOutboundAction,LogAllowed,LogBlocked,LogFileName",
+      "desc": "Muestra el estado del firewall por perfil (Domain, Private, Public), acciones por defecto y configuración de log.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netsecurity/get-netfirewallprofile"
+    },
+    {
+      "cmd": "netsh advfirewall show allprofiles",
+      "desc": "Muestra estado, política por defecto y log de los tres perfiles del firewall.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-advfirewall"
+    },
+    {
+      "cmd": "netsh advfirewall show currentprofile",
+      "desc": "Muestra la configuración del perfil de firewall activo.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-advfirewall"
+    },
+    {
+      "cmd": "Get-NetFirewallRule -Enabled True -Direction Inbound | Select-Object DisplayName,Profile,Action",
+      "desc": "Lista las reglas de entrada habilitadas con perfil y acción.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netsecurity/get-netfirewallrule"
+    },
+    {
+      "cmd": "Get-NetFirewallRule -Enabled True -Action Block",
+      "desc": "Lista las reglas de bloqueo habilitadas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netsecurity/get-netfirewallrule"
+    },
+    {
+      "cmd": "Get-NetFirewallRule -DisplayName \"*{{nombre}}*\"",
+      "desc": "Busca reglas de firewall por nombre usando comodines.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netsecurity/get-netfirewallrule"
+    },
+    {
+      "cmd": "Get-NetFirewallPortFilter -Protocol TCP | Where-Object LocalPort -eq {{puerto}} | Get-NetFirewallRule",
+      "desc": "Lista las reglas de firewall que aplican a un puerto TCP local.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netsecurity/get-netfirewallportfilter"
+    },
+    {
+      "cmd": "Get-NetFirewallRule -PolicyStore ActiveStore -Enabled True",
+      "desc": "Lista las reglas efectivas, incluidas las aplicadas por GPO.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netsecurity/get-netfirewallrule"
+    },
+    {
+      "cmd": "netsh advfirewall firewall show rule name=all dir=in",
+      "desc": "Lista todas las reglas de entrada del firewall con detalle.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-advfirewall"
+    },
+    {
+      "cmd": "netsh advfirewall firewall show rule name=\"{{nombre}}\" verbose",
+      "desc": "Muestra el detalle completo de una regla específica.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/netsh-advfirewall"
+    },
+    {
+      "cmd": "Get-NetConnectionProfile",
+      "desc": "Muestra la categoría de red (Public, Private, DomainAuthenticated) por interfaz, que define qué perfil de firewall aplica.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netconnection/get-netconnectionprofile"
+    },
+    {
+      "cmd": "Set-NetConnectionProfile -InterfaceAlias \"{{interfaz}}\" -NetworkCategory Private",
+      "desc": "Cambia la categoría de red de la interfaz, lo que cambia el perfil de firewall aplicado.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "PowerShell. Requiere consola elevada (administrador). No permite asignar DomainAuthenticated manualmente. Cambiar el perfil modifica las reglas de firewall aplicadas y puede bloquear accesos entrantes.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netconnection/set-netconnectionprofile"
+    },
+    {
+      "cmd": "Get-VpnConnection",
+      "desc": "Lista las conexiones VPN nativas del usuario con servidor, tipo de túnel, autenticación y estado.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/vpnclient/get-vpnconnection"
+    },
+    {
+      "cmd": "Get-VpnConnection -AllUserConnection",
+      "desc": "Lista las conexiones VPN configuradas para todos los usuarios del equipo.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/vpnclient/get-vpnconnection"
+    },
+    {
+      "cmd": "rasdial",
+      "desc": "Muestra las conexiones de acceso remoto (VPN nativas) activas.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/ff859533(v=ws.11)"
+    },
+    {
+      "cmd": "rasdial \"{{nombre}}\" /disconnect",
+      "desc": "Desconecta una conexión VPN nativa activa.",
+      "cat": "MPLS / VPN",
+      "risk": "disruptive",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/ff859533(v=ws.11)"
+    },
+    {
+      "cmd": "Get-SmbConnection",
+      "desc": "Lista las conexiones SMB activas del cliente con servidor, recurso y dialecto negociado.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "PowerShell. La documentación no indica requisito de consola elevada.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/smbshare/get-smbconnection"
+    },
+    {
+      "cmd": "Get-SmbMapping",
+      "desc": "Lista las unidades de red mapeadas por SMB y su estado.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/smbshare/get-smbmapping"
+    },
+    {
+      "cmd": "net use",
+      "desc": "Lista las conexiones a recursos compartidos de red y su estado.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/gg651155(v=ws.11)"
+    },
+    {
+      "cmd": "Get-SmbShare",
+      "desc": "Lista los recursos compartidos publicados por el equipo.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/smbshare/get-smbshare"
+    },
+    {
+      "cmd": "Get-SmbSession",
+      "desc": "Lista las sesiones SMB de clientes conectados a este equipo.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "PowerShell. Suele requerir consola elevada; la documentación no lo precisa.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/smbshare/get-smbsession"
+    },
+    {
+      "cmd": "Get-SmbServerConfiguration | Select-Object EnableSMB1Protocol,EnableSMB2Protocol,RequireSecuritySignature,EncryptData",
+      "desc": "Muestra qué versiones de SMB acepta el servidor y si exige firma o cifrado.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "PowerShell. Puede requerir consola elevada; la documentación no lo precisa.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/smbshare/get-smbserverconfiguration"
+    },
+    {
+      "cmd": "Get-SmbClientConfiguration | Select-Object RequireSecuritySignature,EnableSecuritySignature",
+      "desc": "Muestra si el cliente SMB exige firma. Explica fallas de conexión contra servidores sin firma.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/smbshare/get-smbclientconfiguration"
+    },
+    {
+      "cmd": "Test-NetConnection {{host}} -CommonTCPPort SMB",
+      "desc": "Prueba si el puerto 445 (SMB) del servidor es alcanzable.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/nettcpip/test-netconnection"
+    },
+    {
+      "cmd": "nltest /dsgetdc:{{dominio}}",
+      "desc": "Localiza un controlador de dominio para el dominio indicado y muestra su IP y sitio.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc731935(v=ws.11)"
+    },
+    {
+      "cmd": "nltest /sc_query:{{dominio}}",
+      "desc": "Verifica el estado del canal seguro entre el equipo y el dominio.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "Funciona en PowerShell y CMD.",
+      "source": "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc731935(v=ws.11)"
+    },
+    {
+      "cmd": "Test-ComputerSecureChannel",
+      "desc": "Devuelve True si el canal seguro con el dominio está sano.",
+      "cat": "Otros",
+      "risk": "read",
+      "note": "Windows PowerShell 5.1 (la documentación solo existe para esa versión). La documentación indica ejecutar como administrador. Solo funciona en equipos miembros de dominio; en controladores de dominio da falsos positivos, usar nltest o netdom.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.management/test-computersecurechannel?view=powershell-5.1"
+    },
+    {
+      "cmd": "Get-NetLbfoTeam",
+      "desc": "Lista los equipos NIC Teaming (LBFO) con modo de teaming, algoritmo de balanceo y estado.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "winserver"
+      ],
+      "note": "PowerShell. NIC Teaming (LBFO) solo está soportado en Windows Server. Desde Server 2022 LBFO no se soporta bajo un vSwitch Hyper-V; se usa SET.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netlbfo/get-netlbfoteam"
+    },
+    {
+      "cmd": "Get-NetLbfoTeamMember",
+      "desc": "Lista los adaptadores miembros de cada team y su estado operativo.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "winserver"
+      ],
+      "note": "PowerShell. NIC Teaming (LBFO) solo está soportado en Windows Server. Desde Server 2022 LBFO no se soporta bajo un vSwitch Hyper-V; se usa SET.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netlbfo/get-netlbfoteammember"
+    },
+    {
+      "cmd": "Get-NetLbfoTeamNic",
+      "desc": "Lista las interfaces virtuales del team con su VLAN.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "winserver"
+      ],
+      "note": "PowerShell. NIC Teaming (LBFO) solo está soportado en Windows Server. Desde Server 2022 LBFO no se soporta bajo un vSwitch Hyper-V; se usa SET.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/netlbfo/get-netlbfoteamnic"
+    },
+    {
+      "cmd": "Get-VMSwitch",
+      "desc": "Lista los switches virtuales Hyper-V con su tipo (External, Internal, Private) y adaptador físico asociado.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "PowerShell. Requiere el rol Hyper-V y su módulo PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/hyper-v/get-vmswitch"
+    },
+    {
+      "cmd": "Get-VMSwitchTeam",
+      "desc": "Muestra los miembros y el algoritmo de balanceo de un Switch Embedded Teaming (SET).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "winserver"
+      ],
+      "note": "PowerShell. Requiere el rol Hyper-V y su módulo PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/hyper-v/get-vmswitchteam"
+    },
+    {
+      "cmd": "Get-VMNetworkAdapter -All",
+      "desc": "Lista los adaptadores de red virtuales de VMs y del host con su switch, MAC e IP.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "PowerShell. Requiere el rol Hyper-V y su módulo PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/hyper-v/get-vmnetworkadapter"
+    },
+    {
+      "cmd": "Get-VMNetworkAdapterVlan -ManagementOS",
+      "desc": "Muestra la configuración VLAN (access o trunk) de los adaptadores virtuales del host.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "PowerShell. Requiere el rol Hyper-V y su módulo PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/hyper-v/get-vmnetworkadaptervlan"
+    },
+    {
+      "cmd": "Get-WinEvent -FilterHashtable @{LogName='System'; Level=2,3; StartTime=(Get-Date).AddHours(-24)} -MaxEvents 50",
+      "desc": "Muestra los errores y advertencias del log System de las últimas 24 horas.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent"
+    },
+    {
+      "cmd": "Get-WinEvent -FilterHashtable @{LogName='System'; ProviderName='Tcpip'} -MaxEvents 30",
+      "desc": "Muestra eventos del stack TCP/IP, como conflictos de IP y agotamiento de puertos.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent"
+    },
+    {
+      "cmd": "Get-WinEvent -LogName 'Microsoft-Windows-Dhcp-Client/Admin' -MaxEvents 30",
+      "desc": "Muestra eventos del cliente DHCP: fallas de concesión y conflictos de dirección.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent"
+    },
+    {
+      "cmd": "Get-WinEvent -LogName 'Microsoft-Windows-DNS-Client/Operational' -MaxEvents 30",
+      "desc": "Muestra eventos del cliente DNS con consultas y fallas de resolución.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "PowerShell. El log Operational viene deshabilitado por defecto; verificar en tu versión.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent"
+    },
+    {
+      "cmd": "Get-WinEvent -LogName 'Microsoft-Windows-NetworkProfile/Operational' -MaxEvents 30",
+      "desc": "Muestra conexiones, desconexiones y cambios de categoría de red.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent"
+    },
+    {
+      "cmd": "Get-WinEvent -LogName 'Microsoft-Windows-WLAN-AutoConfig/Operational' -MaxEvents 30",
+      "desc": "Muestra eventos de conexión, desconexión y roaming Wi-Fi.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "win10",
+        "win11"
+      ],
+      "note": "PowerShell.",
+      "source": "https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/get-winevent"
+    },
+    {
+      "cmd": "Get-Content $env:SystemRoot\\System32\\LogFiles\\Firewall\\pfirewall.log -Tail 50",
+      "desc": "Muestra las últimas líneas del log del firewall con conexiones permitidas o descartadas.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "PowerShell. Requiere consola elevada (administrador). El log debe estar habilitado en el perfil (LogBlocked o LogAllowed).",
+      "source": "https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/configure-logging"
+    }
+  ]
+}

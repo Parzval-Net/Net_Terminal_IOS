@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NetTerminal</title>
+<meta name="description" content="La terminal liviana para ingenieros y técnicos de redes: SSH, Telnet, Serial y terminal local en una sola app para macOS, Windows y Linux.">
+<link rel="icon" href="logo.svg">
+<style>
+  :root {
+    --bg: #f6f7fb; --panel: #ffffff; --text: #141821; --muted: #5b6475; --line: #e3e6ee;
+    --accent: #2f6bff; --accent-2: #1e2f8c; --link: #2456d6; --ok: #12915a; --warn: #b7791f; --chip: #eef2ff;
+    --btn-1: #2a5ff0; --btn-2: #1e2f8c; --shot-bg: #eef0f5;
+    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 12px 32px rgba(16,24,40,.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0d1016; --panel: #151a23; --text: #e8ecf4; --muted: #98a2b3; --line: #252c38;
+      --accent: #6b9bff; --accent-2: #3b7bff; --link: #6b9bff; --ok: #3ccf8e; --warn: #f0b75a; --chip: #1b2333;
+      --shot-bg: #10141c;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px rgba(0,0,0,.35);
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible, button:focus-visible, summary:focus-visible, video:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  code { font-size: .92em; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  img { max-width: 100%; display: block; }
+  .skip { position: absolute; left: 12px; top: -60px; z-index: 10; background: var(--panel); color: var(--text); padding: 10px 14px; border-radius: 10px; box-shadow: var(--shadow); }
+  .skip:focus { top: 12px; }
+
+  /* Encabezado */
+  header.hero { position: relative; overflow: hidden; padding: 22px 0 56px; }
+  .hero::before { content: ""; position: absolute; inset: -40% -10% auto; height: 520px;
+    background: radial-gradient(600px 300px at 20% 30%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+                radial-gradient(520px 280px at 85% 10%, color-mix(in srgb, var(--accent-2) 22%, transparent), transparent 70%); pointer-events: none; }
+  .top { position: relative; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 48px; }
+  .brand { display: flex; align-items: center; gap: 12px; color: var(--text); }
+  .brand:hover { text-decoration: none; }
+  .brand img { width: 44px; height: 44px; filter: drop-shadow(0 6px 14px rgba(47,107,255,.35)); }
+  .brand span { font-weight: 700; font-size: 20px; letter-spacing: -.01em; }
+  .top nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 14.5px; font-weight: 500; }
+  .top nav a { color: var(--muted); padding: 4px 0; }
+  .top nav a:hover { color: var(--text); }
+  .hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1.08fr; gap: 44px; align-items: center; }
+  h1 { font-size: clamp(30px, 3.4vw, 44px); line-height: 1.08; letter-spacing: -.025em; margin: 0 0 16px; }
+  h1 em { font-style: normal; background: linear-gradient(90deg, var(--accent), var(--accent-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { color: var(--muted); font-size: 18px; max-width: 32em; margin: 0 0 26px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 22px; border-radius: 12px; font-weight: 600; font-size: 15.5px; border: 1px solid var(--line); background: var(--panel); color: var(--text); box-shadow: var(--shadow); }
+  .btn:hover { text-decoration: none; border-color: var(--accent); }
+  .btn.primary { background: linear-gradient(180deg, var(--btn-1), var(--btn-2)); color: #fff; border: 0; }
+  .btn.primary:hover { filter: brightness(1.08); }
+  .cta-note { margin: 14px 0 0; color: var(--muted); font-size: 14px; }
+  .shot { border-radius: 14px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 30px 60px -20px rgba(16,24,40,.35); background: #0d1016; }
+  .shot .bar { height: 30px; display: flex; align-items: center; gap: 7px; padding: 0 12px; background: #1a1f29; }
+  .shot .bar i { width: 11px; height: 11px; border-radius: 50%; display: block; }
+  .shot img { width: 100%; height: auto; }
+
+  /* Cifras */
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin: 8px 0 8px; }
+  .stat { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .stat b { display: block; font-size: 26px; letter-spacing: -.02em; }
+  .stat span { color: var(--muted); font-size: 13.5px; }
+  .fuente { color: var(--muted); font-size: 12.5px; margin: 0 0 72px; }
+
+  /* Secciones */
+  section { padding: 0 0 80px; scroll-margin-top: 16px; }
+  .kicker { color: var(--link); font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  h2 { font-size: clamp(26px, 3vw, 34px); line-height: 1.15; letter-spacing: -.02em; margin: 6px 0 10px; }
+  .sub { color: var(--muted); max-width: 44em; margin: 0 0 28px; }
+  .ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--chip); color: var(--accent); flex: none; }
+
+  /* Beneficios */
+  .benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .benefit { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; box-shadow: var(--shadow); }
+  .benefit .ic { margin-bottom: 14px; }
+  .benefit h3 { margin: 0 0 6px; font-size: 18px; letter-spacing: -.01em; }
+  .benefit p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* Pasos */
+  .steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; counter-reset: paso; }
+  .steps li { counter-increment: paso; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px; box-shadow: var(--shadow); }
+  .steps li::before { content: counter(paso); display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(180deg, var(--btn-1), var(--btn-2)); color: #fff; font-weight: 700; margin-bottom: 12px; }
+  .steps h3 { margin: 0 0 6px; font-size: 18px; }
+  .steps p { margin: 0; color: var(--muted); font-size: 15px; }
+  kbd { font: 600 12.5px/1 ui-monospace, SFMono-Regular, Menlo, monospace; padding: 2px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; background: var(--bg); color: var(--text); white-space: nowrap; }
+
+  /* Videos: cada tarjeta .video es independiente (poster, src y capítulos) para reemplazarla sin tocar el resto. */
+  .videos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .video { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .video video { width: 100%; display: block; background: #0e1116; aspect-ratio: 16 / 9; }
+  .video .body { padding: 16px 20px 20px; }
+  .video h3 { margin: 0 0 4px; font-size: 16.5px; }
+  .video .meta { color: var(--muted); font-size: 13.5px; margin: 0 0 10px; }
+  .chapters { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: 13.5px; }
+  .chapters button { all: unset; cursor: pointer; display: flex; gap: 8px; padding: 3px 0; color: inherit; }
+  .chapters button:hover span { text-decoration: underline; }
+  .chapters button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .chapters time { color: var(--link); font-variant-numeric: tabular-nums; min-width: 40px; }
+
+  /* Carrusel de capturas: una a la vez, completa (object-fit: contain), con flechas fuera de la imagen. */
+  .carousel { display: grid; grid-template-columns: 44px minmax(0, 960px) 44px; grid-template-areas: "prev view next" ". foot ."; column-gap: 16px; justify-content: center; align-items: center; }
+  .car-view { grid-area: view; overflow: hidden; border-radius: 14px; border: 1px solid var(--line); background: var(--panel); box-shadow: var(--shadow); outline: none; }
+  .car-view:focus-visible { box-shadow: 0 0 0 3px var(--accent); }
+  .car-track { display: flex; transition: transform .5s ease; }
+  .car-track .slide { flex: 0 0 100%; min-width: 0; margin: 0; }
+  .car-track .slide a { display: block; }
+  .car-track .slide img { width: 100%; height: auto; aspect-ratio: 2880 / 1586; max-height: 70vh; object-fit: contain; background: var(--shot-bg); border-bottom: 1px solid var(--line); }
+  .car-track figcaption { padding: 12px 16px; font-size: 14.5px; color: var(--muted); }
+  .car-track figcaption b { color: var(--text); }
+  .car-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel); color: var(--text); font-size: 28px; line-height: 1; cursor: pointer; box-shadow: var(--shadow); display: grid; place-items: center; padding: 0 0 3px; }
+  .car-btn:hover { border-color: var(--accent); color: var(--link); }
+  .car-btn.prev { grid-area: prev; } .car-btn.next { grid-area: next; }
+  .car-foot { grid-area: foot; display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+  .car-dots { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .car-dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; padding: 0; background: color-mix(in srgb, var(--muted) 45%, transparent); cursor: pointer; }
+  .car-dots button[aria-current="true"] { background: var(--accent); width: 24px; border-radius: 6px; }
+  .car-play { border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 8px; height: 28px; min-width: 34px; cursor: pointer; font-size: 11px; }
+  .car-count { font-size: 13px; color: var(--muted); min-width: 52px; text-align: center; font-variant-numeric: tabular-nums; }
+  @media (prefers-reduced-motion: reduce) { .car-track { transition: none; } }
+
+  /* Funciones */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .feat { display: flex; gap: 14px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .feat h3 { margin: 1px 0 3px; font-size: 15.5px; }
+  .feat p { margin: 0; color: var(--muted); font-size: 14px; }
+  details.more { margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+  details.more > summary, .faq summary { cursor: pointer; list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 600; }
+  details.more > summary { padding: 16px 20px; color: var(--link); }
+  details > summary::-webkit-details-marker { display: none; }
+  details > summary::after { content: "+"; font-size: 22px; line-height: 1; color: var(--muted); font-weight: 400; }
+  details[open] > summary::after { content: "\2212"; }
+  .full { margin: 0; padding: 0 20px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 32px; font-size: 14.5px; }
+  .full div { padding: 10px 0; border-top: 1px solid var(--line); }
+  .full dt { font-weight: 600; }
+  .full dd { margin: 2px 0 0; color: var(--muted); }
+
+  /* Apariencia, catálogo y seguridad */
+  .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+  .gallery figure { margin: 0; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
+  .gallery img { width: 100%; height: auto; border-bottom: 1px solid var(--line); }
+  .gallery figcaption { padding: 12px 16px; font-size: 14.5px; color: var(--muted); }
+  .gallery figcaption b { color: var(--text); }
+  .vendors { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip { padding: 8px 14px; border-radius: 999px; background: var(--panel); border: 1px solid var(--line); font-size: 14px; font-weight: 600; }
+  .chip small { color: var(--muted); font-weight: 500; margin-left: 6px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; box-shadow: var(--shadow); }
+  .card h3 { margin: 0 0 12px; font-size: 17px; }
+  .card ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 14.5px; }
+  .card li { margin: 7px 0; }
+  .card li b { color: var(--text); font-weight: 600; }
+
+  /* Descargas */
+  .dl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .dl-item { position: relative; display: flex; flex-direction: column; gap: 6px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); }
+  .dl-item h3 { margin: 0; font-size: 17px; }
+  .dl-item .file { font-size: 14px; color: var(--text); }
+  .dl-item p { margin: 0; color: var(--muted); font-size: 14px; flex: 1; }
+  .dl-item .go { font-weight: 600; font-size: 14.5px; margin-top: 8px; }
+  .dl-item.you { border: 2px solid var(--accent); padding: 19px; }
+  .badge { display: none; position: absolute; top: -11px; left: 16px; background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 999px; }
+  .dl-item.you .badge { display: inline-block; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .badge { color: #0d1016; } }
+  .req { margin: 18px 0 0; padding-left: 20px; color: var(--muted); font-size: 14px; }
+  .req li { margin: 4px 0; }
+
+  /* Preguntas frecuentes */
+  .faq { display: grid; gap: 10px; max-width: 860px; }
+  .faq details { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+  .faq summary { padding: 16px 20px; font-size: 16px; }
+  .faq p { margin: 0; padding: 0 20px 18px; color: var(--muted); font-size: 15px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+
+  @media (max-width: 960px) {
+    .hero-grid, .two, .gallery, .videos, .steps { grid-template-columns: 1fr; }
+    .benefits, .features, .dl { grid-template-columns: 1fr 1fr; }
+    .stats { grid-template-columns: repeat(3, 1fr); }
+    .top nav { display: none; }
+    .full { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 700px) {
+    .carousel { grid-template-columns: 44px minmax(0, 1fr) 44px; grid-template-areas: "view view view" "prev foot next"; column-gap: 8px; }
+    .car-btn { margin-top: 12px; }
+    .car-foot { gap: 6px 10px; margin-top: 12px; }
+    .car-dots { order: -1; flex-basis: 100%; gap: 4px; }
+    .car-dots button { width: 8px; height: 8px; }
+    .car-dots button[aria-current="true"] { width: 16px; }
+  }
+  @media (max-width: 560px) {
+    .wrap { padding: 0 16px; }
+    .benefits, .features, .dl, .chapters { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat:last-child { grid-column: span 2; }
+    .top { margin-bottom: 28px; }
+    .lead { font-size: 17px; }
+    .btn { flex: 1 1 auto; justify-content: center; }
+    section { padding-bottom: 64px; }
+  }
+
+  /* Para la ficha en PDF (y al imprimir) se muestran todas las capturas en grilla. */
+  .ficha .carousel, html.ficha .carousel { display: block; }
+  .ficha .car-view { overflow: visible; border: 0; background: none; box-shadow: none; }
+  .ficha .car-track, html.ficha .car-track { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; transform: none !important; }
+  .ficha .car-track .slide { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .ficha .car-track .slide img { max-height: none; }
+  .ficha .car-btn, .ficha .car-foot { display: none; }
+  @media print {
+    .carousel { display: block; }
+    .car-track { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; transform: none !important; }
+    .car-track .slide img { max-height: none; }
+    .car-btn, .car-foot, .skip { display: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#beneficios">Saltar al contenido</a>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="top">
+      <a class="brand" href="#"><img src="logo.svg" alt="" width="44" height="44"><span>NetTerminal</span></a>
+      <nav aria-label="Secciones">
+        <a href="#beneficios">Por qué</a>
+        <a href="#como-usar">Tutoriales</a>
+        <a href="#capturas">Capturas</a>
+        <a href="#funciones">Funciones</a>
+        <a href="#seguridad">Seguridad</a>
+        <a href="#descargas">Descargas</a>
+        <a href="#preguntas">Preguntas</a>
+        <a href="https://github.com/Parzval-Net/Net_Terminal">GitHub</a>
+      </nav>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <h1>La terminal <em>liviana</em> para ingenieros y técnicos de redes</h1>
+        <p class="lead">SSH, Telnet, Serial y terminal local en una sola app, con comandos verificados por fabricante y control de riesgo en cada comando.</p>
+        <div class="cta">
+          <a class="btn primary" id="cta-descarga" href="https://github.com/Parzval-Net/Net_Terminal/releases/latest">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+            <span>Descargar</span>
+          </a>
+          <a class="btn" href="#como-usar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4z"/></svg>
+            Ver tutoriales
+          </a>
+        </div>
+        <p class="cta-note"><span id="cta-os">Para macOS, Windows 10/11 y Linux, también portable.</span> <a href="#descargas">Otras descargas</a></p>
+      </div>
+      <div class="shot">
+        <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+        <img src="screenshots/terminal.png" width="2880" height="1586" fetchpriority="high" alt="NetTerminal con sesiones en carpetas, terminal con resaltado por fabricante y catálogo de comandos">
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="stats">
+    <div class="stat"><b>~8 MB</b><span>tamaño de la app</span></div>
+    <div class="stat"><b>~90 MB</b><span>memoria en reposo</span></div>
+    <div class="stat"><b>0 %</b><span>CPU sin actividad</span></div>
+    <div class="stat"><b>2.776</b><span>comandos verificados con fuente oficial</span></div>
+    <div class="stat"><b>3</b><span>sistemas operativos, una sola app</span></div>
+  </div>
+  <p class="fuente">Tamaño, memoria y CPU medidos en macOS con la versión 0.9.0 (<a href="https://github.com/Parzval-Net/Net_Terminal/blob/main/docs/TECNICO.md#arquitectura-y-consumo">documentación técnica</a>).</p>
+
+  <section id="beneficios">
+    <div class="kicker">Por qué NetTerminal</div>
+    <h2>Lo que necesitas para operar la red, sin lo que estorba</h2>
+    <p class="sub">Conéctate rápido, ejecuta comandos con seguridad y ten tus herramientas a mano.</p>
+    <div class="benefits">
+      <div class="benefit"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div><h3>Liviana y rápida</h3><p>Pesa unos 8 MB, usa cerca de 90 MB de memoria en reposo y no consume CPU cuando no la estás usando.</p></div>
+      <div class="benefit"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Segura por defecto</h3><p>Contraseñas en una bóveda cifrada y confirmación antes de cualquier comando que pueda cortar servicio.</p></div>
+      <div class="benefit"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h11M4 12h11M4 18h7"/><path d="M15 17l2 2 4-4"/></svg></div><h3>Comandos verificados</h3><p>2.776 comandos con fuente oficial y sugerencias mientras escribes, con la sintaxis de tu equipo.</p></div>
+      <div class="benefit"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h3>Herramientas en un solo lugar</h3><p>Monitoreo, topología, transferencias, SNMP, subredes y speedtest sin abrir otras apps.</p></div>
+      <div class="benefit"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/></svg></div><h3>Automatización con control</h3><p>Scripts Python y plugins de solo lectura por defecto, con el mismo control de riesgo que usas a mano.</p></div>
+      <div class="benefit"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/></svg></div><h3>Multiplataforma y portable</h3><p>macOS, Windows y Linux sin permisos de administrador, y una versión portable para llevar en un pendrive.</p></div>
+    </div>
+  </section>
+
+  <section id="como-funciona">
+    <div class="kicker">Cómo funciona</div>
+    <h2>Lista en tres pasos</h2>
+    <p class="sub">Sin configuraciones largas: instalas, te conectas y trabajas.</p>
+    <ol class="steps">
+      <li><h3>Instala</h3><p>Descarga el archivo de tu sistema desde <a href="#descargas">Descargas</a> o usa el zip portable. Las versiones instaladas se actualizan con un clic desde Ajustes › Acerca de.</p></li>
+      <li><h3>Conéctate</h3><p>Escribe <code>admin@192.0.2.1</code> en la búsqueda (<kbd>⌘K</kbd> o <kbd>Ctrl+Shift+K</kbd>), usa la Conexión rápida (<kbd>⌘O</kbd> o <kbd>Ctrl+Shift+O</kbd>) o importa tus sesiones desde PuTTY, SecureCRT, MobaXterm, ssh_config o CSV.</p></li>
+      <li><h3>Trabaja</h3><p>Abre el catálogo de comandos (<kbd>⌘L</kbd>), las notas (<kbd>⌘J</kbd>) y las herramientas de red (<kbd>⌘E</kbd>). En Windows y Linux, con <kbd>Ctrl+Shift</kbd>.</p></li>
+    </ol>
+  </section>
+
+  <section id="como-usar">
+    <div class="kicker">Tutoriales</div>
+    <h2>Aprende NetTerminal en video</h2>
+    <p class="sub">Tutoriales narrados en español con subtítulos. Haz clic en un capítulo para saltar a esa parte. Todo lo que se ve usa datos ficticios.</p>
+    <div class="videos">
+      <!-- Para cambiar un video: reemplaza poster, src, título, duración y los capítulos (data-t en segundos). -->
+      <div class="video">
+        <video controls preload="metadata" playsinline poster="videos/NetTerminal-tutorial.jpg">
+          <source src="videos/NetTerminal-tutorial.mp4" type="video/mp4">
+        </video>
+        <div class="body">
+          <h3>Tutorial completo</h3>
+          <p class="meta">13:32 · Todas las funciones, cómo usarlas y cómo configurarlas</p>
+          <ol class="chapters">
+            <li><button data-t="0"><time>00:00</time><span>Introducción</span></button></li>
+            <li><button data-t="37"><time>00:37</time><span>Sesiones, carpetas e importación</span></button></li>
+            <li><button data-t="112"><time>01:52</time><span>Conexión rápida</span></button></li>
+            <li><button data-t="154"><time>02:34</time><span>SSH, Telnet y Serial</span></button></li>
+            <li><button data-t="223"><time>03:43</time><span>Pestañas y vista dividida</span></button></li>
+            <li><button data-t="270"><time>04:30</time><span>Enviar a varias sesiones</span></button></li>
+            <li><button data-t="311"><time>05:11</time><span>Notas y notas protegidas</span></button></li>
+            <li><button data-t="373"><time>06:13</time><span>Catálogo y packs de comandos</span></button></li>
+            <li><button data-t="431"><time>07:11</time><span>Topología</span></button></li>
+            <li><button data-t="475"><time>07:55</time><span>Herramientas de red</span></button></li>
+            <li><button data-t="579"><time>09:39</time><span>Logs y alertas</span></button></li>
+            <li><button data-t="627"><time>10:27</time><span>Contraseñas guardadas</span></button></li>
+            <li><button data-t="670"><time>11:10</time><span>Apariencia y temas</span></button></li>
+            <li><button data-t="709"><time>11:49</time><span>Recorrido por Ajustes</span></button></li>
+            <li><button data-t="761"><time>12:41</time><span>Actualizaciones</span></button></li>
+            <li><button data-t="791"><time>13:11</time><span>Cierre</span></button></li>
+          </ol>
+        </div>
+      </div>
+      <div class="video">
+        <video controls preload="metadata" playsinline poster="videos/NetTerminal-scripts-y-plugins.jpg">
+          <source src="videos/NetTerminal-scripts-y-plugins.mp4" type="video/mp4">
+        </video>
+        <div class="body">
+          <h3>Scripts y plugins</h3>
+          <p class="meta">9:25 · Automatización, packs de comandos y plugins. <a href="https://github.com/Parzval-Net/Net_Terminal/tree/main/docs/ejemplos">Ejemplos para descargar</a></p>
+          <ol class="chapters">
+            <li><button data-t="0"><time>00:00</time><span>Introducción</span></button></li>
+            <li><button data-t="30"><time>00:30</time><span>Scripts y macros</span></button></li>
+            <li><button data-t="193"><time>03:13</time><span>Comandos al conectar</span></button></li>
+            <li><button data-t="230"><time>03:50</time><span>Packs de comandos</span></button></li>
+            <li><button data-t="308"><time>05:08</time><span>Plugins</span></button></li>
+            <li><button data-t="482"><time>08:02</time><span>Buenas prácticas</span></button></li>
+            <li><button data-t="540"><time>09:00</time><span>Cierre</span></button></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="capturas">
+    <div class="kicker">Capturas</div>
+    <h2>Así se ve</h2>
+    <p class="sub">Capturas con datos ficticios: direcciones de documentación (RFC 5737) y nombres genéricos. Haz clic en una imagen para verla en tamaño completo.</p>
+    <div class="carousel" id="carrusel" role="region" aria-roledescription="carrusel" aria-label="Capturas de NetTerminal">
+      <div class="car-view" tabindex="0">
+        <div class="car-track">
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/vista-dividida.png"><img src="screenshots/vista-dividida.png" width="2880" height="1586" alt="Vista dividida 2x2" loading="lazy"></a><figcaption><b>Vista dividida.</b> Cuatro equipos a la vez durante una ventana de cambio.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/topologia.png"><img src="screenshots/topologia.png" width="2880" height="1586" alt="Topología CDP/LLDP" loading="lazy"></a><figcaption><b>Topología.</b> Ruta resaltada entre dos equipos con los puertos de cada salto.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/topologia-fuentes.png"><img src="screenshots/topologia-fuentes.png" width="2880" height="1586" alt="Fuentes de descubrimiento de topología" loading="lazy"></a><figcaption><b>Fuentes de descubrimiento.</b> Ruteo, descripciones y MAC/fabricante, apagadas por defecto y con sugerencias para confirmar.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/topologia-trafico.png"><img src="screenshots/topologia-trafico.png" width="2880" height="1586" alt="Tráfico en enlaces de la topología" loading="lazy"></a><figcaption><b>Tráfico en enlaces.</b> Flechas por sentido, Mb/s y color por utilización, cada elemento activable.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/sugerencias-comandos.png"><img src="screenshots/sugerencias-comandos.png" width="2880" height="1586" alt="Sugerencias de comandos en la terminal" loading="lazy"></a><figcaption><b>Sugerencias de comandos.</b> Completa abreviaturas como sh ip int br; nunca envía Enter y se apaga en modo configuración.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/respaldos.png"><img src="screenshots/respaldos.png" width="2880" height="1586" alt="Respaldos y comparación" loading="lazy"></a><figcaption><b>Respaldos.</b> Comparación entre versiones con las líneas agregadas y quitadas.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/monitoreo.png"><img src="screenshots/monitoreo.png" width="2880" height="1586" alt="Monitoreo" loading="lazy"></a><figcaption><b>Monitoreo.</b> Latencia, pérdida y caídas con alarma sonora.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/notas.png"><img src="screenshots/notas.png" width="2880" height="1586" alt="Notas y plantillas" loading="lazy"></a><figcaption><b>Notas y plantillas.</b> Variables que se piden al enviar a la sesión.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/comandos-so.png"><img src="screenshots/comandos-so.png" width="2880" height="1586" alt="Comandos de sistema operativo" loading="lazy"></a><figcaption><b>Comandos de sistema.</b> Consultas de red para Windows, macOS y Linux.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/alertas.png"><img src="screenshots/alertas.png" width="2880" height="1586" alt="Alertas" loading="lazy"></a><figcaption><b>Alertas.</b> Reglas por texto o expresión, globales o por carpeta.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/importar.png"><img src="screenshots/importar.png" width="2880" height="1586" alt="Importar sesiones" loading="lazy"></a><figcaption><b>Importar sesiones.</b> Desde otros clientes, con vista previa y sin contraseñas.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/pestanas-verticales.png"><img src="screenshots/pestanas-verticales.png" width="2880" height="1586" alt="Pestañas verticales" loading="lazy"></a><figcaption><b>Pestañas verticales.</b> Opcionales, con ancho ajustable o solo íconos.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/credenciales.png"><img src="screenshots/credenciales.png" width="2880" height="1586" alt="Contraseñas guardadas" loading="lazy"></a><figcaption><b>Contraseñas guardadas.</b> Cifradas, nunca visibles y escritas solo al conectar.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/snmp.png"><img src="screenshots/snmp.png" width="2880" height="1586" alt="Cliente SNMP" loading="lazy"></a><figcaption><b>Cliente SNMP.</b> Tabla de interfaces con contadores de 64 bits y receptor de traps.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/snmp-generador.png"><img src="screenshots/snmp-generador.png" width="2880" height="1586" alt="Generador de configuración SNMP" loading="lazy"></a><figcaption><b>Generador SNMP.</b> SNMPv3 authPriv de solo lectura, con ACL y vista restringida.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/transferencias.png"><img src="screenshots/transferencias.png" width="2880" height="1586" alt="Transferencias TFTP, HTTP, FTP y SFTP" loading="lazy"></a><figcaption><b>Transferencias.</b> TFTP, HTTP, FTP y SFTP con la carpeta compartida.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/conexion-rapida.png"><img src="screenshots/conexion-rapida.png" width="2880" height="1586" alt="Conexión rápida" loading="lazy"></a><figcaption><b>Conexión rápida.</b> SSH, Telnet, TCP o Serial sin guardar la sesión.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/notas-protegidas.png"><img src="screenshots/notas-protegidas.png" width="2880" height="1586" alt="Notas protegidas con contraseña" loading="lazy"></a><figcaption><b>Notas protegidas.</b> Cifradas en disco y bloqueadas por inactividad.</figcaption></figure>
+          <figure class="slide" role="group" aria-roledescription="diapositiva"><a href="screenshots/acerca.png"><img src="screenshots/acerca.png" width="2880" height="1586" alt="Acerca de" loading="lazy"></a><figcaption><b>Acerca de.</b> Versión, créditos y actualizaciones verificadas.</figcaption></figure>
+        </div>
+      </div>
+      <button class="car-btn prev" type="button" aria-label="Captura anterior">&#8249;</button>
+      <button class="car-btn next" type="button" aria-label="Captura siguiente">&#8250;</button>
+      <div class="car-foot">
+        <button class="car-play" type="button" aria-label="Pausar rotación">&#10074;&#10074;</button>
+        <div class="car-dots" role="group" aria-label="Elegir captura"></div>
+        <span class="car-count" aria-live="polite"></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="funciones">
+    <div class="kicker">Funciones</div>
+    <h2>Todo lo del día a día, nada que estorbe</h2>
+    <p class="sub">Cada herramienta se activa en Ajustes › Módulos: lo que no usas no se carga ni consume recursos.</p>
+    <div class="features">
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 17l6-6-6-6M12 19h8"/></svg></div><div><h3>SSH, Telnet, Serial y local</h3><p>Llaves, jump host y túneles; TCP crudo para servidores de consola.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7h6l2 2h10v10H3z"/></svg></div><div><h3>Sesiones e importación</h3><p>Carpetas ilimitadas e importación desde tu cliente actual.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16M4 12h16M4 19h10"/></svg></div><div><h3>Catálogo de comandos</h3><p>Sintaxis por plataforma detectada y nivel de riesgo por comando.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></div><div><h3>Vista dividida y difusión</h3><p>Hasta 4 terminales a la vez y envío a varias sesiones.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7"/></svg></div><div><h3>Topología</h3><p>Vecinos CDP/LLDP, ruta entre equipos y exportación a draw.io.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12M8 11l4 4 4-4M4 21h16"/></svg></div><div><h3>Respaldos y comparación</h3><p>Solo comandos de consulta y secretos enmascarados.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><div><h3>Herramientas de red</h3><p>Monitoreo con alarma, ping, traceroute, subredes, speedtest e iperf3.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></div><div><h3>Alertas y logs</h3><p>Avisos por palabra clave y logs con secretos enmascarados.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4M9 13h6M9 17h4"/></svg></div><div><h3>Notas y plantillas</h3><p>Variables como <code>{{vlan}}</code> y notas protegidas con contraseña.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12a7 7 0 0 1 14 0M8.5 12a3.5 3.5 0 0 1 7 0"/><circle cx="12" cy="12" r="1.2"/><path d="M12 13v8"/></svg></div><div><h3>SNMP</h3><p>Cliente v1, v2c y v3 de solo lectura y generador de configuración.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17L17 7M9 7h8v8"/></svg></div><div><h3>Transferencias</h3><p>TFTP, HTTP, FTP y SFTP con verificación MD5 del firmware.</p></div></div>
+      <div class="feat"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4.5 2 7.5L12 16l-6.5 5 2-7.5L2 9h7z"/></svg></div><div><h3>Scripts, plugins y agentes IA</h3><p>Python, plugins revisados y servidor MCP local con aprobación.</p></div></div>
+    </div>
+    <details class="more">
+      <summary>Ver todas las funciones en detalle</summary>
+      <dl class="full">
+        <div><dt>SSH, Telnet, Serial y local</dt><dd>OpenSSH del sistema con llaves, agente, jump host y túneles. Telnet nativo, TCP crudo para servidores de consola y Serial con Break. Modo legacy automático opcional para equipos antiguos.</dd></div>
+        <div><dt>Sesiones y contraseñas</dt><dd>Carpetas ilimitadas, importación desde ssh_config, PuTTY, SecureCRT, MobaXterm y CSV, y contraseñas en una bóveda cifrada que nunca se muestra.</dd></div>
+        <div><dt>Catálogo de comandos</dt><dd>Cisco, Juniper, Fortinet, Huawei, Check Point, WatchGuard, Windows, macOS y Linux, con sintaxis por plataforma, nivel de riesgo, favoritos, comandos propios y packs importables.</dd></div>
+        <div><dt>Sugerencias de comandos</dt><dd>Completan mientras escribes, también abreviado como en el equipo (<code>sh ip int br</code>). Nunca envían Enter y se apagan en modo configuración.</dd></div>
+        <div><dt>Vista dividida y difusión</dt><dd>Hasta 4 terminales a la vez y envío a varias sesiones con lista de equipos, riesgo por línea y botón Detener.</dd></div>
+        <div><dt>Topología</dt><dd>Vecinos CDP/LLDP con puertos y Port-channel, ruta entre equipos, snapshots y exportación a draw.io. Sin CDP/LLDP: vecinos OSPF/EIGRP/BGP, enlaces manuales y sugerencias por descripción o por MAC/fabricante. Descubrimiento por SNMP y tráfico por sentido en cada enlace, todo opcional y de solo lectura.</dd></div>
+        <div><dt>Respaldos y comparación</dt><dd>Respaldo de configuración solo con comandos de consulta, secretos enmascarados y comparación entre fechas o equipos.</dd></div>
+        <div><dt>Herramientas de red</dt><dd>Monitoreo ICMP/TCP con alarma, ping y traceroute, puertos, calculadora de subredes, speedtest e iperf3, servidores TFTP/HTTP/FTP y Syslog, y gestor de archivos.</dd></div>
+        <div><dt>Alertas y logs</dt><dd>Avisos por palabra clave en la salida y logs con nombre por patrón, rotación diaria y secretos enmascarados.</dd></div>
+        <div><dt>Notas, macros y plantillas</dt><dd>Plantillas con variables, notas protegidas con contraseña y botones de comandos.</dd></div>
+        <div><dt>Cliente SNMP</dt><dd>v1, v2c y v3 con GET, GETNEXT, WALK y GETBULK, conjuntos de OIDs y receptor de traps. Solo lectura, SHA-256 + AES-128 por defecto y secretos atados a cada equipo.</dd></div>
+        <div><dt>Generador de configuración SNMP</dt><dd>Agente de solo lectura para Cisco IOS-XE, NX-OS, Huawei VRP, Junos, FortiOS y net-snmp, con marcadores para los secretos y avisos donde la sintaxis depende de la versión.</dd></div>
+        <div><dt>Conexión rápida y transferencias</dt><dd>Conecta sin guardar la sesión con el rayo. FTP/FTPS, SFTP con OpenSSH y servidor FTP de solo lectura para pasar firmware a los equipos, con verificación MD5.</dd></div>
+        <div><dt>Scripts, plugins y agentes IA</dt><dd>Scripts Python con API mínima, plugins con revisión de código y servidor MCP local (apagado por defecto) con aprobación por comando.</dd></div>
+      </dl>
+    </details>
+  </section>
+
+  <section id="seguridad">
+    <div class="kicker">Seguridad</div>
+    <h2>Diseñada para entornos corporativos</h2>
+    <p class="sub">Cambios controlados, nada de secretos en texto plano y actualizaciones verificadas.</p>
+    <div class="two">
+      <div class="card">
+        <h3>Operación segura</h3>
+        <ul>
+          <li><b>Contraseñas cifradas</b> (XChaCha20-Poly1305), nunca visibles y escritas solo en el equipo de destino, nunca en el bastión.</li>
+          <li><b>Riesgo por comando:</b> lo que puede cortar servicio pide confirmación siempre, también desde scripts y plugins.</li>
+          <li><b>Envío a varias sesiones</b> con la lista de equipos a la vista y confirmación escribiendo la cantidad.</li>
+          <li><b>Secretos enmascarados</b> en logs y respaldos, y pegado de varias líneas con vista previa.</li>
+          <li><b>Apagado por defecto:</b> servidores TFTP y FTP, traps SNMP, agentes IA y algoritmos SSH legacy.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Código y distribución</h3>
+        <ul>
+          <li><b>Actualizaciones firmadas:</b> se verifica la firma antes de instalar y siempre con tu confirmación.</li>
+          <li><b>Auditoría automática</b> de dependencias (npm y cargo) que detiene la publicación.</li>
+          <li><b>Argumentos SSH validados</b> contra inyección y comandos encadenados evaluados por partes.</li>
+          <li><b>Plugins con revisión de código</b> y bloqueo si sus archivos cambian.</li>
+          <li><b>Limitaciones conocidas</b> documentadas en <a href="https://github.com/Parzval-Net/Net_Terminal/blob/main/SECURITY.md">SECURITY.md</a>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="catalogo">
+    <div class="kicker">Catálogo</div>
+    <h2>2.776 comandos con fuente oficial</h2>
+    <p class="sub">Cada comando trae explicación, nivel de riesgo y la sintaxis de la plataforma detectada en tu equipo.</p>
+    <div class="vendors">
+      <span class="chip">Cisco<small>IOS · IOS-XE · NX-OS · IOS-XR · ASA</small></span>
+      <span class="chip">Juniper<small>Junos · Evolved</small></span>
+      <span class="chip">Fortinet<small>FortiOS 6.2 a 7.6</small></span>
+      <span class="chip">Huawei<small>VRP5 · VRP8 · YunShan</small></span>
+      <span class="chip">Check Point<small>R80.40 a R82</small></span>
+      <span class="chip">WatchGuard<small>Fireware</small></span>
+      <span class="chip">Windows<small>10 · 11 · Server</small></span>
+      <span class="chip">macOS<small>12 a 27</small></span>
+      <span class="chip">Linux<small>Debian · Ubuntu · RHEL · Fedora · SUSE · Arch · Alpine</small></span>
+    </div>
+  </section>
+
+  <section id="temas">
+    <div class="kicker">Apariencia</div>
+    <h2>Modo claro, oscuro y 17 temas de terminal</h2>
+    <p class="sub">La interfaz sigue al sistema o se fija en claro u oscuro, con contraste WCAG AA. La terminal tiene su propio tema, fuente, tamaño y cursor.</p>
+    <div class="gallery">
+      <figure><img src="screenshots/modo-oscuro.png" width="2880" height="1586" alt="NetTerminal en modo oscuro" loading="lazy"><figcaption><b>Modo oscuro.</b> La misma sesión con la interfaz y la terminal oscuras.</figcaption></figure>
+      <figure><img src="screenshots/ajustes.png" width="2880" height="1586" alt="Temas de terminal en Ajustes" loading="lazy"><figcaption><b>Temas de terminal.</b> Ámbar, Dracula, Nord, Tokyo Night y más, con vista previa.</figcaption></figure>
+    </div>
+  </section>
+
+  <section id="descargas">
+    <div class="kicker">Descargas</div>
+    <h2>Instala o lleva en un pendrive</h2>
+    <p class="sub">Todos los archivos están en la <a href="https://github.com/Parzval-Net/Net_Terminal/releases/latest">última versión publicada</a>. Solo el <code>.deb</code> requiere permisos de administrador.</p>
+    <div class="dl">
+      <div class="dl-item" data-os="windows"><span class="badge">Tu sistema</span><h3>Windows 10/11</h3><span class="file"><code>-setup.exe</code></span><p>Se instala solo para tu usuario. Se actualiza con un clic.</p><a class="go" href="https://github.com/Parzval-Net/Net_Terminal/releases/latest">Ir a la descarga</a></div>
+      <div class="dl-item" data-os="mac"><span class="badge">Tu sistema</span><h3>macOS</h3><span class="file"><code>.dmg</code> universal (Intel y Apple Silicon)</span><p>La primera vez ábrela con clic derecho › Abrir. Se actualiza con un clic.</p><a class="go" href="https://github.com/Parzval-Net/Net_Terminal/releases/latest">Ir a la descarga</a></div>
+      <div class="dl-item" data-os="linux"><span class="badge">Tu sistema</span><h3>Linux</h3><span class="file"><code>.AppImage</code> o <code>.deb</code></span><p>AppImage sin instalar, con actualización en un clic. El .deb se instala y actualiza con apt.</p><a class="go" href="https://github.com/Parzval-Net/Net_Terminal/releases/latest">Ir a la descarga</a></div>
+      <div class="dl-item" data-os="portable"><span class="badge">Tu sistema</span><h3>Portable</h3><span class="file"><code>NetTerminal-portable.zip</code></span><p>Los tres ejecutables y tus datos en una carpeta. Actualización manual.</p><a class="go" href="https://github.com/Parzval-Net/Net_Terminal/releases/latest/download/NetTerminal-portable.zip">Descargar el zip</a></div>
+    </div>
+    <ul class="req">
+      <li><b>Windows:</b> requiere WebView2, que ya viene en Windows 11 y en Windows 10 actualizado. Si falta, el instalador lo descarga.</li>
+      <li><b>Linux:</b> para el puerto serial tu usuario debe estar en el grupo <code>dialout</code> (o <code>uucp</code>).</li>
+      <li><b>Equipos corporativos:</b> con AppLocker o Intune una app sin firma puede quedar bloqueada. Consulta con tu área de TI.</li>
+    </ul>
+  </section>
+
+  <section id="preguntas">
+    <div class="kicker">Preguntas frecuentes</div>
+    <h2>Antes de instalar</h2>
+    <div class="faq">
+      <details><summary>¿Tiene costo?</summary><p>Se descarga sin costo y sin registro desde la página de <a href="https://github.com/Parzval-Net/Net_Terminal/releases/latest">releases en GitHub</a>, donde también está publicado el código.</p></details>
+      <details><summary>¿Necesito permisos de administrador?</summary><p>No. El instalador de Windows, el <code>.dmg</code>, el AppImage y el zip portable funcionan sin administrador. Solo el <code>.deb</code> los requiere. En Linux, agregar tu usuario al grupo <code>dialout</code> para usar el puerto serial requiere administrador una sola vez.</p></details>
+      <details><summary>¿Funciona sin internet o desde un pendrive?</summary><p>Sí. Las conexiones van directo de tu PC a cada equipo y el catálogo de comandos viene incluido en la app. Con el zip portable, sesiones, ajustes, notas y logs quedan en la carpeta <code>data</code> junto al ejecutable. El aviso de actualizaciones y el speedtest sí usan internet.</p></details>
+      <details><summary>¿Dónde quedan mis contraseñas?</summary><p>En una bóveda cifrada de la app (XChaCha20-Poly1305). La llave queda en el llavero del sistema o, en modo portable, se deriva de una contraseña maestra. Las contraseñas nunca se muestran y no pasan por logs, historial, scripts ni exportaciones.</p></details>
+      <details><summary>¿Envía mis datos a alguna parte?</summary><p>Tus sesiones, notas y contraseñas quedan en tu equipo. La auditoría del binario no encontró conexiones salientes incrustadas. La app consulta el último release de GitHub al abrirse y cada 6 horas para avisar de versiones nuevas, y el speedtest usa Cloudflare cuando lo ejecutas.</p></details>
+      <details><summary>¿Con qué equipos funciona?</summary><p>Con cualquier equipo al que llegues por SSH, Telnet, TCP o puerto serial. El catálogo de comandos cubre Cisco, Juniper, Fortinet, Huawei, Check Point y WatchGuard, además de Windows, macOS y Linux.</p></details>
+      <details><summary>¿Cómo se actualiza?</summary><p>La app avisa cuando hay una versión nueva y se actualiza con un clic desde Ajustes › Acerca de, siempre con tu confirmación y verificando la firma del proyecto. En modo portable y con el <code>.deb</code> la actualización es manual.</p></details>
+      <details><summary>¿Puedo traer mis sesiones de otro cliente?</summary><p>Sí. Importa desde PuTTY, SecureCRT, MobaXterm, ssh_config o CSV, con vista previa. Las contraseñas nunca se importan.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>NetTerminal · Creado por Nicolás Rivera · Desarrollado en conjunto con Claude</span>
+    <span>Tauri 2 · Rust · xterm.js · <a href="https://github.com/Parzval-Net/Net_Terminal/blob/main/docs/TECNICO.md">Documentación técnica</a> · <a href="NetTerminal-ficha.pdf">Ficha PDF</a> · <a href="https://github.com/Parzval-Net/Net_Terminal">GitHub</a></span>
+  </div>
+</footer>
+
+<script>
+  // Descarga según el sistema del visitante: cambia el texto del botón principal y destaca
+  // la tarjeta de su sistema en Descargas. Los archivos llevan la versión en el nombre, por eso
+  // el enlace va a la página del último release y no a un archivo fijo.
+  (() => {
+    const p = (navigator.userAgentData?.platform || navigator.platform || "") + " " + navigator.userAgent;
+    const mobile = /Android|iPhone|iPad|iPod/i.test(p);
+    const os = mobile ? null : /Win/i.test(p) ? "windows" : /Mac/i.test(p) ? "mac" : /Linux|X11|CrOS/i.test(p) ? "linux" : null;
+    if (!os) return;
+    const info = {
+      windows: ["Descargar para Windows", "Instalador .exe para Windows 10/11, sin permisos de administrador."],
+      mac: ["Descargar para macOS", "Archivo .dmg universal para Intel y Apple Silicon."],
+      linux: ["Descargar para Linux", "AppImage, sin instalar. También hay .deb."],
+    }[os];
+    document.querySelector("#cta-descarga span").textContent = info[0];
+    document.getElementById("cta-os").textContent = info[1];
+    document.querySelector(`.dl-item[data-os="${os}"]`)?.classList.add("you");
+  })();
+</script>
+<script>
+  // Carrusel de capturas: botones, puntos, teclado, deslizar en pantallas táctiles y rotación
+  // automática cada 6 s que se pausa al pasar el mouse o enfocar, y no arranca si el sistema
+  // pide reducir movimiento.
+  (() => {
+    const root = document.getElementById("carrusel");
+    if (!root || document.documentElement.classList.contains("ficha")) return;
+    const track = root.querySelector(".car-track");
+    const slides = [...track.children];
+    const dots = root.querySelector(".car-dots");
+    const count = root.querySelector(".car-count");
+    const play = root.querySelector(".car-play");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let i = 0, timer = null, paused = reduce, hover = false;
+    slides.forEach((s, k) => {
+      s.setAttribute("aria-label", `${k + 1} de ${slides.length}`);
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("aria-label", `Ir a la captura ${k + 1}: ${s.querySelector("b")?.textContent ?? ""}`);
+      b.addEventListener("click", () => go(k, true));
+      dots.appendChild(b);
+    });
+    function go(k, user) {
+      i = (k + slides.length) % slides.length;
+      track.style.transform = `translateX(-${i * 100}%)`;
+      slides.forEach((s, n) => { s.setAttribute("aria-hidden", n !== i); s.querySelectorAll("a,button").forEach((e) => (e.tabIndex = n === i ? 0 : -1)); });
+      [...dots.children].forEach((d, n) => d.setAttribute("aria-current", n === i));
+      count.textContent = `${i + 1} / ${slides.length}`;
+      const img = slides[(i + 1) % slides.length].querySelector("img");
+      if (img) img.loading = "eager"; // precarga la siguiente
+      if (user) restart();
+    }
+    function restart() {
+      clearInterval(timer);
+      if (!paused && !hover && !document.hidden) timer = setInterval(() => go(i + 1), 6000);
+    }
+    function setPaused(p) {
+      paused = p;
+      play.innerHTML = p ? "&#9654;" : "&#10074;&#10074;";
+      play.setAttribute("aria-label", p ? "Reanudar rotación" : "Pausar rotación");
+      restart();
+    }
+    root.querySelector(".prev").addEventListener("click", () => go(i - 1, true));
+    root.querySelector(".next").addEventListener("click", () => go(i + 1, true));
+    play.addEventListener("click", () => setPaused(!paused));
+    root.addEventListener("mouseenter", () => { hover = true; restart(); });
+    root.addEventListener("mouseleave", () => { hover = false; restart(); });
+    root.addEventListener("focusin", () => { hover = true; restart(); });
+    root.addEventListener("focusout", () => { hover = false; restart(); });
+    root.querySelector(".car-view").addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") { e.preventDefault(); go(i - 1, true); }
+      if (e.key === "ArrowRight") { e.preventDefault(); go(i + 1, true); }
+    });
+    let x0 = null;
+    track.addEventListener("touchstart", (e) => (x0 = e.touches[0].clientX), { passive: true });
+    track.addEventListener("touchend", (e) => {
+      if (x0 == null) return;
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 40) go(i + (dx < 0 ? 1 : -1), true);
+      x0 = null;
+    });
+    document.addEventListener("visibilitychange", restart);
+    go(0);
+    setPaused(paused);
+  })();
+</script>
+<script>
+  // Capítulos: salta al minuto indicado en el video de la misma tarjeta.
+  document.querySelectorAll(".chapters button").forEach((b) => b.addEventListener("click", () => {
+    const v = b.closest(".video").querySelector("video");
+    v.currentTime = Number(b.dataset.t);
+    v.play().catch(() => {});
+  }));
+  // En la ficha PDF (clase "ficha") y al imprimir, las preguntas frecuentes se muestran abiertas.
+  // La ficha además vuelve al botón de descarga genérico: el PDF no depende del sistema de quien lo genera.
+  const abrirFaq = () => document.querySelectorAll(".faq details").forEach((d) => (d.open = true));
+  const modoFicha = () => {
+    abrirFaq();
+    document.querySelector("#cta-descarga span").textContent = "Descargar";
+    document.getElementById("cta-os").textContent = "Para macOS, Windows 10/11 y Linux, también portable.";
+    document.querySelectorAll(".dl-item.you").forEach((e) => e.classList.remove("you"));
+  };
+  if (document.documentElement.classList.contains("ficha")) modoFicha();
+  new MutationObserver(() => document.documentElement.classList.contains("ficha") && modoFicha())
+    .observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+  addEventListener("beforeprint", abrirFaq);
+</script>
+</body>
+</html>

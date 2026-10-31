@@ -1,0 +1,66 @@
+# Muestra de oraciones difíciles de los tres guiones (scripts/video/v2/*/guion). La usa verificar_voz.py --corpus.
+# Video 1
+Descarga el archivo de tu sistema desde la página de versiones del proyecto: una imagen dmg para macOS, un instalador de Windows, un AppImage o un paquete deb para Linux.
+Para crear una sesión, usa el botón más o ⌘N, y elige SSH, Telnet, Serial, TCP o terminal local.
+Acepta ssh_config, PuTTY, SecureCRT, MobaXterm y CSV, con vista previa, y nunca importa contraseñas ni túneles.
+Con ⌘K buscas una sesión o escribes usuario arroba host, y ahí quedan tus conexiones recientes.
+En la sesión puedes indicar una llave privada y un jump host, el equipo intermedio por el que se pasa antes de llegar al destino.
+La misma opción está en la sesión, como Permitir algoritmos legacy, y en Ajustes, Terminal, en modo automático, apagado por defecto.
+Cerrar todas también tiene atajo: ⌘⇧W, o Ctrl+Shift+Alt+W en Windows y Linux.
+⌘L abre el catálogo: 1.776 comandos, cada uno con su fuente oficial.
+Detectar ejecuta un comando de consulta en el equipo y reconoce su plataforma, por ejemplo IOS-XE.
+Con Control y flecha derecha aceptas solo la siguiente palabra. En macOS es Option y flecha derecha.
+Control punto abre una lista de hasta ocho comandos: flechas para elegir, Enter para escribir y Escape para cerrar.
+En Linux esa tecla puede abrir el selector de emojis: cámbiala por Alt barra en Ajustes, Terminal.
+Puedes escribir abreviado, como en el equipo: la abreviatura de show ip interface brief se reconoce igual.
+Por ejemplo, en una interfaz Cisco, las letras ese y hache ya no son show, sino shutdown.
+Para consultar desde configuración, escribe do antes del comando en Cisco, o run en Junos, y las sugerencias vuelven.
+Si lo escrito ya puede ser un comando con riesgo, como reload, no aparece.
+⌘Enter, o Ctrl+Enter en Windows y Linux, envía la línea o la selección a la sesión activa, y Todo envía la nota completa.
+Y con ⌘F buscas texto en la salida de la terminal.
+Ajustes se abre con ⌘, y en Windows y Linux con Ctrl+, sin Shift.
+La terminal tiene su propio tema: Automático o uno de diecisiete, como Ámbar, Dracula o Tokyo Night.
+# Video 2
+Las herramientas se abren con ⌘E. En Windows y Linux, Ctrl+Shift+E.
+La app envía solo consultas, como show cdp neighbors detail. Los enlaces paralelos se rotulan con el Port-channel que los agrupa.
+Aparecen con su router ID o su IP y borde punteado, y toman su nombre real cuando los exploras.
+Sugerencias por descripción lee el texto de cada puerto, por ejemplo un uplink hacia el switch de distribución, y propone ese enlace.
+La confianza es alta si hay una MAC virtual de HSRP o VRRP, porque ahí hay un router.
+Si el LLDP estándar vuelve vacío, prueba la MIB versión dos, y en Cisco, si la tabla MAC global viene vacía, la lee VLAN por VLAN.
+Cada enlace tiene una flecha por sentido, y la etiqueta nombra al equipo de referencia: por ejemplo, core-sw01, flecha derecha 120 megabits, flecha izquierda 35.
+Con TFTP, HTTP y FTP, tu PC es el servidor y el equipo descarga con un comando copy. Con SCP y SFTP es al revés: el PC se conecta por SSH al equipo.
+Debajo están los comandos para el equipo, listos para copiar: copy tftp para Cisco y tftp get para Huawei.
+El Servidor HTTP usa el puerto ochenta ochenta y es solo de lectura. Su comando es copy http, con la IP y el puerto.
+Lo mismo vale para FTP, traps y Syslog: 2121, 1162 y 1514.
+El usuario es siempre nt, y cada vez que pulsas Iniciar se crea una contraseña nueva; los comandos para el equipo ya la incluyen.
+Con ls listas, con cd cambias de carpeta, get trae y put envía, siempre sobre la carpeta compartida. bye cierra.
+¿Por qué SCP en Cisco IOS-XE? Porque el servidor del equipo habla SCP clásico. Actívalo con ip scp server enable.
+En NX-OS, para SFTP, activa feature sftp-server.
+Se propone según la plataforma detectada en el catálogo; en NX-OS, el almacenamiento es bootflash y se usa la VRF management, que puedes cambiar.
+Respaldar config copia la running config a la carpeta compartida, sin enmascarar secretos, y no entra en Respaldos.
+SNMPv3 viene por defecto, con authPriv, SHA-256 y AES-128. MD5 y DES quedan ocultos por ser heredados.
+En Consulta, GET lee un OID exacto y GETNEXT el siguiente. El recorrido completo de la tabla usa GETBULK, que pide muchas filas por paquete, con tope de filas y botón Detener.
+Velocidad mide con speedtest contra Cloudflare, unos 95 MB por prueba, y con iperf3 entre dos puntos de tu red, si lo tienes instalado.
+Syslog recibe logs por UDP 514; si ese puerto no inicia, usa el 1514. Copia el comando logging host para el equipo, filtra por texto o severidad, y activa Guardar en archivo diario si necesitas evidencia.
+# Video 3
+Por ejemplo, terminal length 0 en Cisco, o screen-length 0 temporary en Huawei, para quitar la paginación.
+Puedes comprobar cada uno en la terminal local de NetTerminal, que abres con ⌘T; en Windows y Linux, Ctrl+Shift+T.
+En Windows la app usa el lanzador py; en macOS prefiere el Python de Homebrew o de python.org.
+En Windows, el proyecto iperf no publica binarios: el sitio iperf punto fr enlaza compilaciones de terceros, así que verifica su origen y deja el ejecutable junto a NetTerminal o en el PATH.
+En Linux es el paquete openssh-client, u openssh-clients en Fedora y Red Hat.
+Para traceroute, Windows trae tracert y macOS trae traceroute. En Linux la app usa traceroute o tracepath.
+Un script es un archivo de Python en la carpeta de scripts: en la barra de botones, Scripts, Abrir carpeta de scripts.
+El primero lee el nombre y el host de la sesión, y con run envía show version: run escribe el comando, espera el prompt y devuelve solo la salida.
+Para más control, run se arma con cuatro piezas: clear descarta la salida anterior, sendline envía una línea, wait_for espera el prompt con un tiempo máximo, y read lee hasta que el equipo deja de enviar.
+Con sessions ves los destinos elegidos, con on trabajas sobre uno por su nombre, y for_each ejecuta una función en cada uno, de a uno o en paralelo.
+Para pedir un secreto, como una clave de enable, usa ask_secret: se escribe en un campo oculto y la app lo enmascara en los mensajes del script.
+Un plugin empaqueta acciones para compartirlas: una carpeta con un manifiesto, plugin.json, y código Python con la misma API.
+main.py toma la acción elegida de la variable NT_ACTION.
+Pide dos permisos. El permiso session es el que la app hace cumplir: sin él, el plugin no lee ni envía nada a la sesión. files, igual que network, es una declaración.
+Un cuarto permiso, vault-type, deja que el plugin pida que la app escriba la contraseña guardada en un pedido de login.
+La app rechaza manifiestos inválidos, enlaces simbólicos, más de 200 archivos o 20 megabytes, y código que no se puede leer, como bytecode o binarios.
+Solo al presionar Instalar y habilitar queda activo, con una huella SHA-256 de sus archivos.
+Los packs amplían el catálogo, que abres con ⌘L; en Windows y Linux, Ctrl+Shift+L. Un pack es un archivo JSON con comandos y explicaciones.
+Si declaras consulta pero el comando cambia estado, como clear counters, la app avisa que lo tratará como cambio.
+NetTerminal también trabaja con agentes de IA como Claude Code, Gemini CLI o Codex, mediante MCP, un protocolo abierto para conectar herramientas a un asistente.
+Si uno necesita volver a entrar a un equipo, usa type_saved_password: la app escribe la contraseña guardada en el pedido de login, el script nunca la ve, y solo funciona si marcaste la casilla al lanzarlo.

@@ -1,0 +1,8 @@
+# Apariencia y temas
+En Ajustes, Apariencia, la interfaz sigue al sistema o se fija en claro u oscuro.
+Así se ve el modo oscuro.
+La terminal tiene su propio tema, con diecisiete opciones como Ámbar, Dracula o Tokyo Night.
+También ajustas la fuente, el tamaño, el interlineado y el cursor.
+En Resaltado activas los esquemas por fabricante y las reglas comunes, como direcciones IP y estados up o down.
+Personalizar copia un esquema a tus reglas propias para cambiar sus colores.
+Cada sesión puede fijar su fabricante en Editar sesión.

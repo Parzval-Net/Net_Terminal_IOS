@@ -1,0 +1,11 @@
+# SFTP y SCP
+
+SFTP y SCP usan el OpenSSH de tu sistema, con el usuario, el puerto, la llave y el jump host de la sesión.
+
+En SFTP interactivo, elige el equipo y pulsa Abrir SFTP. En la pestaña nueva escribes la contraseña. Con ls listas, con cd cambias de carpeta, get trae y put envía, siempre sobre la carpeta compartida. bye cierra.
+
+Desde el gestor de archivos, SCP y SFTP también abren una pestaña donde escribes la contraseña.
+
+¿Por qué SCP en Cisco IOS-XE? Porque el servidor del equipo habla SCP clásico. Actívalo con ip scp server enable. La app pide SCP clásico al OpenSSH moderno, que usaría SFTP. En NX-OS, para SFTP, activa feature sftp-server.
+
+Cuando la copia termina bien, el gestor verifica solo el MD5: ejecuta el comando en la sesión del equipo y compara con tu copia. Si un script tiene tomada esa sesión, espera y reintenta hasta dos minutos. En el SFTP interactivo no hay un fin claro: al cerrar su pestaña, la app te recuerda seleccionar el archivo en el gestor y pulsar MD5.

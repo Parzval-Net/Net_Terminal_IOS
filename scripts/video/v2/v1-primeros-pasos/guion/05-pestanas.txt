@@ -1,0 +1,9 @@
+# Pestañas y vista dividida
+Cada conexión abre una pestaña, y la sesión sigue activa al cambiar de una a otra.
+Doble clic renombra la pestaña, y una marca avisa cuando hay salida nueva en segundo plano.
+Con clic derecho la duplicas, reconectas, desconectas sin cerrarla o copias toda la salida.
+En ese menú también pasas a pestañas verticales, en una columna que puedes ensanchar o plegar a íconos.
+La vista dividida muestra dos pestañas o cuatro en cuadrícula, y cada panel tiene su selector.
+Para cerrar varias, usa Cerrar las demás, Cerrar las de la derecha o Cerrar todas las pestañas.
+Antes, un aviso detalla qué sesiones se cortan y qué conexiones rápidas se pierden.
+Cerrar todas también tiene atajo: ⌘⇧W, o Ctrl+Shift+Alt+W en Windows y Linux.

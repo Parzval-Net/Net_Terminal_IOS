@@ -1,0 +1,499 @@
+{
+  "vendor": "fortiap",
+  "name": "FortiAP",
+  "platforms": [
+    {
+      "id": "fap",
+      "label": "FortiAP / FortiAP-S / FortiAP-W2 (FortiAP OS)",
+      "detect": "Version:\\s*FortiAP-(?!U)",
+      "note": "CLI local por SSH, Telnet o consola. Gestión con cfg y diagnóstico con cw_diag. Transferencia TFTP con ftftp."
+    },
+    {
+      "id": "fapu",
+      "label": "FortiAP-U (Universal)",
+      "detect": "Version:\\s*FortiAP-U",
+      "note": "Mismos comandos cfg y cw_diag; la transferencia TFTP usa tftp de BusyBox en vez de ftftp."
+    }
+  ],
+  "detectCommand": "fap-get-status",
+  "commands": [
+    {
+      "cmd": "fap-get-status",
+      "desc": "Muestra modelo, versión de firmware, build, número de serie, MAC base, hostname y tipo de alimentación PoE. Primer comando para identificar el AP.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://community.fortinet.com/fortiap-5/technical-tip-how-to-run-fortiap-shell-commands-via-fortigate-capwap-tunnel-93574"
+    },
+    {
+      "cmd": "cfg -s",
+      "desc": "Lista las variables de configuración más usadas y las que no están en valor por defecto (IP, modo de direccionamiento, tipo de discovery, IP del controlador).",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -e",
+      "desc": "Exporta (muestra) las variables de configuración del FortiAP. Útil para respaldar la configuración local antes de un cambio.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -h",
+      "desc": "Muestra la ayuda de los comandos cfg y la lista completa de variables de configuración soportadas por el firmware.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a AC_IPADDR_1={{ip_controlador}}",
+      "desc": "Define la IP del WiFi controller (FortiGate) para discovery estático. Se complementa con AC_IPADDR_2 y AC_IPADDR_3.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Usar junto con AC_DISCOVERY_TYPE=1. Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a AC_DISCOVERY_TYPE={{tipo}}",
+      "desc": "Define el método de discovery del controlador: 0 auto, 1 estático, 2 DHCP, 3 DNS, 5 broadcast, 6 multicast, 7 FortiCloud.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Un valor erróneo puede impedir que el AP vuelva a unirse al controlador. Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a ADDR_MODE={{modo}}",
+      "desc": "Define cómo obtiene IP el AP: DHCP (por defecto) o STATIC (usa AP_IPADDR, AP_NETMASK e IPGW).",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Puede cambiar la IP de gestión y cortar la sesión SSH. Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a AP_IPADDR={{ip}}",
+      "desc": "Define la IP estática del FortiAP cuando ADDR_MODE es STATIC.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a AP_NETMASK={{mascara}}",
+      "desc": "Define la máscara de red del FortiAP cuando ADDR_MODE es STATIC.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a IPGW={{gateway}}",
+      "desc": "Define el gateway por defecto del FortiAP cuando ADDR_MODE es STATIC.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "note": "Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a AP_MGMT_VLAN_ID={{vlan_id}}",
+      "desc": "Define la VLAN de gestión del AP. Un valor distinto de 0 etiqueta el tráfico de gestión con esa VLAN.",
+      "cat": "Capa 2",
+      "risk": "disruptive",
+      "note": "Si el switch no transporta esa VLAN, el AP pierde conectividad con el controlador. Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a ALLOW_SSH={{valor}}",
+      "desc": "Habilita (1) o deshabilita (0) SSH en el AP, o lo deja controlado por el AC (2, por defecto).",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -a ADMIN_TIMEOUT={{minutos}}",
+      "desc": "Define el timeout de la sesión administrativa en minutos. Fortinet sugiere 0 durante capturas de debug largas.",
+      "cat": "Sistema",
+      "risk": "change",
+      "note": "Revertir al terminar el troubleshooting. Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -r {{variable}}",
+      "desc": "Elimina una variable de configuración, que vuelve a su valor por defecto.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Requiere cfg -c para grabar en flash.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -c",
+      "desc": "Graba en flash los cambios hechos con cfg -a o cfg -r.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Si se cambiaron variables de IP o discovery, el AP puede desconectarse y volver a buscar controlador.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cfg -x",
+      "desc": "Restablece la configuración del FortiAP a valores de fábrica sin reiniciar. Borra también la contraseña de admin.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Se pierde la IP estática y el discovery configurado. No existe forma de resetear solo la contraseña.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "reboot",
+      "desc": "Reinicia el FortiAP. Necesario para aplicar algunos cambios locales y para salir del modo Configuration.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Corta el servicio WiFi del AP mientras reinicia.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.4.1/fortiwifi-and-fortiap-configuration-guide/306409"
+    },
+    {
+      "cmd": "passwd",
+      "desc": "Cambia la contraseña del usuario admin del FortiAP.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Grabar con cfg -c. Si el AP es gestionado, el FortiGate puede sobrescribirla con login-passwd del perfil.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.4.5/fortiwifi-and-fortiap-configuration-guide/66962/fortiap-cli-access"
+    },
+    {
+      "cmd": "restore {{imagen}} {{tftp_ip}}",
+      "desc": "Descarga una imagen de firmware desde un servidor TFTP y actualiza el FortiAP. No requiere acceso al controlador.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "El AP reinicia al terminar. Validar ruta de upgrade soportada antes de ejecutar.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.0.4/fortiwifi-and-fortiap-configuration-guide/610249"
+    },
+    {
+      "cmd": "fap-tech",
+      "desc": "Entrega una salida consolidada de comandos de diagnóstico del AP. Es la información base que pide el TAC.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag help",
+      "desc": "Muestra la ayuda de todos los comandos cw_diag disponibles en el firmware.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag uptime",
+      "desc": "Muestra el uptime de los daemons del FortiAP. Útil para detectar reinicios o crashes recientes.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag sys-performance",
+      "desc": "Muestra uso de CPU y memoria del FortiAP.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Fortinet sugiere tomarlo tres veces con un minuto de diferencia.",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-troubleshooting-93540"
+    },
+    {
+      "cmd": "cw_diag kernel-panic",
+      "desc": "Muestra el registro de kernel panic del AP. Si hay salida, escalar al TAC.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Alias kp en firmwares recientes.",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-exhibits-ap-leave-join-behavior-on-the-fortigate-192779"
+    },
+    {
+      "cmd": "diag_debug_crashlog read",
+      "desc": "Lee el crashlog del FortiAP para identificar caídas de procesos como cwWtpd.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-exhibits-ap-leave-join-behavior-on-the-fortigate-192779"
+    },
+    {
+      "cmd": "dmesg",
+      "desc": "Muestra el buffer de mensajes del kernel del AP (errores de radio, driver, interfaz).",
+      "cat": "Logs",
+      "risk": "read",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-troubleshooting-93540"
+    },
+    {
+      "cmd": "presult",
+      "desc": "Muestra el resultado de la verificación de ping hacia el AC. Confirma si hay pérdida de paquetes entre el AP y el FortiGate.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-exhibits-ap-leave-join-behavior-on-the-fortigate-192779"
+    },
+    {
+      "cmd": "cw_diag -c wtp-cfg",
+      "desc": "Muestra los parámetros de configuración del WTP en el plano de control (perfil, estado FSM, AC, modo).",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Alias wcfg.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c radio-cfg",
+      "desc": "Muestra los parámetros de cada radio: país, banda, canal operativo, potencia TX, ancho de canal, DARRP y modo monitor.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Alias rcfg. Si aparece Radio 0: Failed, revisar firmware o abrir caso TAC.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c vap-cfg",
+      "desc": "Muestra los VAP (SSID) activos en el plano de control: BSSID, interfaz, VLAN, seguridad y modo de bridging.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Alias vcfg. Debe haber una entrada por cada combinación radio x SSID configurada en el FortiGate y en estado ADMIN_UP; si falta alguna hay problema de sincronización. Total 0 VAP Configurations indica que el AP no está difundiendo SSID.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "top",
+      "desc": "Muestra los procesos del FortiAP que más consumen CPU y memoria.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Monitorear varios minutos para detectar anomalías. Salir con Ctrl+C.",
+      "source": "https://community.fortinet.com/fortigate-3/technical-guide-fortigate-wireless-controller-to-fortiap-configuration-push-issues-and-solutions-208964"
+    },
+    {
+      "cmd": "cw_diag -c acs",
+      "desc": "Muestra el estado de la sesión con cada AC: estado FSM (RUN, RUN_STANDBY), IP del controlador, peers de failover y tiempos de reboot automático.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-commands-to-validate-fortigate-wifi-controller-1-1-fast-failover-199502"
+    },
+    {
+      "cmd": "cw_diag -c ha",
+      "desc": "Muestra el AC actual y la lista de controladores descubiertos con prioridad. Valida el failover 1+1 de controladores.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-commands-to-validate-fortigate-wifi-controller-1-1-fast-failover-199502"
+    },
+    {
+      "cmd": "kinfo",
+      "desc": "Muestra las sesiones CAPWAP de control y datos del kernel (IP y puerto del AC y del AP).",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-commands-to-validate-fortigate-wifi-controller-1-1-fast-failover-199502"
+    },
+    {
+      "cmd": "cw_diag -c acs-chan-stats",
+      "desc": "Muestra en tiempo real el estado de las conexiones CAPWAP hacia los controladores.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag stats wl_intf",
+      "desc": "Muestra el estado y estadísticas de las interfaces inalámbricas del AP.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "iwconfig {{interfaz_wlan}}",
+      "desc": "Muestra modo, frecuencia, bit rate y potencia TX real de una interfaz de radio (ej. wlan00, wlan10).",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.4.5/fortiwifi-and-fortiap-configuration-guide/68434/signal-strength-issues"
+    },
+    {
+      "cmd": "cw_diag -c ap-scan",
+      "desc": "Lista los AP vecinos escaneados por cada radio con BSSID, canal, RSSI y SSID. Sirve para detectar interferencia cocanal.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Requiere ap-scan habilitado en el WIDS profile asignado a la radio.",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-how-to-find-interfering-neighbor-fortiap-93951"
+    },
+    {
+      "cmd": "cw_diag -c sta-scan",
+      "desc": "Lista las estaciones (clientes) escaneadas por el AP.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c sta-cap",
+      "desc": "Muestra las capacidades de las estaciones escaneadas.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c wids",
+      "desc": "Muestra las detecciones WIDS registradas por el AP.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c ap-suppress",
+      "desc": "Lista los AP que el FortiAP está suprimiendo (rogue suppression).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c scan-clr-all",
+      "desc": "Limpia todas las tablas de AP, estaciones y ARP escaneados.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c darrp",
+      "desc": "Muestra el canal asignado por DARRP a cada radio.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c temperature",
+      "desc": "Muestra la temperatura de operación de la CPU del FortiAP.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag power",
+      "desc": "Muestra el modo de alimentación PoE detectado y operativo (full o low) y la potencia máxima por radio.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Un modo low indica PoE insuficiente: radios con menos potencia o cadenas.",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-exhibits-ap-leave-join-behavior-on-the-fortigate-192779"
+    },
+    {
+      "cmd": "cw_diag -c all-countries",
+      "desc": "Lista los códigos de país y región y los dominios regulatorios soportados por el AP.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-fortiap-offline-complete-consolidated-troubleshooting-checklist-145616"
+    },
+    {
+      "cmd": "cw_diag -c mesh",
+      "desc": "Muestra el estado de la malla (mesh) del AP.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c mesh-ap",
+      "desc": "Muestra los AP candidatos para uplink mesh.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c k-lan-host",
+      "desc": "Muestra los clientes cableados conectados al puerto LAN2 del FortiAP.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c vlan-probe-cmd 0 {{interfaz}} {{vlan_inicio}} {{vlan_fin}} {{reintentos}} {{timeout}}",
+      "desc": "Inicia un sondeo de VLAN en la interfaz uplink para verificar qué VLAN entrega el switch (ej. 0 eth0 2 300 3 10).",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Acción 0 inicia y 1 detiene. Ver resultado con cw_diag -c vlan-probe-rpt.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c vlan-probe-rpt",
+      "desc": "Muestra el reporte del sondeo de VLAN en el uplink.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c wan1x",
+      "desc": "Muestra la configuración del suplicante 802.1X del puerto WAN del AP.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag -c snmp",
+      "desc": "Muestra la configuración SNMP aplicada al FortiAP.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag plain-ctl {{valor}}",
+      "desc": "Habilita (1) o deshabilita (0) el control CAPWAP en texto plano en el AP, para capturar el tráfico de control sin cifrar.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Debe habilitarse también en el controlador con diagnose wireless-controller wlac plain-ctl. Deshabilitar al terminar.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.4.4/fortiwifi-and-fortiap-configuration-guide/266723"
+    },
+    {
+      "cmd": "cw_diag sniff-cfg {{ip}} {{puerto}}",
+      "desc": "Define la IP y puerto del servidor que recibe el tráfico capturado por el AP.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag sniff {{modo}}",
+      "desc": "Habilita o deshabilita el envío de paquetes capturados al servidor de sniff (0, 1 o 2).",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "ftftp -l /tmp/wl_sniff.cap -r {{archivo_remoto}} -p {{tftp_ip}}",
+      "desc": "Sube a un servidor TFTP la captura inalámbrica guardada en /tmp/wl_sniff.cap.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Sintaxis para FortiAP estándar W1. En W2 se usa ftftp {{tftp_ip}} -m binary -c put /tmp/wl_sniff.cap {{archivo_remoto}}. La captura se pierde al reiniciar o cambiar la radio.",
+      "variants": [
+        {
+          "platforms": [
+            "fapu"
+          ],
+          "cmd": "tftp -l /tmp/wl_sniff.cap -r {{archivo_remoto}} -p {{tftp_ip}}"
+        }
+      ],
+      "source": "https://docs.fortinet.com/document/fortiap/7.4.4/fortiwifi-and-fortiap-configuration-guide/266723"
+    },
+    {
+      "cmd": "cw_debug app cwWtpd 0x7fff",
+      "desc": "Activa el debug detallado del daemon cwWtpd del AP (asociación de clientes, CAPWAP).",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Usar por SSH o Telnet, no por consola: puede afectar el rendimiento. Detener con cw_debug app cwWtpd 0x0.",
+      "source": "https://community.fortinet.com/fortiap-5/technical-tip-how-to-troubleshoot-wireless-station-connection-issues-on-the-fortiap-96016"
+    },
+    {
+      "cmd": "cw_debug app cwWtpd 0x0",
+      "desc": "Detiene el debug del daemon cwWtpd.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "source": "https://community.fortinet.com/fortiap-5/technical-tip-how-to-troubleshoot-wireless-station-connection-issues-on-the-fortiap-96016"
+    },
+    {
+      "cmd": "cw_diag debug cwctl {{nivel}}",
+      "desc": "Define el nivel de debug del módulo cwctl (0 lo desactiva).",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Con fon la salida se guarda en /tmp/var_log_wtpd y con foff se detiene.",
+      "source": "https://community.fortinet.com/fortiap-5/troubleshooting-tip-debug-output-on-txt-file-for-fortiap-222539"
+    },
+    {
+      "cmd": "cw_diag --clog {{valor}}",
+      "desc": "Activa (on) o desactiva (off) los mensajes de log en consola.",
+      "cat": "Logs",
+      "risk": "change",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.0/fortiwifi-and-fortiap-configuration-guide/65088/fortiap-cli-configuration-and-diagnostics-commands"
+    },
+    {
+      "cmd": "cw_diag wlanfw-dump {{tftp_ip}}",
+      "desc": "Habilita el envío del volcado de memoria del firmware WLAN a un servidor TFTP cuando ocurre un crash.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Disponible desde FortiAP 6.4 build 186 y 7.0.2. Cada volcado pesa cerca de 90 MB.",
+      "source": "https://community.fortinet.com/fortiap-5/technical-tip-how-to-export-kernel-panic-crash-firmware-memory-dump-from-fortiap-to-a-tftp-server-111196"
+    }
+  ]
+}

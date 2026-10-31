@@ -1,0 +1,90 @@
+[package]
+name = "net-terminal"
+version = "0.9.19"
+description = "Cliente SSH, Telnet y Serial liviano y multiplataforma"
+repository = "https://github.com/Parzval-Net/NetTerminal_Android"
+authors = ["NetTerminal"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "net_terminal_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-opener = "2"
+tauri-plugin-clipboard-manager = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+portable-pty = "0.9"
+serialport = { version = "4.6", default-features = false }
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+regex = "1"
+tiny_http = "0.12"
+# HTTP del speedtest: el mismo reqwest + rustls (ring) que ya trae tauri-plugin-updater.
+reqwest = { version = "0.13", default-features = false, features = ["rustls-no-provider", "system-proxy"] }
+rustls = { version = "0.23", default-features = false, features = ["ring"] }
+sha2 = "0.11"
+if-addrs = "0.15"
+tauri-plugin-dialog = "2"
+zip = { version = "9", default-features = false, features = ["deflate"] }
+md-5 = "0.11"
+# Contraseñas guardadas: bóveda cifrada (XChaCha20-Poly1305 + Argon2id) y llave en el
+# llavero del sistema cuando está disponible.
+# "zeroize" borra la llave interna del cifrador y la de Poly1305 al soltarse (en 0.10 era fijo).
+chacha20poly1305 = { version = "0.11", default-features = false, features = ["alloc", "zeroize"] }
+argon2 = { version = "0.6", default-features = false, features = ["alloc", "zeroize"] }
+zeroize = { version = "1", features = ["derive"] }
+# RNG del sistema (sal, nonce, llaves y credenciales temporales): el mismo getrandom 0.4 de RustCrypto.
+getrandom = "0.4"
+# SNMPv3 (USM): HMAC-MD5/SHA-1/SHA-2 y AES-128-CFB, de RustCrypto como el resto del cifrado.
+hmac = "0.13"
+sha1 = "0.11"
+aes = "0.9"
+cfb-mode = "0.9"
+# DES-CBC solo para equipos antiguos (opción "legado" en la interfaz).
+des = "0.9"
+cbc = "0.2"
+# Cliente FTP/FTPS (TLS explícito con el rustls + ring que ya usa la app).
+# "no-log" apaga en compilación las macros de `log` (global): suppaftp registraría el comando PASS
+# en nivel trace. La app no instala un logger, así que no se pierde salida.
+suppaftp = { version = "12.2", default-features = false, features = ["rustls-ring", "no-log"] }
+rustls-platform-verifier = "0.7"
+
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-updater = "2"
+
+[target.'cfg(all(target_os = "linux", not(target_env = "musl")))'.dependencies]
+serialport = { version = "4.6", features = ["libudev"] }
+
+# termios de la PTY local (carácter de borrado para SSH); ya venía con portable-pty.
+[target.'cfg(unix)'.dependencies]
+libc = "0.2"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+keyring = { version = "3.6", default-features = false, features = ["apple-native"] }
+
+[target.'cfg(windows)'.dependencies]
+keyring = { version = "3.6", default-features = false, features = ["windows-native"] }
+# Zoom nativo de WebView2 (pellizco y Ctrl+rueda): se apaga para que los gestos lleguen al mapa de Topología.
+# Mismas versiones que ya trae tauri/wry, para no duplicar crates.
+webview2-com = "0.39"
+windows-core = "0.62"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+keyring = { version = "3.6", default-features = false, features = ["sync-secret-service", "crypto-rust"] }
+
+
+# Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

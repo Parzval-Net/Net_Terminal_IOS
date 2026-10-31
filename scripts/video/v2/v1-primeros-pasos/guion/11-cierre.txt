@@ -1,0 +1,5 @@
+# Cierre
+Ya sabes instalar NetTerminal, ordenar tus equipos, conectarte y trabajar con el catálogo, las sugerencias y las notas.
+Los atajos aparecen al pasar el mouse sobre cada botón.
+En el video dos verás las herramientas de red, y en el video tres, la automatización.
+Gracias por ver.

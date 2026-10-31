@@ -1,0 +1,11 @@
+# Topología: vecinos CDP y LLDP
+
+Topología dibuja tu red con lo que cada equipo sabe de sus vecinos. CDP, de Cisco, y LLDP, el estándar, anuncian por cada puerto quién está al otro lado y por qué interfaz.
+
+Conecta una sesión con un equipo. En Topología, deja Descubrir con en Consola y elige el equipo en Equipo, sesión conectada. Deja marcado Estado de puertos y pulsa Descubrir vecinos. La app envía solo consultas, como show cdp neighbors detail. Los enlaces paralelos se rotulan con el Port-channel que los agrupa.
+
+Para seguir la ruta salto a salto, haz clic en un vecino y pulsa Conectar y seguir la ruta. Si tienes una sesión guardada con esa IP o ese nombre, la usa; si no, abre SSH con el usuario y el jump host de la sesión de origen. Escribe la contraseña en la nueva pestaña. Al conectar, ese equipo queda elegido en Equipo: vuelve a Topología y pulsa Descubrir vecinos otra vez.
+
+Para ver el camino entre dos equipos, selecciona uno y pulsa Desde aquí. Luego el otro, y Hasta aquí. Ruta lista los puertos de cada salto.
+
+Antes de un cambio, guarda un snapshot. Después, elige Comparar con: lo nuevo aparece en verde y lo que falta, en rojo punteado. Abrir reemplaza el diagrama y el basurero borra el snapshot; ambos piden confirmación. Exportar ofrece SVG, draw.io, CSV y Mermaid.

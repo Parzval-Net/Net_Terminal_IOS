@@ -1,0 +1,7 @@
+# Apariencia y Ajustes
+Ajustes se abre con ⌘, y en Windows y Linux con Ctrl+, sin Shift.
+En Apariencia, la interfaz sigue al sistema o se fija en Claro u Oscuro.
+La terminal tiene su propio tema: Automático o uno de diecisiete, como Ámbar, Dracula o Tokyo Night.
+También eliges fuente, tamaño, interlineado y cursor, y Resaltado colorea la salida según el fabricante.
+El buscador de arriba encuentra cualquier opción, y en Módulos ocultas las herramientas que no usas.
+Los cambios se aplican al instante, y Restablecer valores pide confirmación antes de borrar tus preferencias.

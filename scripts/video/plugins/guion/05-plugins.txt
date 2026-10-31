@@ -1,0 +1,27 @@
+# Plugins
+
+Un plugin empaqueta acciones reutilizables: una carpeta con un manifiesto plugin.json y un script de Python que usa la misma API netterminal. Sus acciones aparecen como botones en Herramientas, Plugins.
+
+Escribamos uno mínimo. El manifiesto declara un id con letras, números, guiones o guion bajo, el nombre, la versión, el archivo de entrada, los permisos y al menos una acción.
+
+El archivo main.py lee la acción elegida en la variable NT_ACTION y ejecuta la función que corresponde. Aquí, versión e interfaces, solo lectura.
+
+Para instalarlo, entra a Herramientas, Plugins, y elige Desde carpeta o Instalar .zip. La app copia el plugin a un área temporal y lo valida antes de mostrarte nada.
+
+Rechaza manifiestos inválidos, enlaces simbólicos, rutas fuera de la carpeta, más de 200 archivos o 20 MB, y todo código que no se puede revisar: bytecode, binarios, archivos .pth o Python que no esté en UTF-8.
+
+Luego ves la revisión: descripción, permisos y todo el código Python, partiendo por el archivo de entrada. Solo si lo apruebas se instala y se habilita.
+
+Al aprobarlo, la app guarda una huella SHA-256 de todos sus archivos. Si alguno cambia, el plugin queda bloqueado hasta que revises el código y apruebes el cambio.
+
+Sobre los permisos: session es el único que la app hace cumplir. Sin él, el plugin no puede leer ni enviar nada a la sesión. Network y files son declarativos, porque Python corre con tus privilegios. Por eso la revisión es obligatoria.
+
+Las acciones que usan la sesión requieren una pestaña conectada, y su salida aparece abajo. Los plugins no envían a varias sesiones ni pasan por el motor de riesgo.
+
+Para actualizarlo, sube la versión en el manifiesto y agrega lo nuevo, en este caso una acción de ping.
+
+Al instalar de nuevo, la revisión avisa que reemplazará la versión instalada y muestra el código completo.
+
+Si en cambio editas los archivos directamente en la carpeta de plugins, la app lo detecta, lo bloquea y te pide revisar y aprobar los cambios para habilitarlo.
+
+El script, el plugin y un pack de ejemplo están en la carpeta docs/ejemplos del repositorio.

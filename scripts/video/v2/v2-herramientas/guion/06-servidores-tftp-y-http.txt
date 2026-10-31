@@ -1,0 +1,13 @@
+# Servidores TFTP y HTTP
+
+El Servidor TFTP usa el puerto 69. Pulsa Iniciar.
+
+Debajo están los comandos para el equipo, listos para copiar: copy tftp para Cisco y tftp get para Huawei. Usan el archivo que elegiste en Archivos compartidos y la IP del selector: revísalos antes de pegar.
+
+Por defecto TFTP solo entrega archivos. Para recibir, activa Permitir subidas. Se aplica al instante, incluso con el servidor en marcha, y no se guarda: al abrir la app de nuevo vuelve a estar apagado.
+
+El Servidor HTTP usa el puerto ochenta ochenta y es solo de lectura. Su comando es copy http, con la IP y el puerto.
+
+En Linux y macOS, los puertos bajo 1024 pueden requerir privilegios. Si TFTP no inicia en el 69, usa el 1069 y configúralo en el equipo. Lo mismo vale para FTP, traps y Syslog: 2121, 1162 y 1514.
+
+El flujo típico para un firmware: agrega la imagen con Agregar, revisa el espacio libre en el equipo, inicia HTTP, o TFTP si el equipo no lo soporta, pega el comando en la sesión, sigue el avance en Transferencias, verifica el MD5 contra el del fabricante y detén el servidor. El cambio de imagen y el reinicio quedan a tu cargo.

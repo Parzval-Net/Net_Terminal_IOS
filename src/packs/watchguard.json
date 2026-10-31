@@ -1,0 +1,984 @@
+{
+ "vendor": "watchguard",
+ "name": "WatchGuard",
+ "platforms": [
+  {
+   "id": "fw12",
+   "label": "Fireware 12.x",
+   "detect": "\\b12\\.(?:[5-9]|1[0-2])\\.\\d+",
+   "note": "Fireware v12.5 a v12.12. Comandos base según CLI Reference v12.9.4 y v12.12.2/12.11.9."
+  },
+  {
+   "id": "fw2025",
+   "label": "Fireware 2025.x / 2026.x",
+   "detect": "\\b20(?:2[5-9])\\.\\d+(?:\\.\\d+)?",
+   "note": "Nueva numeración por año (v2025.1, v2026.1, v2026.2, v2026.3). Agrega comandos como show hw_acceleration e interface_multilevel_ipg en modelos T115-W/T125/T145."
+  }
+ ],
+ "detectCommand": "show sysinfo",
+ "commands": [
+  {
+   "cmd": "show sysinfo",
+   "desc": "Muestra la información de sistema del Firebox (modelo, versión de Fireware, número de serie y uptime). Es el punto de partida para levantar el estado del equipo.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Acceso por SSH puerto 4118 (Trusted/Optional por defecto) o consola serial 115200 8N1 sin control de flujo, terminal VT100.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show status-report",
+   "desc": "Entrega el reporte de salud del sistema, útil para diagnóstico general o para adjuntar a un caso de soporte.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Salida extensa.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show features",
+   "desc": "Lista las funcionalidades de software licenciadas y activas en el equipo.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show feature-key",
+   "desc": "Muestra el ID del feature key y las fechas de expiración de cada servicio licenciado.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Con un ID muestra el detalle de ese feature key.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show clock",
+   "desc": "Muestra la fecha y hora del sistema. Clave para correlacionar logs y validar certificados.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "who",
+   "desc": "Lista las sesiones de Device Management activas con rol, IP de origen, inicio y última actividad.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "unlock device-mgmt-users {{usuario}}",
+   "desc": "Desbloquea una cuenta de Device Management bloqueada por intentos fallidos.",
+   "cat": "Sistema",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). Para cuentas Firebox-DB usar 'unlock firebox-db {{usuario}}'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show fips",
+   "desc": "Indica si el modo FIPS está habilitado.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Documentado desde la guía v12.11/2026 (FIPS 140-3 en 12.11). Verificar en tu versión si es anterior.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show fault-report",
+   "desc": "Muestra la configuración y los Fault Reports disponibles. El prompt muestra [Fault] cuando existe un evento de falla.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nsystem name {{nombre}}\nexit",
+   "desc": "Define el nombre amigable del Firebox que aparece en reportes y consolas.",
+   "cat": "Sistema",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nntp enable\nntp server ip {{ip}}\nexit",
+   "desc": "Habilita NTP y agrega un servidor NTP por IP para sincronizar la hora.",
+   "cat": "Sistema",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. Para FQDN: 'ntp server domain {{fqdn}}'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "sync feature-key apply",
+   "desc": "Descarga el feature key desde WatchGuard y lo aplica de inmediato.",
+   "cat": "Sistema",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). Sin 'apply' el nuevo feature key se usa tras reiniciar.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "upgrade system from {{url}}",
+   "desc": "Actualiza Fireware OS desde un archivo .sysa-dl en un servidor FTP o TFTP. Reinicia el equipo.",
+   "cat": "Sistema",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Agregar 'yes' omite la confirmación. Instalar una versión inferior hace downgrade y obliga a restaurar backup o volver a fábrica. En FireCluster actualiza ambos miembros, uno a la vez. Si la URL lleva usuario y clave (ftp://usuario:clave@host/ruta), quedan en el historial de la sesión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show sys-storage",
+   "desc": "Muestra capacidad total, usada y disponible del almacenamiento del equipo.",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose hardware system",
+   "desc": "Muestra temperatura de CPU, velocidad del ventilador y voltajes.",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). No soportado en T15, T20, T25, T40 y T45 (incluye variantes -W, -PoE y -CW) ni en XTMv. Pide confirmación: agregar 'yes' la omite.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose hardware ethernet nic-nums",
+   "desc": "Muestra la cantidad total de interfaces Ethernet del equipo.",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose hardware ethernet nic-stat {{interfaz}}",
+   "desc": "Muestra el estado físico de una interfaz Ethernet (por ejemplo eth0).",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). Usar nombre interno ethN.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose hardware ethernet nic-errors {{interfaz}}",
+   "desc": "Muestra el reporte de errores de una interfaz Ethernet, útil ante CRC, drops o problemas de cableado.",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose hardware poe yes",
+   "desc": "Muestra el estado PoE y la clase del dispositivo conectado en puertos con Power over Ethernet.",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). Solo modelos con PoE.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show usb",
+   "desc": "Muestra información del pendrive USB conectado (imágenes de backup, auto-restore, diagnóstico).",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Componentes: auto-restore, diagnostic status, flash-image, support-file.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show hw_acceleration",
+   "desc": "Muestra si la aceleración por hardware de la criptografía VPN está habilitada.",
+   "cat": "Hardware",
+   "risk": "read",
+   "platforms": [
+    "fw2025"
+   ],
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Solo Firebox T115-W, T125 y T145 con Fireware v2026.1 o superior.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show interface",
+   "desc": "Resumen de todas las interfaces físicas con su configuración y estado.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show interface {{numero}}",
+   "desc": "Detalle de una interfaz por número, incluida la IPv6 si está habilitada.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show link-aggregation",
+   "desc": "Muestra configuración y estado de las interfaces Link Aggregation.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Se puede indicar el nombre de la interfaz LA.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show dhcp leases",
+   "desc": "Muestra la tabla de leases DHCP IPv4 (subred, total y en uso).",
+   "cat": "Interfaces",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Guía v12.9.4 indica v12.7 o superior; la guía v2026.3 indica v12.10 o superior. Verificar en tu versión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\ninterface FastEthernet {{numero}}\nname {{nombre}}\nexit\nexit",
+   "desc": "Cambia el nombre (alias) de una interfaz física.",
+   "cat": "Interfaces",
+   "risk": "change",
+   "note": "Modo: interface (WG(config/if-fe<n>)#), dentro de configure.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\ninterface FastEthernet {{numero}}\nip address {{ip_cidr}}\nexit\nexit",
+   "desc": "Asigna la dirección IP de una interfaz interna (formato A.B.C.D/nn).",
+   "cat": "Interfaces",
+   "risk": "disruptive",
+   "note": "Modo: interface (WG(config/if-fe<n>)#), dentro de configure. En una interfaz externa agregar 'default-gw {{gateway}}'. Puede cortar la gestión si es la interfaz de acceso.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\ninterface FastEthernet {{numero}}\nno enable\nexit\nexit",
+   "desc": "Deshabilita una interfaz física.",
+   "cat": "Interfaces",
+   "risk": "disruptive",
+   "note": "Modo: interface (WG(config/if-fe<n>)#), dentro de configure. Corta todo el tráfico de la interfaz. Rehabilitar con 'enable'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\ninterface FastEthernet {{numero}}\ntype trusted\nexit\nexit",
+   "desc": "Define el tipo de interfaz (trusted, optional, custom o external).",
+   "cat": "Interfaces",
+   "risk": "disruptive",
+   "note": "Modo: interface (WG(config/if-fe<n>)#), dentro de configure. Para external: 'type external default-gw {{gateway}}', 'dhcp' o 'pppoe'. Cambia políticas aplicadas.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\ninterface FastEthernet {{numero}}\nlink-speed {{velocidad}}\nexit\nexit",
+   "desc": "Fuerza velocidad y dúplex (10-full, 100-full, 1000-full, etc.).",
+   "cat": "Interfaces",
+   "risk": "disruptive",
+   "note": "Modo: interface (WG(config/if-fe<n>)#), dentro de configure. Provoca renegociación del enlace.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show arp",
+   "desc": "Muestra la tabla ARP del Firebox.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show static-arp",
+   "desc": "Muestra las entradas ARP estáticas configuradas.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "arp flush",
+   "desc": "Limpia todas las entradas de la caché ARP.",
+   "cat": "Capa 2",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). Puede generar pérdida breve de tráfico mientras se re-aprenden entradas.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nstatic-arp {{interfaz}} {{ip}} {{mac}}\nexit",
+   "desc": "Crea una asociación IP a MAC estática en una interfaz.",
+   "cat": "Capa 2",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. MAC en formato 00:11:22:33:44:55.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show vlan",
+   "desc": "Muestra las interfaces VLAN e información de Spanning Tree asociada.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Se puede indicar el nombre de la VLAN.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show bridge",
+   "desc": "Muestra configuración y estado de las interfaces bridge.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). La guía muestra la sintaxis como 'show bovpn [bridge-name]' por error tipográfico; verificar en tu versión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nvlan {{nombre}}\nvlan-id {{vlan_id}} security-zone trusted {{ip_cidr}} member {{numero}} tagged\nexit\nexit",
+   "desc": "Crea una VLAN en zona trusted con su IP y la asocia a una interfaz física como tagged.",
+   "cat": "Capa 2",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), submodo vlan (WG(config/vlan-<nombre>)#). Sintaxis de la guía: vlan-id <id> security-zone (external|trusted|optional) <dirección> member (<n>|name <if>) (tagged|untagged). En trusted y optional la IP es red/prefijo de /8 a /30. VLAN ID 1-4094; en T115-W, T125 y T145 con v2026.2 o superior el 4094 está reservado.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nlink-aggregation {{nombre}}\nmember {{numero}}\nmode dynamic\nexit\nexit",
+   "desc": "Crea una interfaz Link Aggregation, agrega miembros y la deja en modo dinámico 802.3ad (LACP).",
+   "cat": "Capa 2",
+   "risk": "disruptive",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. Submodo link-aggregation. Modos: active-backup (defecto), dynamic, static. Los miembros deben estar habilitados.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show ip route",
+   "desc": "Muestra la tabla de rutas IPv4 (primeras 100 rutas).",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Filtros: connected, static, dynamic, vpn, ifname {{interfaz}} o una red A.B.C.D/nn.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show ip route {{red_cidr}}",
+   "desc": "Muestra solo las rutas hacia una red de destino específica.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Prefijo /8 a /32.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show ip static-route",
+   "desc": "Muestra las rutas estáticas configuradas.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show ip dynamic-routing bgp",
+   "desc": "Muestra la información de enrutamiento dinámico BGP.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Protocolos: bgp, ospf, ospfv3, rip, ripng.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show v6 ip route",
+   "desc": "Muestra la tabla de rutas IPv6.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Mismos filtros que IPv4; 'show v6 ip static-route' lista las estáticas.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose dynroute \"show ip route\"",
+   "desc": "Consulta la tabla de rutas del motor de routing dinámico (vtysh de Quagga).",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). La guía lo documenta para Fireware v12.8.x o inferior; desde v12.9 usar show ip route dynamic o show ip route. El comando vtysh va entre comillas y no deben usarse comandos vtysh que modifiquen la tabla.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose dynroute \"show ip ospf\"",
+   "desc": "Muestra el estado de OSPF desde el motor de routing dinámico.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). Documentado para Fireware v12.8.x o inferior; desde v12.9 usar show ip dynamic-routing ospf.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose dynroute \"show ip bgp summary\"",
+   "desc": "Muestra el resumen de vecinos BGP y prefijos recibidos.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). Documentado para Fireware v12.8.x o inferior; desde v12.9 usar show ip dynamic-routing bgp. La guía soporta la mayoría de comandos vtysh de Quagga, pero este no figura como ejemplo: verificar en tu versión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nip route {{red_cidr}} {{gateway}}\nexit",
+   "desc": "Crea una ruta estática IPv4.",
+   "cat": "Enrutamiento",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. Opcional 'distance <valor>' (1 a 255) desde v12.9; en v12.8.x o inferior el parámetro es 'metric'. Eliminar con 'no ip route {{red_cidr}}'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "import route-config bgp from {{url}}",
+   "desc": "Importa la configuración del protocolo dinámico (formato Quagga) desde FTP o TFTP.",
+   "cat": "Enrutamiento",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). Protocolos: bgp, rip, ripng, ospf, ospfv3. Usar 'from console' para pegarla en la CLI. Si la URL lleva usuario y clave (ftp://usuario:clave@host/ruta), quedan en el historial de la sesión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nip dynamic-routing bgp enable\nexit",
+   "desc": "Habilita BGP; Fireware crea automáticamente la política DR-BGP-Any.",
+   "cat": "Enrutamiento",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. Requiere importar antes la configuración del protocolo.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show sd-wan status",
+   "desc": "Muestra modo, interfaces y estado de cada acción SD-WAN (A=activa, Q=calificada, P=preferida) y su método de failover/failback.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). 'show sd-wan action' lista las acciones.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show link-monitor",
+   "desc": "Muestra los destinos de Link Monitor por interfaz.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Comando propio desde v12.3; en v12.2.1 o inferior era parte de multi-wan.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show vpn-status bovpn gateway",
+   "desc": "Muestra el estado de las conexiones Branch Office VPN.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Agregar el nombre del gateway para filtrar.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show bovpn-gateway",
+   "desc": "Muestra configuración y estado de los gateways BOVPN.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show bovpn-tunnel",
+   "desc": "Muestra configuración y estado de los túneles BOVPN y su gateway asociado.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show bovpn-vif",
+   "desc": "Muestra las interfaces virtuales BOVPN (route-based VPN).",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show mvpn-ipsec",
+   "desc": "Lista los grupos Mobile VPN with IPSec.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show sslvpn",
+   "desc": "Muestra la configuración de Mobile VPN with SSL.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show vpn-status l2tp session",
+   "desc": "Lista las sesiones activas de Mobile VPN with L2TP con su interfaz PPP e IP virtual.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose vpn \"/ike/sa/list\"",
+   "desc": "Lista las SA de Fase 1 (IKE) establecidas.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose vpn \"/ipsec/sa/list\"",
+   "desc": "Lista las SA IPSec (Fase 2) disponibles.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose vpn \"/ike/gateway/list\"",
+   "desc": "Lista los gateways IKE configurados.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). Detalle: diagnose vpn \"/ike/gateway/info {{nombre}}\".",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "vpn-tunnel diag-report gateway {{nombre}} 20",
+   "desc": "Genera el reporte de diagnóstico VPN de un gateway BOVPN y sus túneles (duración en segundos, máx. 60).",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "vpn-tunnel rekey {{nombre}}",
+   "desc": "Fuerza el rekey de un gateway BOVPN.",
+   "cat": "MPLS / VPN",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Interrumpe brevemente los túneles del gateway.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose vpn \"/ike/restart\"",
+   "desc": "Reinicia el proceso IKE de VPN.",
+   "cat": "MPLS / VPN",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Cae y se renegocia toda VPN IPSec.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "no vpn-status l2tp virtual-ip {{ip}}",
+   "desc": "Termina una sesión Mobile VPN with L2TP por su IP virtual.",
+   "cat": "MPLS / VPN",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Alternativa: 'no vpn-status l2tp ppp-if {{interfaz}}'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show rule",
+   "desc": "Lista todas las políticas configuradas.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show rule {{nombre}}",
+   "desc": "Muestra el detalle de una política (nombre sensible a mayúsculas).",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show alias",
+   "desc": "Lista los alias configurados.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Con nombre muestra el detalle.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "policy-check {{interfaz}} tcp {{ip_origen}} {{ip_destino}} {{puerto_origen}} {{puerto_destino}}",
+   "desc": "Indica qué política procesa un flujo dado y qué acción aplica, sin generar tráfico real.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). Protocolos: ping (sin puertos), tcp, udp. En FireCluster solo en el master. Interfaz por nombre (ej. Trusted, External, SSL-VPN).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show connection count",
+   "desc": "Muestra la cantidad actual de conexiones en el Firebox.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show connection count by-policy {{nombre}}",
+   "desc": "Muestra el conteo de conexiones por política.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Sin nombre muestra todas; nombres sensibles a mayúsculas.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show one-to-one-nat",
+   "desc": "Muestra la configuración de NAT 1-to-1.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show ip blocked-site",
+   "desc": "Muestra la lista de sitios bloqueados.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nip blocked-site dynamic {{ip}} expire-after hour {{horas}}\nexit",
+   "desc": "Bloquea temporalmente todo el tráfico desde una IP por el tiempo indicado.",
+   "cat": "Seguridad",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. También acepta day, minute y second.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show intrusion-prevention settings",
+   "desc": "Muestra la configuración de IPS.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Otros: ips-statistic, exception, notification.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show signature-update",
+   "desc": "Muestra el estado de actualización de firmas de IPS, Gateway AV y DLP.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show geolocation ip-lookup {{ip}}",
+   "desc": "Consulta el país asociado a una IP según la base de Geolocation.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show auth-server",
+   "desc": "Muestra configuración y estado de los servidores de autenticación.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose auth-server {{dominio}} {{usuario}}",
+   "desc": "Prueba la conexión con un servidor AD o LDAP, busca al usuario y obtiene sus grupos.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). Usar 'ldap' como servidor para LDAP. Admite un tercer parámetro con la contraseña del usuario: no usarlo, queda en el historial.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nweb-server-cipher block weak-ciphers\nexit",
+   "desc": "Bloquea los cifrados CBC débiles en el servidor web del Firebox.",
+   "cat": "Seguridad",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. No figura en la guía v12.9.4; documentado en la guía v12.12/2026. Bloqueo de un cifrado individual desde v2026.1. Verificar en tu versión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nauth-setting login-block enable\nexit",
+   "desc": "Bloquea IPs de origen tras intentos de login fallidos consecutivos.",
+   "cat": "Seguridad",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. Fireware v12.10.4 o superior. Ajustar attempts, period y duration.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show cluster status",
+   "desc": "Muestra el estado y rol de los miembros del FireCluster.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Agregar 'member {{nombre}}' para un miembro.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show cluster sync",
+   "desc": "Muestra el estado de sincronización entre miembros del cluster.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Opciones: cluster, gateway, host-mapping, hostile-sites, signatures; timeout por defecto 10 s.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "cluster sync",
+   "desc": "Fuerza la sincronización de configuración y datos del master hacia el backup master.",
+   "cat": "Alta disponibilidad",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). Se puede limitar: configuration, certificates, dhcp, licenses, signatures, etc.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "cluster discover",
+   "desc": "Descubre un nuevo miembro en safe mode y le carga la configuración del cluster.",
+   "cat": "Alta disponibilidad",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "cluster failover",
+   "desc": "Fuerza el failover: el backup master pasa a ser cluster master.",
+   "cat": "Alta disponibilidad",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Puede cortar sesiones según el modo del cluster.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "cluster reboot {{nombre}}",
+   "desc": "Reinicia un miembro del cluster; sin nombre reinicia ambos.",
+   "cat": "Alta disponibilidad",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Nombre sensible a mayúsculas.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "cluster reset {{nombre}}",
+   "desc": "Restablece un miembro del cluster a valores de fábrica ('all' para ambos).",
+   "cat": "Alta disponibilidad",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Desde el backup master solo puede resetearse a sí mismo.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "diagnose vpn \"/ipsec/cluster/topology\"",
+   "desc": "Muestra la topología del cluster vista por el subsistema IPSec.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show traffic-management",
+   "desc": "Lista las acciones de Traffic Management configuradas.",
+   "cat": "QoS",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Con nombre muestra el detalle de una acción.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show global-setting traffic-management",
+   "desc": "Indica si Traffic Management y QoS están habilitados globalmente.",
+   "cat": "QoS",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\ninterface FastEthernet {{numero}}\nqos marking dscp preserve priority-method Mapped-from-Marking\nexit\nexit",
+   "desc": "Configura el marcado DSCP en la interfaz para preservar el valor original y priorizar según el marcado.",
+   "cat": "QoS",
+   "risk": "change",
+   "note": "Modo: interface (WG(config/if-fe<n>)#), dentro de configure. Estados: assign {{clase}}, clear, preserve. Métodos: No_Priority, Customer, Mapped-from-Marking.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\ninterface FastEthernet {{numero}}\nqos max-link-bandwidth {{valor}}\nexit\nexit",
+   "desc": "Define el ancho de banda máximo del enlace para Traffic Management.",
+   "cat": "QoS",
+   "risk": "change",
+   "note": "Modo: interface (WG(config/if-fe<n>)#), dentro de configure. Valor 0 a 1.000.000.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show quota-report",
+   "desc": "Muestra el reporte en tiempo de ejecución de cuotas de ancho de banda y tiempo.",
+   "cat": "QoS",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "quota-reset user {{usuario}}",
+   "desc": "Reinicia la cuota de un usuario.",
+   "cat": "QoS",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). Para una acción: 'quota-reset action {{nombre}}'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "ping {{ip}}",
+   "desc": "Envía un ping IPv4 desde el Firebox.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). Acepta opciones estándar: -c, -s, -I, -t, etc.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "ping -c 5 -I {{interfaz}} {{ip}}",
+   "desc": "Ping con 5 paquetes forzando la interfaz o IP de origen.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "ping -6 {{ipv6}} -I {{interfaz}}",
+   "desc": "Ping IPv6 indicando la interfaz de salida (ej. eth1).",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "traceroute {{ip}}",
+   "desc": "Traza la ruta hacia un destino.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>). -n evita resolución DNS; -I usa otro protocolo; -m TTL máximo.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "tcpdump -n -i {{interfaz}} -c {{cantidad}} host {{ip}}",
+   "desc": "Captura tráfico en una interfaz filtrando por host y limitando la cantidad de paquetes.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Modo: main. La guía indica que algunos comandos no están disponibles con rol Device Monitor (WG>). Usar siempre -c para no saturar la sesión. Interfaz con nombre interno (eth0, vlan10, bond0).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "dnslookup {{fqdn}}",
+   "desc": "Resuelve un nombre de dominio usando los DNS del Firebox.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Modo: main (WG# o WG>).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show ip dns",
+   "desc": "Muestra los servidores DNS configurados en el Firebox.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "export support to {{url}}",
+   "desc": "Exporta el support snapshot a un servidor FTP o TFTP para soporte técnico.",
+   "cat": "Diagnóstico",
+   "risk": "change",
+   "note": "Modo: main (WG# o WG>). También 'export support to usb {{archivo}}'. Contiene configuración: tratar como información sensible y usar solo destinos autorizados. Si la URL lleva usuario y clave (ftp://usuario:clave@host/ruta), quedan en el historial de la sesión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show log-cache tail {{cantidad}}",
+   "desc": "Muestra los últimos N registros del repositorio temporal de Traffic Monitor (1 a 10000).",
+   "cat": "Logs",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show log-cache key {{texto}}",
+   "desc": "Filtra el log cache por un patrón de texto.",
+   "cat": "Logs",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). Combinable con count y tail.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show log-setting",
+   "desc": "Muestra la configuración de logging de todos los componentes.",
+   "cat": "Logs",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nlog-setting log-level {{componente}} {{nivel}}\nexit",
+   "desc": "Ajusta el nivel de log de diagnóstico de un componente (ej. IKE-32, Firewall-7).",
+   "cat": "Logs",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. Niveles: Off, Error, Warning, Information, Debug. Volver al nivel original al terminar.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\nlog-setting ike-packet-trace enable\nexit",
+   "desc": "Habilita la traza de paquetes IKE para troubleshooting de VPN.",
+   "cat": "Logs",
+   "risk": "change",
+   "note": "Modo: configure (WG(config)#), se entra con 'configure'. Deshabilitar con 'no log-setting ike-packet-trace enable'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "fault-report send",
+   "desc": "Envía de inmediato todos los Fault Reports a WatchGuard.",
+   "cat": "Logs",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). 'no fault-report' elimina todos los Fault Reports del equipo.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show global-setting",
+   "desc": "Muestra todos los global settings (timeouts TCP/UDP, puerto de Web UI, auto-reboot, etc.).",
+   "cat": "Configuración",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "show backup-list",
+   "desc": "Lista las imágenes de backup guardadas en el Firebox.",
+   "cat": "Configuración",
+   "risk": "read",
+   "note": "Modo: cualquiera (comando común, también en configure y submodos). 'show backup-list from usb' para el pendrive.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "backup image {{archivo}}",
+   "desc": "Guarda una imagen de backup en el almacenamiento del Firebox.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). Para USB: 'backup image {{archivo}} to usb {{clave}} yes' (yes incluye Fireware OS).",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "export config to {{url}}",
+   "desc": "Exporta la configuración en XML (Policy Manager) a un servidor FTP o TFTP.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Modo: main, requiere Device Administrator (WG#). Agregar 'html' para el reporte legible. El archivo contiene datos sensibles: usar solo destinos autorizados. Si la URL lleva usuario y clave (ftp://usuario:clave@host/ruta), quedan en el historial de la sesión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "configure\npolicy\napply\nexit\nexit",
+   "desc": "Guarda y aplica los cambios hechos en el modo policy.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo: policy (WG(config/policy)#), dentro de configure; requiere 'apply'. Aplica de inmediato todos los cambios pendientes del modo policy, lo que puede reiniciar túneles VPN o cambiar el filtrado.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "import config from {{url}}",
+   "desc": "Importa un archivo de configuración desde FTP o TFTP y reemplaza la configuración actual.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Reemplaza la configuración actual. Si la URL lleva usuario y clave (ftp://usuario:clave@host/ruta), quedan en el historial de la sesión.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "restore image {{archivo}}",
+   "desc": "Restaura una imagen de backup guardada en el Firebox.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Desde USB: 'restore image {{archivo}} from usb {{clave}}'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "restore factory-default",
+   "desc": "Restaura la configuración de fábrica conservando backups, feature key y certificados; no requiere reinicio.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Pérdida total de la configuración. Tener backup y acceso por consola serial.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "restore factory-default all",
+   "desc": "Restaura fábrica y elimina backups, feature key y certificados; aplica tras el siguiente reinicio.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Irreversible. Requiere re-licenciar el equipo.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "reboot",
+   "desc": "Detiene todo el procesamiento y hace un reinicio en frío del equipo.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Corta todo el tráfico. En FireCluster preferir 'cluster reboot'.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  },
+  {
+   "cmd": "shutdown",
+   "desc": "Apaga el Firebox.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo: main, requiere Device Administrator (WG#). Requiere acceso físico para volver a encender.",
+   "source": "https://www.watchguard.com/help/docs/fireware/12/en-US/CLI/CLI_Reference_v12_12.pdf"
+  }
+ ]
+}

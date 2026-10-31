@@ -1,0 +1,1044 @@
+{
+  "vendor": "macos",
+  "name": "macOS",
+  "detectCommand": "sw_vers",
+  "platforms": [
+    {
+      "id": "macos12",
+      "label": "macOS 12 Monterey",
+      "detect": "ProductVersion:\\s+12\\.",
+      "note": "Incluye networkQuality. La utilidad airport aún funciona."
+    },
+    {
+      "id": "macos13",
+      "label": "macOS 13 Ventura",
+      "detect": "ProductVersion:\\s+13\\.",
+      "note": "Configuración del Sistema reemplaza Preferencias del Sistema. airport aún funciona."
+    },
+    {
+      "id": "macos14",
+      "label": "macOS 14 Sonoma",
+      "detect": "ProductVersion:\\s+14\\.",
+      "note": "airport muestra advertencia de deprecación y deja de entregar datos desde 14.4; usar wdutil."
+    },
+    {
+      "id": "macos15",
+      "label": "macOS 15 Sequoia",
+      "detect": "ProductVersion:\\s+15\\.",
+      "note": "SSID redactado en ipconfig getsummary y networksetup -getairportnetwork sin permisos; verificar en tu versión."
+    },
+    {
+      "id": "macos26",
+      "label": "macOS 26 Tahoe",
+      "detect": "ProductVersion:\\s+26\\.",
+      "note": "Mantiene las restricciones de privacidad sobre SSID; verificar en tu versión."
+    },
+    {
+      "id": "macos27",
+      "label": "macOS 27",
+      "detect": "ProductVersion:\\s+27\\.",
+      "note": "Versión más reciente detectada en pruebas; los comandos sin restricción de plataforma aplican. Verificar en tu versión."
+    }
+  ],
+  "commands": [
+    {
+      "cmd": "sw_vers",
+      "desc": "Muestra nombre, versión y build de macOS. Sirve para identificar la plataforma antes de elegir la sintaxis correcta.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://ss64.com/mac/sw_vers.html"
+    },
+    {
+      "cmd": "scutil --get ComputerName",
+      "desc": "Muestra el nombre del equipo visible en la red y en Compartir.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "scutil --get LocalHostName",
+      "desc": "Muestra el nombre Bonjour del equipo, usado como <nombre>.local en la red local.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "scutil --get HostName",
+      "desc": "Muestra el hostname configurado manualmente. Si no está definido, informa que no hay valor y el sistema usa el nombre derivado de DHCP o DNS.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "hostname",
+      "desc": "Muestra el hostname efectivo que usa el sistema en este momento.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/shell_cmds/blob/main/hostname/hostname.1"
+    },
+    {
+      "cmd": "system_profiler SPSoftwareDataType",
+      "desc": "Resume versión de macOS, kernel, tiempo encendido y nombre del equipo.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://ss64.com/mac/system_profiler.html"
+    },
+    {
+      "cmd": "networksetup -listallhardwareports",
+      "desc": "Lista los puertos de hardware de red (Wi-Fi, Ethernet, Thunderbolt Bridge) con su dispositivo BSD (en0, en1) y dirección MAC.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getmacaddress {{interfaz}}",
+      "desc": "Muestra la dirección MAC de un puerto de hardware o dispositivo, por ejemplo en0.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getmedia {{interfaz}}",
+      "desc": "Muestra la velocidad y dúplex configurados y activos del puerto (por ejemplo autoselect o 1000baseT full-duplex).",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "system_profiler SPNetworkDataType",
+      "desc": "Reporte completo de cada servicio de red: tipo, IPv4, IPv6, DNS, proxies y dirección MAC.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://ss64.com/mac/system_profiler.html"
+    },
+    {
+      "cmd": "system_profiler SPEthernetDataType",
+      "desc": "Detalle de las controladoras Ethernet: fabricante, driver, bus y dirección MAC.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://ss64.com/mac/system_profiler.html"
+    },
+    {
+      "cmd": "ifconfig",
+      "desc": "Muestra todas las interfaces con flags, MTU, MAC, direcciones IPv4/IPv6 y estado del enlace.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ifconfig.tproj/ifconfig.8"
+    },
+    {
+      "cmd": "ifconfig {{interfaz}}",
+      "desc": "Muestra la configuración y estado de una interfaz específica, por ejemplo en0.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ifconfig.tproj/ifconfig.8"
+    },
+    {
+      "cmd": "ifconfig -v {{interfaz}}",
+      "desc": "Estado detallado de la interfaz: tipo, calidad de enlace, estado de scheduler y parámetros del driver.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ifconfig.tproj/ifconfig.8"
+    },
+    {
+      "cmd": "ifconfig -l",
+      "desc": "Lista solo los nombres de todas las interfaces del sistema en una línea.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ifconfig.tproj/ifconfig.8"
+    },
+    {
+      "cmd": "ipconfig getifaddr {{interfaz}}",
+      "desc": "Devuelve solo la dirección IPv4 de la interfaz. Útil en scripts.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "ipconfig getpacket {{interfaz}}",
+      "desc": "Muestra el último paquete DHCP aceptado: IP asignada, servidor DHCP, router, DNS, lease y opciones.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "ipconfig getoption {{interfaz}} router",
+      "desc": "Devuelve una opción DHCP específica, en este caso el gateway entregado. También acepta domain_name_server, subnet_mask o lease_time.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "ipconfig getsummary {{interfaz}}",
+      "desc": "Resumen del estado IPConfiguration de la interfaz: método IPv4/IPv6, lease DHCP y, en Wi-Fi, datos de la red asociada.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "En versiones recientes el SSID puede aparecer como <redacted> por privacidad; verificar en tu versión.",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "networksetup -listallnetworkservices",
+      "desc": "Lista los servicios de red configurados. Un asterisco indica servicio deshabilitado.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -listnetworkserviceorder",
+      "desc": "Lista los servicios en orden de prioridad junto a su puerto y dispositivo. El primero activo define la ruta por defecto.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getinfo \"{{servicio}}\"",
+      "desc": "Muestra método de configuración (DHCP o manual), IP, máscara, router, IPv6 y MAC de un servicio, por ejemplo Wi-Fi.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getMTU {{interfaz}}",
+      "desc": "Muestra el MTU activo del puerto o dispositivo.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getnetworkserviceenabled \"{{servicio}}\"",
+      "desc": "Indica si un servicio de red está habilitado.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "scutil --nwi",
+      "desc": "Muestra el estado de red que usa el sistema: interfaces activas por familia (IPv4/IPv6), orden de preferencia y alcanzabilidad.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8",
+      "note": "Sintaxis no confirmada en documentación oficial (--nwi no figura en la página man de scutil); verificar."
+    },
+    {
+      "cmd": "system_profiler SPAirPortDataType",
+      "desc": "Informe Wi-Fi: chipset, firmware, país, red actual (canal, PHY, seguridad, señal y ruido) y redes cercanas.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "En versiones recientes el nombre de red puede aparecer redactado si el proceso no tiene permiso de Localización; verificar en tu versión.",
+      "source": "https://ss64.com/mac/system_profiler.html"
+    },
+    {
+      "cmd": "sudo wdutil info",
+      "desc": "Muestra el estado Wi-Fi equivalente a la vista Info de Diagnóstico inalámbrico: SSID, BSSID, RSSI, ruido, canal, tasa de transmisión y DNS.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Requiere sudo. Apple lo recomienda para diagnóstico Wi-Fi en lugar de airport. Sintaxis no confirmada en documentación oficial para macOS 12; verificar.",
+      "source": "https://ss64.com/mac/wdutil.html"
+    },
+    {
+      "cmd": "sudo wdutil diagnose",
+      "desc": "Ejecuta Diagnóstico inalámbrico sin interfaz gráfica y genera un paquete de diagnóstico en /var/tmp (o en la carpeta indicada con -f).",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Requiere sudo. Equivale a la app Diagnóstico inalámbrico: ejecuta pruebas activas y escribe archivos. La opción -q no figura en la página man de wdutil. El paquete contiene información sensible de la red; revisar antes de compartir.",
+      "source": "https://ss64.com/mac/wdutil.html"
+    },
+    {
+      "cmd": "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I",
+      "desc": "Utilidad airport heredada: muestra estado Wi-Fi actual (RSSI, ruido, BSSID, SSID, canal). Solo útil hasta macOS 14.3.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "macos12",
+        "macos13",
+        "macos14"
+      ],
+      "note": "Deprecada: desde macOS 14.4 solo imprime la advertencia de obsolescencia y no entrega datos; no está presente en macOS 27 (verificado). Usar sudo wdutil info o system_profiler SPAirPortDataType.",
+      "source": "https://developer.apple.com/forums/thread/748397"
+    },
+    {
+      "cmd": "/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -s",
+      "desc": "Utilidad airport heredada: escanea redes Wi-Fi cercanas con SSID, BSSID, RSSI, canal y seguridad. Solo útil hasta macOS 14.3.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "macos12",
+        "macos13",
+        "macos14"
+      ],
+      "note": "Deprecada: desde macOS 14.4 solo imprime la advertencia de obsolescencia y no entrega datos. Alternativa: system_profiler SPAirPortDataType (sección Other Local Wi-Fi Networks).",
+      "source": "https://ss64.com/mac/airport.html"
+    },
+    {
+      "cmd": "ipconfig getsummary {{interfaz}} | grep -E ' SSID|BSSID'",
+      "desc": "Extrae SSID y BSSID de la red Wi-Fi asociada desde el resumen de IPConfiguration.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Se reporta que en versiones recientes el SSID aparece como <redacted> porque ipconfig getsummary exige un entitlement (ver wts.dev/posts/ipconfig). No hay forma documentada de evitarlo; usar system_profiler SPAirPortDataType. Verificar en tu versión.",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "networksetup -getairportnetwork {{interfaz}}",
+      "desc": "Muestra la red Wi-Fi a la que está asociada la interfaz.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Se reporta que desde macOS 14.6 o 15 devuelve 'You are not associated with an AirPort network' aunque haya Wi-Fi. Alternativa: system_profiler SPAirPortDataType (hilo de Apple Community).",
+      "source": "https://discussions.apple.com/thread/255778674"
+    },
+    {
+      "cmd": "networksetup -getairportpower {{interfaz}}",
+      "desc": "Indica si la radio Wi-Fi de la interfaz está encendida.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -listpreferredwirelessnetworks {{interfaz}}",
+      "desc": "Lista las redes Wi-Fi preferidas (guardadas) para la interfaz.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo ipconfig setverbose 1",
+      "desc": "Activa el log detallado del agente IPConfiguration (subsistema com.apple.IPConfiguration).",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Requiere sudo. Es persistente entre reinicios según man ipconfig; revertir con sudo ipconfig setverbose 0.",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "arp -an",
+      "desc": "Muestra la tabla ARP completa en formato numérico: IP, MAC, interfaz y vigencia.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/arp.tproj/arp.8"
+    },
+    {
+      "cmd": "arp -n {{ip}}",
+      "desc": "Muestra la entrada ARP de una IP específica.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/arp.tproj/arp.8"
+    },
+    {
+      "cmd": "ndp -an",
+      "desc": "Muestra la caché de vecinos IPv6 (equivalente a ARP en IPv6) en formato numérico.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ndp.tproj/ndp.8"
+    },
+    {
+      "cmd": "ndp -p",
+      "desc": "Lista los prefijos IPv6 aprendidos por Router Advertisement con su vigencia.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ndp.tproj/ndp.8"
+    },
+    {
+      "cmd": "networksetup -listVLANs",
+      "desc": "Lista las VLAN configuradas en el equipo con su interfaz padre y tag.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -listBonds",
+      "desc": "Lista los bonds (agregación de enlaces) configurados.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -showBondStatus {{bond}}",
+      "desc": "Muestra el estado de un bond y de sus interfaces miembro, por ejemplo bond0.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo arp -d {{ip}}",
+      "desc": "Elimina la entrada ARP de una IP para forzar una nueva resolución.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Requiere sudo. Con -a (arp -d -a) se borran todas las entradas ARP y puede haber un corte breve.",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/arp.tproj/arp.8"
+    },
+    {
+      "cmd": "netstat -rn",
+      "desc": "Muestra las tablas de rutas IPv4 e IPv6 en formato numérico, con gateway, flags e interfaz.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "netstat -rn -f inet",
+      "desc": "Muestra solo la tabla de rutas IPv4.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "netstat -rn -f inet6",
+      "desc": "Muestra solo la tabla de rutas IPv6.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "route -n get default",
+      "desc": "Muestra la ruta por defecto IPv4 efectiva: gateway, interfaz de salida y flags.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/route.tproj/route.8"
+    },
+    {
+      "cmd": "route -n get {{ip}}",
+      "desc": "Indica qué ruta, gateway e interfaz usaría el sistema para llegar a un destino.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/route.tproj/route.8"
+    },
+    {
+      "cmd": "route -n get -inet6 default",
+      "desc": "Muestra la ruta por defecto IPv6 efectiva.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/route.tproj/route.8"
+    },
+    {
+      "cmd": "route -n monitor",
+      "desc": "Muestra en tiempo real los cambios en la tabla de rutas. Detener con Ctrl+C.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/route.tproj/route.8"
+    },
+    {
+      "cmd": "ndp -r",
+      "desc": "Lista los routers IPv6 por defecto aprendidos por Router Advertisement.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ndp.tproj/ndp.8"
+    },
+    {
+      "cmd": "ipconfig getra {{interfaz}}",
+      "desc": "Muestra el último Router Advertisement aceptado en la interfaz.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "networksetup -getadditionalroutes \"{{servicio}}\"",
+      "desc": "Lista las rutas estáticas adicionales asociadas a un servicio de red.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo route add -net {{red}} {{gateway}}",
+      "desc": "Agrega una ruta estática temporal hacia una red, por ejemplo 192.0.2.0/24. Se pierde al reiniciar o al cambiar de red.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "note": "Requiere sudo. Para persistencia usar networksetup -setadditionalroutes.",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/route.tproj/route.8"
+    },
+    {
+      "cmd": "sudo route delete -net {{red}}",
+      "desc": "Elimina una ruta estática temporal. Puede cortar el tráfico que dependía de esa ruta.",
+      "cat": "Enrutamiento",
+      "risk": "disruptive",
+      "note": "Requiere sudo. Borrar la ruta por defecto corta la conectividad.",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/route.tproj/route.8"
+    },
+    {
+      "cmd": "scutil --dns",
+      "desc": "Muestra la configuración DNS real del sistema: resolvers por interfaz, dominios de búsqueda, resolvers por dominio (VPN, /etc/resolver) y orden.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "dscacheutil -q host -a name {{dominio}}",
+      "desc": "Resuelve un nombre usando el resolver del sistema (incluye /etc/hosts y caché), igual que las aplicaciones.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/DSTools/blob/main/dscacheutil/dscacheutil.1"
+    },
+    {
+      "cmd": "networksetup -getdnsservers \"{{servicio}}\"",
+      "desc": "Muestra los servidores DNS configurados manualmente en un servicio. Si se usan los de DHCP, lo indica.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getsearchdomains \"{{servicio}}\"",
+      "desc": "Muestra los dominios de búsqueda configurados manualmente en un servicio.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "dig {{dominio}}",
+      "desc": "Consulta DNS directa al servidor configurado y muestra respuesta, TTL y servidor que respondió.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "dig no usa el resolver de macOS (ignora /etc/resolver y DNS por VPN); para eso usar dscacheutil.",
+      "source": "https://github.com/apple-oss-distributions/bind9/blob/main/bind9/bin/dig/dig.1"
+    },
+    {
+      "cmd": "dig @{{servidor}} {{dominio}} {{tipo}}",
+      "desc": "Consulta un registro específico (A, AAAA, MX, TXT, NS) a un servidor DNS concreto.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/bind9/blob/main/bind9/bin/dig/dig.1"
+    },
+    {
+      "cmd": "dig +trace {{dominio}}",
+      "desc": "Sigue la delegación DNS desde la raíz hasta el servidor autoritativo.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/bind9/blob/main/bind9/bin/dig/dig.1"
+    },
+    {
+      "cmd": "dig -x {{ip}}",
+      "desc": "Consulta la resolución inversa (PTR) de una IP.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/bind9/blob/main/bind9/bin/dig/dig.1"
+    },
+    {
+      "cmd": "nslookup {{dominio}}",
+      "desc": "Consulta DNS interactiva o directa, útil por compatibilidad con procedimientos de Windows.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://bind9.readthedocs.io/en/latest/manpages.html"
+    },
+    {
+      "cmd": "dns-sd -G v4v6 {{dominio}}",
+      "desc": "Resuelve un nombre por la API de mDNSResponder (incluye nombres .local por mDNS) y muestra A y AAAA en tiempo real.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Se mantiene ejecutando; detener con Ctrl+C.",
+      "source": "https://github.com/apple-oss-distributions/mDNSResponder/blob/main/mDNSShared/dns-sd.1"
+    },
+    {
+      "cmd": "dns-sd -B _services._dns-sd._udp local",
+      "desc": "Descubre qué tipos de servicio Bonjour se anuncian en la red local.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Detener con Ctrl+C.",
+      "source": "https://github.com/apple-oss-distributions/mDNSResponder/blob/main/mDNSShared/dns-sd.1"
+    },
+    {
+      "cmd": "dns-sd -B {{servicio}} local",
+      "desc": "Busca instancias de un tipo de servicio Bonjour, por ejemplo _ipp._tcp o _ssh._tcp.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Detener con Ctrl+C.",
+      "source": "https://github.com/apple-oss-distributions/mDNSResponder/blob/main/mDNSShared/dns-sd.1"
+    },
+    {
+      "cmd": "dns-sd -L \"{{instancia}}\" {{servicio}} local",
+      "desc": "Resuelve una instancia Bonjour a host, puerto y registros TXT.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Detener con Ctrl+C.",
+      "source": "https://github.com/apple-oss-distributions/mDNSResponder/blob/main/mDNSShared/dns-sd.1"
+    },
+    {
+      "cmd": "ls -l /etc/resolver",
+      "desc": "Lista los resolvers por dominio definidos localmente (DNS split), usados habitualmente por clientes VPN.",
+      "cat": "DNS",
+      "risk": "read",
+      "note": "Si el directorio no existe, no hay resolvers por dominio. scutil --dns muestra el efecto real.",
+      "source": "https://ss64.com/mac/scutil.html"
+    },
+    {
+      "cmd": "cat /etc/hosts",
+      "desc": "Muestra el archivo hosts local, que tiene prioridad sobre DNS en el resolver del sistema.",
+      "cat": "DNS",
+      "risk": "read",
+      "source": "https://ss64.com/mac/dscacheutil.html"
+    },
+    {
+      "cmd": "sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder",
+      "desc": "Vacía la caché DNS del sistema y reinicia la caché de mDNSResponder. Útil tras cambios de DNS o de /etc/hosts.",
+      "cat": "DNS",
+      "risk": "change",
+      "note": "Requiere sudo. Procedimiento habitual en macOS recientes; verificar en tu versión.",
+      "source": "https://github.com/apple-oss-distributions/DSTools/blob/main/dscacheutil/dscacheutil.1"
+    },
+    {
+      "cmd": "sudo networksetup -setdnsservers \"{{servicio}}\" {{dns1}} {{dns2}}",
+      "desc": "Define servidores DNS manuales para un servicio, reemplazando los entregados por DHCP. Un DNS incorrecto interrumpe la resolución de nombres.",
+      "cat": "DNS",
+      "risk": "disruptive",
+      "note": "Requiere privilegios de administrador.",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo networksetup -setdnsservers \"{{servicio}}\" Empty",
+      "desc": "Elimina los DNS manuales del servicio y vuelve a usar los entregados por DHCP. Si el DHCP no entrega DNS, se pierde la resolución de nombres.",
+      "cat": "DNS",
+      "risk": "disruptive",
+      "note": "Requiere privilegios de administrador.",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo lsof -nP -iTCP -sTCP:LISTEN",
+      "desc": "Lista los puertos TCP en escucha con el proceso, PID y usuario dueño.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Sin sudo solo muestra procesos del usuario actual.",
+      "source": "https://github.com/apple-oss-distributions/lsof/blob/main/lsof/lsof.8"
+    },
+    {
+      "cmd": "sudo lsof -nP -iUDP",
+      "desc": "Lista los sockets UDP abiertos con el proceso dueño.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Sin sudo solo muestra procesos del usuario actual.",
+      "source": "https://github.com/apple-oss-distributions/lsof/blob/main/lsof/lsof.8"
+    },
+    {
+      "cmd": "sudo lsof -nP -i :{{puerto}}",
+      "desc": "Muestra qué proceso usa o está conectado a un puerto específico.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Sin sudo solo muestra procesos del usuario actual.",
+      "source": "https://github.com/apple-oss-distributions/lsof/blob/main/lsof/lsof.8"
+    },
+    {
+      "cmd": "lsof -nP -iTCP -sTCP:ESTABLISHED",
+      "desc": "Lista las conexiones TCP establecidas con proceso, origen y destino.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Agregar sudo para ver procesos de otros usuarios.",
+      "source": "https://github.com/apple-oss-distributions/lsof/blob/main/lsof/lsof.8"
+    },
+    {
+      "cmd": "netstat -anv -p tcp",
+      "desc": "Lista sockets TCP con estado, colas, PID y nombre del proceso (columnas extendidas de macOS).",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "netstat -an -p udp",
+      "desc": "Lista sockets UDP abiertos en formato numérico.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "netstat -s -p tcp",
+      "desc": "Estadísticas TCP: retransmisiones, conexiones rechazadas, resets y errores de checksum.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "netstat -ib",
+      "desc": "Contadores por interfaz con paquetes, errores, colisiones y bytes de entrada y salida.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "netstat -I {{interfaz}} -w 1",
+      "desc": "Muestra cada segundo el tráfico de la interfaz (paquetes, errores y bytes). Detener con Ctrl+C.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "nettop -P -L 1",
+      "desc": "Muestra una muestra en CSV del tráfico acumulado por proceso (bytes in/out).",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://www.manpagez.com/man/1/nettop/"
+    },
+    {
+      "cmd": "nettop -m tcp -n",
+      "desc": "Vista interactiva de conexiones TCP por proceso con bytes, RTT y estado. Salir con q.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "source": "https://www.manpagez.com/man/1/nettop/"
+    },
+    {
+      "cmd": "networkQuality -v",
+      "desc": "Mide capacidad de bajada y subida y la capacidad de respuesta (RPM) contra servidores de Apple, con detalle de la prueba.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Disponible desde macOS Monterey. Genera tráfico de prueba significativo.",
+      "source": "https://support.apple.com/en-us/101942"
+    },
+    {
+      "cmd": "networkQuality -s -v",
+      "desc": "Ejecuta bajada y subida en forma secuencial en lugar de paralela, útil para aislar el sentido con problemas.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Desde macOS Monterey. Fuente de flags: página man.",
+      "source": "https://support.apple.com/en-us/101942"
+    },
+    {
+      "cmd": "ping -c 5 {{host}}",
+      "desc": "Envía 5 paquetes ICMP echo y muestra latencia (mínimo, promedio, máximo y desviación estándar) y pérdida.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ping.tproj/ping.8"
+    },
+    {
+      "cmd": "ping -c 5 -D -s 1472 {{host}}",
+      "desc": "Prueba de MTU: envía paquetes de 1500 bytes totales con DF activo. Si falla, hay un MTU menor en el camino.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Ajustar -s para encontrar el máximo (MTU menos 28 bytes).",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ping.tproj/ping.8"
+    },
+    {
+      "cmd": "ping -c 5 -b {{interfaz}} {{host}}",
+      "desc": "Envía ping forzando la interfaz de salida (opción propia de Apple).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ping.tproj/ping.8"
+    },
+    {
+      "cmd": "ping6 -c 5 {{host}}",
+      "desc": "Envía 5 paquetes ICMPv6 echo al destino IPv6.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ping6.tproj/ping6.8"
+    },
+    {
+      "cmd": "traceroute -n {{host}}",
+      "desc": "Muestra los saltos hasta el destino con UDP en formato numérico.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/traceroute.tproj/traceroute.8"
+    },
+    {
+      "cmd": "traceroute -n -I {{host}}",
+      "desc": "Traceroute usando ICMP echo en lugar de UDP, útil cuando hay filtros de UDP.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/traceroute.tproj/traceroute.8"
+    },
+    {
+      "cmd": "traceroute6 -n {{host}}",
+      "desc": "Muestra los saltos hasta un destino IPv6 en formato numérico.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/traceroute6.tproj/traceroute6.8"
+    },
+    {
+      "cmd": "nc -vz -G 5 {{host}} {{puerto}}",
+      "desc": "Verifica si un puerto TCP está abierto, con timeout de conexión de 5 segundos.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/netcat/blob/main/nc.1"
+    },
+    {
+      "cmd": "nc -vzu {{host}} {{puerto}}",
+      "desc": "Prueba un puerto UDP. Un resultado exitoso no garantiza que haya servicio, ya que UDP no confirma conexión.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/netcat/blob/main/nc.1"
+    },
+    {
+      "cmd": "curl -sv -o /dev/null https://{{host}}",
+      "desc": "Prueba HTTPS de extremo a extremo: resolución, conexión TCP, handshake TLS, certificado y código HTTP.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://curl.se/docs/manpage.html"
+    },
+    {
+      "cmd": "curl -s -o /dev/null -w '%{time_namelookup} %{time_connect} %{time_appconnect} %{time_total}\\n' https://{{host}}",
+      "desc": "Mide tiempos de DNS, TCP, TLS y total de una solicitud HTTPS.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://curl.se/docs/manpage.html"
+    },
+    {
+      "cmd": "scutil -r {{host}}",
+      "desc": "Evalúa la alcanzabilidad de un nodo según el sistema (Reachable, Directly Reachable, Transient Connection).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "sudo tcpdump -D",
+      "desc": "Lista las interfaces disponibles para captura, incluida la pseudo interfaz pktap.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Requiere sudo.",
+      "source": "https://github.com/apple-oss-distributions/tcpdump/blob/main/tcpdump/tcpdump.1"
+    },
+    {
+      "cmd": "sudo tcpdump -i {{interfaz}} -nn",
+      "desc": "Captura y muestra paquetes de una interfaz sin resolver nombres ni puertos.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Requiere sudo. Detener con Ctrl+C.",
+      "source": "https://github.com/apple-oss-distributions/tcpdump/blob/main/tcpdump/tcpdump.1"
+    },
+    {
+      "cmd": "sudo tcpdump -i {{interfaz}} -nn host {{host}} and port {{puerto}}",
+      "desc": "Captura filtrando por host y puerto.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Requiere sudo. Detener con Ctrl+C.",
+      "source": "https://github.com/apple-oss-distributions/tcpdump/blob/main/tcpdump/tcpdump.1"
+    },
+    {
+      "cmd": "sudo tcpdump -i pktap,{{interfaz}} -k -nn",
+      "desc": "Captura con metadatos propios de macOS: proceso, PID e interfaz de cada paquete (pktap con -k).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Requiere sudo. Opciones -k y pktap son extensiones de Apple.",
+      "source": "https://github.com/apple-oss-distributions/tcpdump/blob/main/tcpdump/tcpdump.1"
+    },
+    {
+      "cmd": "sudo tcpdump -i pktap,all -k -nn -Q \"proc = {{proceso}}\"",
+      "desc": "Captura en todas las interfaces solo el tráfico de un proceso, usando el filtro de metadatos -Q.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Requiere sudo. Extensión de Apple.",
+      "source": "https://github.com/apple-oss-distributions/tcpdump/blob/main/tcpdump/tcpdump.1"
+    },
+    {
+      "cmd": "sudo tcpdump -i {{interfaz}} -nn -w {{archivo}}.pcap",
+      "desc": "Guarda la captura en un archivo pcap para analizar con Wireshark. Escribe un archivo en disco.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Requiere sudo. La captura puede contener datos sensibles; proteger el archivo. Vigilar el espacio en disco y los datos sensibles de la captura.",
+      "source": "https://github.com/apple-oss-distributions/tcpdump/blob/main/tcpdump/tcpdump.1"
+    },
+    {
+      "cmd": "/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate",
+      "desc": "Indica si el firewall de aplicaciones de macOS está activo.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Fuente de sintaxis: ayuda del comando (-h).",
+      "source": "https://support.apple.com/guide/mac-help/change-firewall-settings-on-mac-mh11783/mac"
+    },
+    {
+      "cmd": "/usr/libexec/ApplicationFirewall/socketfilterfw --listapps",
+      "desc": "Lista las aplicaciones registradas en el firewall y si tienen conexiones entrantes permitidas o bloqueadas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Fuente de sintaxis: ayuda del comando (-h).",
+      "source": "https://support.apple.com/guide/mac-help/change-firewall-settings-on-mac-mh11783/mac"
+    },
+    {
+      "cmd": "/usr/libexec/ApplicationFirewall/socketfilterfw --getstealthmode",
+      "desc": "Indica si el modo sigiloso está activo (no responde a ping ni a sondeos a puertos cerrados).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Fuente de sintaxis: ayuda del comando (-h).",
+      "source": "https://support.apple.com/guide/mac-help/change-firewall-settings-on-mac-mh11783/mac"
+    },
+    {
+      "cmd": "system_profiler SPFirewallDataType",
+      "desc": "Resume la configuración del firewall de aplicaciones: modo, stealth, logging y aplicaciones.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "source": "https://ss64.com/mac/system_profiler.html"
+    },
+    {
+      "cmd": "sudo pfctl -s info",
+      "desc": "Muestra estado y contadores del packet filter (pf): si está habilitado, estados y paquetes bloqueados.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Requiere sudo.",
+      "source": "https://ss64.com/mac/pfctl.html"
+    },
+    {
+      "cmd": "sudo pfctl -s rules",
+      "desc": "Muestra las reglas de filtrado pf cargadas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Requiere sudo.",
+      "source": "https://ss64.com/mac/pfctl.html"
+    },
+    {
+      "cmd": "sudo pfctl -s nat",
+      "desc": "Muestra las reglas NAT de pf cargadas (por ejemplo al compartir Internet).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Requiere sudo.",
+      "source": "https://ss64.com/mac/pfctl.html"
+    },
+    {
+      "cmd": "sudo pfctl -s states",
+      "desc": "Muestra la tabla de estados de conexiones de pf.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Requiere sudo.",
+      "source": "https://ss64.com/mac/pfctl.html"
+    },
+    {
+      "cmd": "scutil --nc list",
+      "desc": "Lista los servicios VPN configurados en el sistema con su estado, tipo y nombre.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "note": "Algunos clientes VPN de terceros no se registran aquí.",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "scutil --nc status \"{{servicio}}\"",
+      "desc": "Muestra si un servicio VPN está conectado y su información extendida (IP asignada, servidor, DNS).",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "scutil --nc statistics \"{{servicio}}\"",
+      "desc": "Muestra bytes, paquetes y errores de un servicio VPN.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "netstat -rn -f inet | grep utun",
+      "desc": "Muestra qué rutas IPv4 salen por túneles VPN (utun) para validar split tunnel o full tunnel.",
+      "cat": "MPLS / VPN",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/netstat.tproj/netstat.1"
+    },
+    {
+      "cmd": "scutil --proxy",
+      "desc": "Muestra la configuración de proxy efectiva del sistema: HTTP, HTTPS, PAC, autodescubrimiento y excepciones.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/configd/blob/main/scutil.tproj/scutil.8"
+    },
+    {
+      "cmd": "networksetup -getwebproxy \"{{servicio}}\"",
+      "desc": "Muestra el proxy HTTP configurado en un servicio.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getsecurewebproxy \"{{servicio}}\"",
+      "desc": "Muestra el proxy HTTPS configurado en un servicio.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getautoproxyurl \"{{servicio}}\"",
+      "desc": "Muestra la URL del archivo PAC configurado y si está habilitado.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getproxyautodiscovery \"{{servicio}}\"",
+      "desc": "Indica si el autodescubrimiento de proxy (WPAD) está activo en el servicio.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getproxybypassdomains \"{{servicio}}\"",
+      "desc": "Lista los hosts y dominios excluidos del proxy.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -getcurrentlocation",
+      "desc": "Muestra la ubicación de red activa.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "networksetup -listlocations",
+      "desc": "Lista las ubicaciones de red configuradas.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo ipconfig set {{interfaz}} DHCP",
+      "desc": "Reemplaza el servicio IPv4 de la interfaz por uno temporal con DHCP y solicita un nuevo lease. Hay un corte de conectividad.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Requiere sudo. Crea un servicio temporal; para un cambio persistente usar networksetup -setdhcp.",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "sudo networksetup -setdhcp \"{{servicio}}\"",
+      "desc": "Configura el servicio para obtener IPv4 por DHCP de forma persistente. Si estaba en IP fija, la dirección cambia y se pierde la sesión remota.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Requiere privilegios de administrador.",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo networksetup -setmanual \"{{servicio}}\" {{ip}} {{mascara}} {{gateway}}",
+      "desc": "Asigna IPv4 estática persistente al servicio. Una dirección incorrecta corta la conectividad.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Requiere privilegios de administrador.",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo networksetup -setnetworkserviceenabled \"{{servicio}}\" off",
+      "desc": "Deshabilita un servicio de red. Corta la conectividad por esa interfaz hasta volver a habilitarlo con on.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Requiere privilegios de administrador. No ejecutar sobre la interfaz de la sesión remota.",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "sudo ifconfig {{interfaz}} down",
+      "desc": "Baja administrativamente la interfaz. Se pierde la conectividad por ella hasta ejecutar up.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Requiere sudo. No ejecutar sobre la interfaz de la sesión remota.",
+      "source": "https://github.com/apple-oss-distributions/network_cmds/blob/main/ifconfig.tproj/ifconfig.8"
+    },
+    {
+      "cmd": "networksetup -setairportpower {{interfaz}} off",
+      "desc": "Apaga la radio Wi-Fi. Corta toda conectividad Wi-Fi hasta encenderla con on.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Puede requerir privilegios de administrador. No ejecutar si la sesión depende del Wi-Fi.",
+      "source": "https://ss64.com/mac/networksetup.html"
+    },
+    {
+      "cmd": "log stream --predicate 'process == \"mDNSResponder\"' --info",
+      "desc": "Muestra en tiempo real el log de mDNSResponder, el servicio de resolución DNS y Bonjour. Detener con Ctrl+C.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "Puede requerir sudo para ver todo el detalle.",
+      "source": "https://ss64.com/mac/log.html"
+    },
+    {
+      "cmd": "log show --last 1h --style compact --predicate 'subsystem == \"com.apple.IPConfiguration\"'",
+      "desc": "Muestra la última hora de eventos de IPConfiguration: DHCP, leases y cambios de dirección.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "Subsistema documentado en la página man de ipconfig. Para más detalle activar ipconfig setverbose 1.",
+      "source": "https://github.com/apple-oss-distributions/bootp/blob/main/ipconfig.tproj/ipconfig.8"
+    },
+    {
+      "cmd": "log show --last 1h --style compact --predicate 'process == \"configd\"'",
+      "desc": "Muestra eventos de configd, el proceso que aplica cambios de red, DNS y proxy.",
+      "cat": "Logs",
+      "risk": "read",
+      "source": "https://ss64.com/mac/log.html"
+    },
+    {
+      "cmd": "sysctl net.inet.tcp",
+      "desc": "Muestra los parámetros TCP del kernel (buffers, keepalive, MSS por defecto).",
+      "cat": "Otros",
+      "risk": "read",
+      "source": "https://github.com/apple-oss-distributions/system_cmds/blob/main/sysctl/sysctl.8"
+    }
+  ]
+}

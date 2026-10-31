@@ -1,0 +1,472 @@
+{
+  "vendor": "fortiswitch",
+  "name": "FortiSwitch",
+  "platforms": [
+    {
+      "id": "fswos",
+      "label": "FortiSwitchOS",
+      "detect": "Version:\\s*FortiSwitch",
+      "note": "Sintaxis estable entre 6.4 y 7.6 para los comandos de este pack; verificada en CLI Reference 7.2."
+    }
+  ],
+  "detectCommand": "get system status",
+  "commands": [
+    {
+      "cmd": "get system status",
+      "desc": "Muestra modelo, versión de FortiSwitchOS, build, número de serie, hostname y hora del sistema. Punto de partida de cualquier diagnóstico.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get system performance status",
+      "desc": "Resume uso de CPU, memoria y uptime del switch.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "diagnose sys top 2 20",
+      "desc": "Lista los 20 procesos con mayor consumo de CPU, refrescando cada 2 segundos.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Detener con q o Ctrl+C.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "get hardware status",
+      "desc": "Informa versión de ASIC, tipo de CPU, memoria y flash. Útil para confirmar capacidades del modelo y para casos con soporte.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "diagnose sys fan status",
+      "desc": "Estado y velocidad de los ventiladores.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose sys psu status",
+      "desc": "Estado de las fuentes de poder. Útil para validar redundancia de PSU.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose sys pcb temp",
+      "desc": "Temperatura de los sensores de la placa.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch physical-ports summary",
+      "desc": "Resumen de todos los puertos: estado, VLAN nativa, dúplex, velocidad y flags (trunk, mirror, QinQ).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Agregar el nombre de puerto para ver solo uno.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch physical-ports list {{puerto}}",
+      "desc": "Detalle de un puerto: estado admin y de línea, MTU, velocidad y contadores de errores, drops y colisiones.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch physical-ports port-stats non-zero",
+      "desc": "Contadores por puerto mostrando solo los valores distintos de cero. Rápido para detectar errores CRC o descartes.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch physical-ports linerate {{puerto}}",
+      "desc": "Tasa de transmisión y recepción en tiempo real del puerto (Mbps y paquetes).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Detener con Ctrl+C. Acepta lista de puertos separados por coma.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch physical-ports set-counter-zero {{puerto}}",
+      "desc": "Lleva a cero los contadores visibles del puerto para medir errores desde un punto conocido.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Se revierte con diagnose switch physical-ports set-counter-revert.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "get switch physical-port",
+      "desc": "Configuración y estado de los puertos físicos (velocidad, estado, descripción).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get switch interface",
+      "desc": "Configuración de las interfaces de switching: VLAN nativa, allowed VLANs, STP y modo de cada puerto.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "diagnose switch physical-ports cable-diag {{puerto}}",
+      "desc": "Ejecuta un test TDR sobre el cable de cobre del puerto e informa estado y largo de cada par.",
+      "cat": "Diagnóstico",
+      "risk": "disruptive",
+      "note": "Si el enlace está arriba, el test interrumpe el tráfico del puerto por algunos segundos. No aplica a fibra.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch physical-ports led-flash 5",
+      "desc": "Hace parpadear los LED de todos los puertos durante 5 minutos para identificar físicamente el switch en el rack.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Valores válidos 5, 15, 30 o 60. Detener con led-flash disable.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "get switch modules summary",
+      "desc": "Resumen de los transceivers (SFP/QSFP) instalados por puerto: tipo, fabricante y part number.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get switch modules status {{puerto}}",
+      "desc": "Estado del transceiver instalado en el puerto. Con detail se ve tipo, conector y distancias soportadas.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get switch vlan",
+      "desc": "Lista las VLAN configuradas en el switch.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "diagnose switch vlan list {{vlan}}",
+      "desc": "Detalle de la VLAN en hardware: puertos miembros y tagging.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Sin argumento lista todas las VLAN.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch mac-address list",
+      "desc": "Tabla MAC del switch: MAC, VLAN, puerto y flags. Base para ubicar en qué puerto está un equipo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Para una MAC puntual, filtrar la salida con | grep y parte de la MAC.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "execute mac clear by-vlan {{vlan}}",
+      "desc": "Borra las MAC aprendidas en una VLAN para forzar un nuevo aprendizaje.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Genera flooding momentáneo hasta reaprender.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "get switch lldp neighbors-summary",
+      "desc": "Resumen de vecinos LLDP por puerto: equipo remoto, puerto remoto y capacidades.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get switch lldp neighbors-detail {{puerto}}",
+      "desc": "Detalle LLDP del vecino conectado en un puerto (chassis ID, nombre, IP de gestión, VLAN).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get switch lldp stats",
+      "desc": "Contadores LLDP por puerto (tramas enviadas, recibidas y descartadas).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get switch trunk",
+      "desc": "Configuración de los trunks (LAG): modo, miembros y parámetros LACP.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "diagnose switch trunk summary",
+      "desc": "Estado resumido de los trunks: modo, estado y uptime. Útil para ver si LACP negoció.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch trunk list {{trunk}}",
+      "desc": "Detalle LACP del trunk: estado por miembro, partner y contadores.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch mclag icl",
+      "desc": "Estado del ICL de MCLAG: peer, enlaces y sincronización entre pares.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose switch mclag list {{trunk}}",
+      "desc": "Estado del trunk MCLAG en ambos pares: miembros locales y remotos.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "get switch stp settings",
+      "desc": "Configuración global de STP/MSTP: modo, prioridad, timers y región.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get switch stp instance",
+      "desc": "Instancias STP configuradas y VLAN asociadas.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "diagnose stp instance list",
+      "desc": "Estado STP por instancia: root bridge, rol y estado de cada puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Se puede filtrar por instancia y puerto.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose stp vlan list {{vlan}}",
+      "desc": "Estado STP de la VLAN indicada.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose bpdu-guard display status",
+      "desc": "Puertos con BPDU guard y si alguno quedó bloqueado por recibir BPDU.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "execute bpdu-guard reset {{puerto}}",
+      "desc": "Rehabilita un puerto bloqueado por BPDU guard.",
+      "cat": "Capa 2",
+      "risk": "disruptive",
+      "note": "Si la causa sigue presente, el puerto vuelve a bloquearse. Validar antes que no haya loop.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "diagnose loop-guard status",
+      "desc": "Estado de loop guard por puerto y puertos bloqueados por loop.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "execute loop-guard reset {{puerto}}",
+      "desc": "Rehabilita un puerto bloqueado por loop guard.",
+      "cat": "Capa 2",
+      "risk": "disruptive",
+      "note": "Confirmar que el loop fue eliminado antes de ejecutar.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "get switch poe inline",
+      "desc": "Presupuesto PoE del switch (budget, consumo, modo) y estado de potencia por puerto.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "diagnose switch poe status {{puerto}}",
+      "desc": "Estado PoE de un puerto: potencia entregada, estado, clase y fallas detectadas.",
+      "cat": "Hardware",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "execute poe-reset {{puerto}}",
+      "desc": "Reinicia la alimentación PoE del puerto. Se usa para reiniciar un AP o teléfono IP en forma remota.",
+      "cat": "Hardware",
+      "risk": "disruptive",
+      "note": "Corta la energía del dispositivo conectado.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "diagnose switch 802-1x status {{puerto}}",
+      "desc": "Estado de autenticación 802.1X del puerto: MAC autorizadas, VLAN asignada y modo.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "get switch dhcp-snooping status",
+      "desc": "Estado de DHCP snooping por VLAN.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "execute switch-controller get-conn-status",
+      "desc": "Estado de la conexión FortiLink vista desde el switch: conexión, versión e IP del FortiGate administrador.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Válido solo si el switch está administrado por un FortiGate.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "diagnose switch physical-ports linerate up",
+      "desc": "Tasa TX/RX en tiempo real solo de los puertos con enlace arriba, con totales. Si el total TX difiere mucho del RX puede haber loop o broadcast excesivo.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Fuente comunitaria: usado en la guía de troubleshooting de Fortinet Community; no figura con el argumento up en la CLI Reference. Detener con Ctrl+C.",
+      "source": "https://community.fortinet.com/t5/FortiSwitch/Technical-Tip-FortiSwitch-Troubleshooting-Guide/ta-p/281494"
+    },
+    {
+      "cmd": "diagnose sys ntp status",
+      "desc": "Estado de sincronización NTP del switch. En FortiLink el reloj debe estar sincronizado con el FortiGate o la conexión puede fallar.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "get switch modules detail {{puerto}}",
+      "desc": "Detalle del transceiver del puerto: identificador, conector, tipo y distancias soportadas.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Fortinet TAC pide get switch modules status, detail y limits al escalar casos de ópticas.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "diagnose debug report",
+      "desc": "Genera el reporte de diagnóstico completo del switch para adjuntar a un caso con Fortinet TAC.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Salida extensa; capturar con logging de la sesión SSH.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "config switch auto-network\nset mgmt-vlan 4094\nset status enable\nend",
+      "desc": "Habilita la red automática de gestión FortiLink en el switch con VLAN de gestión 4094. Se revisa cuando un switch nuevo no aparece en el FortiGate.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Aplica a FortiSwitchOS 7.2.0 o superior. Bajo 7.2.0, según Fortinet Community, se usa config system global / set switch-mgmt-mode fortilink.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/511852/config-switch"
+    },
+    {
+      "cmd": "get system interface physical",
+      "desc": "Estado de las interfaces de sistema (mgmt, internal) con IP y enlace.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get router info routing-table all",
+      "desc": "Tabla de rutas del switch (gestión y capa 3).",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "get system arp",
+      "desc": "Tabla ARP del switch.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "execute ping {{ip}}",
+      "desc": "Prueba de conectividad ICMP desde el switch.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "execute traceroute {{ip}}",
+      "desc": "Traza la ruta hacia un destino desde el switch.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "diagnose sniffer packet {{interfaz}} none 4 20 a",
+      "desc": "Captura 20 paquetes en la interfaz indicada mostrando cabecera, interfaz y hora UTC.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Captura tráfico dirigido a la CPU del switch, no el tráfico conmutado en hardware.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "diagnose debug crashlog read",
+      "desc": "Lee el crashlog del sistema para revisar caídas de procesos o reinicios inesperados.",
+      "cat": "Logs",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/452179/diagnose"
+    },
+    {
+      "cmd": "execute log display",
+      "desc": "Muestra los logs almacenados en memoria según el filtro activo.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "Ajustar con execute log filter category y view-lines.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "get system ntp",
+      "desc": "Configuración NTP del switch.",
+      "cat": "Sistema",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/896953/get"
+    },
+    {
+      "cmd": "execute backup config tftp {{archivo}} {{servidor_tftp}}",
+      "desc": "Respalda la configuración del switch en un servidor TFTP.",
+      "cat": "Configuración",
+      "risk": "read",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "execute reboot",
+      "desc": "Reinicia el switch.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Corta todo el tráfico conmutado. Admite comment \"texto\" para registrar el motivo.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "execute factoryreset",
+      "desc": "Restaura la configuración de fábrica, incluyendo direccionamiento de interfaces.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Se pierde toda la configuración y el acceso remoto. Respaldar antes.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    },
+    {
+      "cmd": "execute factoryresetfull",
+      "desc": "Reset completo: borra configuración, datos, licencias y entorno BIOS. Las imágenes de firmware se mantienen.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Uso excepcional antes de RMA o reasignación del equipo.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.2.2/fortiswitchos-cli-reference/434023/execute"
+    }
+  ]
+}

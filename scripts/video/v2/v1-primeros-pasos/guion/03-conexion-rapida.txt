@@ -1,0 +1,7 @@
+# Conexión rápida
+La conexión rápida abre un equipo sin guardarlo como sesión.
+Úsala con el rayo, junto al botón más, o con ⌘O.
+Elige SSH, Telnet, TCP o Serial. TCP es una conexión directa, sin negociación Telnet, útil en servidores de consola.
+Con Conectar se abre una pestaña marcada con un rayo.
+Si quieres conservarla, usa Guardar como sesión, en la barra de estado o en el menú de la pestaña. La pestaña pasa a ser una sesión guardada, sin reconectar.
+Con ⌘K buscas una sesión o escribes usuario arroba host, y ahí quedan tus conexiones recientes.

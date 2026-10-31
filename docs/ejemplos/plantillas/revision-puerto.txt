@@ -1,0 +1,4 @@
+show interfaces {{interfaz}} status
+show interfaces {{interfaz}} | include line protocol|CRC|errors
+show mac address-table interface {{interfaz}}
+show logging | include {{interfaz}}

@@ -1,0 +1,7 @@
+# Topología
+En Herramientas, Topología dibuja los vecinos CDP y LLDP del equipo conectado, usando solo comandos de consulta.
+Muestra los puertos de cada enlace, su estado y los Port-channel.
+Al seleccionar un vecino ves su detalle y puedes conectarte para seguir la ruta salto a salto.
+Desde aquí y Hasta aquí resaltan el camino más corto, con los puertos de cada salto, listo para copiar en un ticket.
+Guarda un snapshot antes de una ventana de cambio y compáralo después: en verde lo nuevo y en rojo punteado lo que ya no aparece.
+El diagrama se exporta a SVG, draw.io, CSV o Mermaid.

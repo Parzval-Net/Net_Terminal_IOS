@@ -1,0 +1,13 @@
+# Gestor de archivos
+
+El gestor de archivos, arriba en Transferencias, junta todo en dos paneles: tu PC a la izquierda y el equipo a la derecha. Necesita una sesión abierta.
+
+Revisa Tipo de equipo. Se propone según la plataforma detectada en el catálogo; en NX-OS, el almacenamiento es bootflash y se usa la VRF management, que puedes cambiar. IP de este PC se elige según la ruta hacia el equipo, y Leer archivos muestra el espacio libre.
+
+Para enviar, selecciona el archivo y pulsa Enviar, o arrástralo. La app escribe el copy, responde las confirmaciones y muestra el avance. Si falta espacio o el archivo existe, avisa antes.
+
+Usa el servidor que ya esté activo; si no hay uno, lo inicia para la operación y lo detiene al terminar. Las subidas que necesita para traer un archivo se habilitan en caliente, sin reiniciar el servidor ni cambiar la contraseña FTP, y se quitan al final.
+
+Con Verificar MD5 después de enviar, compara el hash al terminar y marca en rojo si no coincide.
+
+Respaldar config copia la running config a la carpeta compartida, sin enmascarar secretos, y no entra en Respaldos. Para un historial enmascarado y comparable usa el módulo Respaldos.

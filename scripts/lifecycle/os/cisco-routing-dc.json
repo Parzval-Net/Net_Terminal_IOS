@@ -1,0 +1,284 @@
+{
+ "vendor": "Cisco",
+ "entries": [
+  {
+   "family": "ISR 4000 (4221/4321/4331/4351/4431/4451)",
+   "match": [
+    "^ISR4(2\\d|3\\d|4[0-5])\\d"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.9.10",
+   "latest": "17.12.8",
+   "lastAvailable": "17.12.8",
+   "notes": "Cisco recomienda 17.9.10 o 17.12.8 segun features. EoSW 31-08-2025 (EOL14896); 17.12.x es el tren final, 17.12.8 es el rebuild mas alto publicado. Cisco puede emitir rebuilds ad hoc hasta nov 2028. Release notes 17.12.x: https://www.cisco.com/c/en/us/td/docs/routers/access/4400/release/xe-17-12/isr4k-rel-notes-xe-17-12.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ISR 4461",
+   "match": [
+    "^ISR4461"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.12.8",
+   "latest": "17.18.5",
+   "lastAvailable": "17.18.5",
+   "notes": "Cisco recomienda 17.12.8 o 17.15.6 segun features. EoSW 20-01-2026 (EOL15446); 17.18.x es el tren final y 17.18.5 el rebuild mas alto publicado. Release notes 17.18.x: https://www.cisco.com/c/en/us/td/docs/routers/access/isr4400/Release-notes/17-18-x/isr4k-rel-notes-xe-17-18.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ISR 1000 (C11xx)",
+   "match": [
+    "^C11\\d{2}[A-Z-]"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.12.8",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Cisco recomienda 17.12.8 o 17.15.6. Desde 17.4 o anterior se requiere salto intermedio (17.5 a 17.10) antes de 17.11+. Latest segun release notes 26.2.x (28-09-2026): https://www.cisco.com/c/en/us/td/docs/routers/access/1100/release/isr1k-release-notes-xe-26-2-x.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ISR 800 (C8xx)",
+   "match": [
+    "^C8\\d{2}(?!\\d)",
+    "^CISCO8\\d{2}(?!\\d)"
+   ],
+   "os": "IOS",
+   "recommended": null,
+   "latest": "15.9(3)M13",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendado. 15.9(3)M13 es el rebuild mas alto en las release notes 15.9(3)M (act. 09-04-2026), que soportan Cisco 800/800M. Validar soporte por modelo, los 880 antiguos pueden no estar soportados.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/15-9m/release/notes/15-9-3-m-rel-notes.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ISR 900 (C9xx)",
+   "match": [
+    "^C9\\d{2}(?!\\d)"
+   ],
+   "os": "IOS",
+   "recommended": null,
+   "latest": "15.9(3)M13",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendado. Cisco indica que 15.9.3 sera el ultimo tren soportado (EoS 28-07-2026, aun en mantenimiento). C921/C931 requieren 15.8(3)Mb o superior.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/15-9m/release/notes/15-9-3-m-rel-notes.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 8200/8300/8500 Edge",
+   "match": [
+    "^C8[235]00L?-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.12.8",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Cisco recomienda 17.12.8 o 17.15.6 segun features. 26.2.1 publicado 31-08-2026; release notes 26.2.x para C8200/C8300 (27-09-2026): https://www.cisco.com/c/en/us/td/docs/routers/cloud_edge/c8300/rel_notes/26-x/release-notes-catalyst-8200-and-catalyst-8300-series-edge-platforms-release-26-2-x.html. C8500 tambien tiene release notes 26.2.x.",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ISR G2 1900/2900/3900",
+   "match": [
+    "^CISCO(19|29|39)\\d{2}"
+   ],
+   "os": "IOS",
+   "recommended": null,
+   "latest": "15.7(3)M9",
+   "lastAvailable": "15.7(3)M9",
+   "notes": "Sin release recomendado vigente. EoSW 10-05-2023 y LDoS 31-05-2027 (EOL14566). 15.7(3)M9 es el ultimo rebuild en release notes 15.7(3)M. EoL: https://www.cisco.com/c/en/us/products/collateral/routers/1900-series-integrated-services-routers-isr/select-isr-1900-2900-3900-software-eol.html",
+   "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/15-7m/release/notes/15-7-3-m-rel-notes.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ASR 1001-X / 1002-X",
+   "match": [
+    "^ASR100[12]-X(?![A-Z])"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.9.10",
+   "latest": "17.9.10",
+   "lastAvailable": "17.9.10",
+   "notes": "17.9 es el ultimo tren para ASR1001-X, ASR1002-X y RP2. EoSW 01-08-2023 (EOL14624). 17.9.10 es el rebuild mas alto en release notes 17.9.x: https://www.cisco.com/c/en/us/td/docs/routers/asr1000/release/notes/xe-17-9/asr1000-rel-notes-xe-17-9.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ASR 1000 (HX y modulares)",
+   "match": [
+    "^ASR100[12]-HX",
+    "^ASR100[469](-X)?(?![A-Z0-9])",
+    "^ASR1013"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "17.18.5",
+   "lastAvailable": null,
+   "notes": "17.15.6 recomendado para RP3. Chasis modulares con RP2 quedan en 17.9.10 (ultimo tren RP2). Latest segun release notes 17.18.x: https://www.cisco.com/c/en/us/td/docs/routers/asr1000/release/notes/xe-17-18/asr1000-rel-notes-xe-17-18.html. ASR1001/ASR1002 originales no incluidos.",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ASR 920",
+   "match": [
+    "^ASR-920"
+   ],
+   "os": "IOS-XE",
+   "recommended": null,
+   "latest": "17.15.6",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendado para ASR 920. 17.15.6 es el rebuild mas alto en caveats 17.15.x (act. 18-09-2026). EoS anunciado: 31-03-2027.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr920/release/notes/17-15-1/b-rn-xe-17-15-1-asr920/m-caveats-17-15-x-asr920.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ASR 900 (902/903/907/914)",
+   "match": [
+    "^ASR-9(0[2-7]|14)(?!\\d)"
+   ],
+   "os": "IOS-XE",
+   "recommended": null,
+   "latest": "17.15.6",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendado para ASR 900. 17.15.6 es el rebuild mas alto en caveats 17.15.x. EoL de la serie anunciado 01-04-2026.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr903/release/notes/17-15-1/b-rn-xe-17-15-x-asr900/m-caveats-17-15-x-asr900.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "ASR 9000",
+   "match": [
+    "^ASR-?9\\d{3}(?!\\d)",
+    "^ASR9K"
+   ],
+   "os": "IOS-XR",
+   "recommended": "25.2.21",
+   "latest": "26.3.1",
+   "lastAvailable": null,
+   "notes": "Recomendado para ASR9000 64-bit (eXR), doc 222669 act. 27-07-2026. 6.9.2 es el ultimo release para hardware solo 32-bit (cXR). Latest segun lista de release notes (26.3.1, 11-09-2026): https://www.cisco.com/c/en/us/support/routers/asr-9000-series-aggregation-services-routers/products-release-notes-list.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xr-software/222669-recommended-releases-for-ios-xr-routers.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Nexus 9000",
+   "match": [
+    "^N9K-"
+   ],
+   "os": "NX-OS",
+   "recommended": "10.5(6)M",
+   "latest": "10.6(4)M",
+   "lastAvailable": null,
+   "notes": "Recomendado 10.5(6)M o 10.6(4)M (doc act. 01-10-2026). Hardware sin 10.5: 10.4(7)M; -EX sin 10.4: 10.3(8)M; sin 10.x: 9.3(16). Aplica a modo NX-OS, no ACI.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/recommended_release/b_Minimum_and_Recommended_Cisco_NX-OS_Releases_for_Cisco_Nexus_9000_Series_Switches.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Nexus 3500/3600",
+   "match": [
+    "^N3K-C3[56]"
+   ],
+   "os": "NX-OS",
+   "recommended": "10.5(6)M",
+   "latest": "10.6(4)M",
+   "lastAvailable": null,
+   "notes": "Recomendado 10.5(6)M o 10.6(4)M para hardware con soporte 10.5/10.6; si no soporta 10.x, 9.3(16). Latest segun release notes N3K: https://www.cisco.com/c/en/us/support/switches/nexus-3000-series-switches/products-release-notes-list.html",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus3000/sw/recommended_release/b_Minimum_and_Recommended_Cisco_NX-OS_Releases_for_Cisco_Nexus_3000_Series_Switches.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Nexus 3000/3100/3200/3400-S",
+   "match": [
+    "^N3K-C3[0-4]"
+   ],
+   "os": "NX-OS",
+   "recommended": "9.3(16)",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "9.3(16) recomendado para hardware sin soporte 10.x y no pasado LDoS. Latest no verificable por modelo; algunos modelos 3100/3200 pueden soportar 10.x, validar en release notes.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus3000/sw/recommended_release/b_Minimum_and_Recommended_Cisco_NX-OS_Releases_for_Cisco_Nexus_3000_Series_Switches.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Nexus 5000 (5010/5020)",
+   "match": [
+    "^N5K-C50"
+   ],
+   "os": "NX-OS",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Plataforma legacy sin documento oficial vigente de releases; no verificado. No soporta NX-OS 7.x (release notes 7.x solo cubren 5500/5600).",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5500/sw/release/notes/7x/Nexus5500_Release_Notes_7x.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Nexus 5500",
+   "match": [
+    "^N5K-C55"
+   ],
+   "os": "NX-OS",
+   "recommended": "7.3(13)N1(1)",
+   "latest": "7.3(17)N1(1)",
+   "lastAvailable": "7.3(17)N1(1)",
+   "notes": "Recomendado segun doc 5500 (antiguo, minimo 7.3(8)N1(1)). EoSW de NX-OS 7.3 para 5500/5600/6000: 04-08-2021 (https://www.cisco.com/c/en/us/products/collateral/switches/nexus-5000-series-switches/eos-eol-notice-c51-743752.html). Current release 7.3(17)N1(1) segun release notes 7.x.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5500/sw/release/recommended_releases/n5500_recommended_nx-os_releases.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Nexus 5600",
+   "match": [
+    "^N5K-C56",
+    "^N56-"
+   ],
+   "os": "NX-OS",
+   "recommended": null,
+   "latest": "7.3(17)N1(1)",
+   "lastAvailable": "7.3(17)N1(1)",
+   "notes": "Sin documento de release recomendado para 5600. Current release 7.3(17)N1(1) (release notes 7.x, 15-12-2025). EoSW de NX-OS 7.3: 04-08-2021 (EoL c51-743752).",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5600/sw/release/notes/7x/Nexus5600_Release_Notes_7x.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Nexus 7000/7700",
+   "match": [
+    "^N7K-C70",
+    "^N77-C77"
+   ],
+   "os": "NX-OS",
+   "recommended": "8.4(10)",
+   "latest": "8.4(14)",
+   "lastAvailable": "8.4(14)",
+   "notes": "Recomendado 8.4(10) (doc act. 11-02-2025). EoSW de NX-OS 8.4: 06-11-2024, LDoS 30-11-2028. 8.4(14) es el current release (23-09-2026): https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/release/notes/cisco_nexus7000_release_notes_84.html",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/sw/nx-os/recommended_releases/recommended_nx-os_releases.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Nexus 2000 FEX",
+   "match": [
+    "^N2K-"
+   ],
+   "os": "N/A (FEX)",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "FEX no tiene OS propio; su software lo entrega el switch padre (Nexus 5500/5600/7000/9000). Revisar la version del parent.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5600/sw/release/notes/7x/Nexus5600_Release_Notes_7x.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "MDS 9000",
+   "match": [
+    "^DS-C9\\d{3}"
+   ],
+   "os": "NX-OS",
+   "recommended": "9.4(5)",
+   "latest": "9.4(5a)",
+   "lastAvailable": null,
+   "notes": "Recomendado 9.4(5) (doc act. 06-08-2026). FICON en directores 9706/9710/9718: 9.4(3b). Latest 9.4(5a) (01-09-2026): https://www.cisco.com/c/en/us/support/storage-networking/mds-9000-nx-os-san-os-software/products-release-notes-list.html",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/mds9000/sw/b_MDS_NX-OS_Recommended_Releases.html",
+   "checked": "2026-10-28"
+  }
+ ]
+}

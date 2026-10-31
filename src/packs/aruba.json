@@ -1,0 +1,3595 @@
+{
+  "vendor": "aruba",
+  "name": "Aruba",
+  "platforms": [
+    {
+      "id": "aoscx",
+      "label": "AOS-CX (switches CX 4100i a 10000)",
+      "detect": "^\\s*(?:ArubaOS-CX|AOS-CX)\\s*$|^Version\\s*:\\s*[A-Z]{2}\\.10\\.\\d",
+      "note": "AOS-CX 10.x en CX 4100i, 6000, 6100, 6200, 6300, 6400, 8100, 8320, 8325, 8360, 8400, 9300 y 10000. Configuración inmediata con checkpoints y rollback. VSX solo en 6400/8xxx/9300/10000; VSF en 4100i/6100/6200/6300. Prompt switch> (operador) y switch# (manager); 'configure terminal' entra a config."
+    },
+    {
+      "id": "aossw",
+      "label": "ArubaOS-Switch (ProCurve: 2530, 2540, 2930F/M, 3810, 5400R)",
+      "detect": "Image stamp:\\s*/(?:ws|sw)/|Boot ROM Version:\\s*[A-Z]{1,2}\\.1[56]\\.|^\\s*[A-Z]{1,2}\\.1[56]\\.\\d{2}\\.\\d{4}\\s*$",
+      "note": "Firmware 16.x por familia: YA/YB (2530), YC (2540), WB (2920), WC (2930F/2930M), KB (3810M, 5400R), KA (3800, 5400zl). CLI estilo ProVision: manager# y (config)#, configuración inmediata en running-config; persistir con write memory. Menú de texto con 'menu'."
+    },
+    {
+      "id": "aos8",
+      "label": "ArubaOS 8 (Mobility Controller/Conductor)",
+      "detect": "ArubaOS \\(MODEL: Aruba[^)\\n]*\\), Version 8\\.",
+      "note": "Controladores 7000/9000, MC-VA y Mobility Conductor (MM). Jerarquía /mm y /md con cd; write memory despliega a los MD. show version muestra MODEL: Aruba7xxx/ArubaMC-VA/ArubaMM-VA y 'Switch uptime is'."
+    },
+    {
+      "id": "aos10",
+      "label": "AOS 10 (Gateways y AP)",
+      "detect": "ArubaOS \\(MODEL: [^)\\n]*\\), Version 10\\.",
+      "note": "Gestionados desde Central. La CLI local (SSH/consola o Central > Tools > Commands) solo tiene comandos show, ping y traceroute; no acepta configuración."
+    },
+    {
+      "id": "iap",
+      "label": "Aruba Instant (IAP)",
+      "detect": "ArubaOS \\(MODEL: (?!Aruba)[^)\\n]*\\), Version 8\\.",
+      "note": "Instant AOS-8.x en AP sin controlador; el conductor (Virtual Controller) replica la config al cluster. Cambios con configure terminal y commit apply. show version muestra MODEL: <modelo AP> y 'AP uptime is'."
+    }
+  ],
+  "detectCommand": "show version",
+  "commands": [
+    {
+      "cmd": "show version",
+      "desc": "Muestra versión de AOS-CX, imagen activa, Service OS y BIOS. Primer comando para identificar plataforma y validar upgrades.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "El prefijo de la versión identifica la familia (ej. FL, GL, PL, ML, XL, DL seguido de .10.xx.xxxx). Disponible en contexto operador (>) y manager (#). En ArubaOS-Switch: Muestra la imagen de firmware en ejecución (Image stamp, versión tipo WC.16.11.0019), la imagen de booteo (Primary/Secondary) y la versión de Boot ROM. En ArubaOS 8/AOS 10/Instant: Muestra versión de ArubaOS/Instant/AOS 10, modelo y uptime.",
+      "platforms": [
+        "aoscx",
+        "aossw",
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_6200/Content/SysHW_cmds/sho-ver-10.htm"
+    },
+    {
+      "cmd": "no page",
+      "desc": "Desactiva la paginación de la sesión actual para capturar salidas largas sin pausas.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "No es persistente; aplica solo a la sesión. 'page <LINES>' (2 a 1000) vuelve a paginar. En ArubaOS-Switch: Desactiva la paginación de la salida de comandos para la sesión.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_832x/Content/cli_ses_cmds/page.htm"
+    },
+    {
+      "cmd": "show system",
+      "desc": "Muestra hostname, contacto, ubicación, MAC base, número de serie, uptime y uso de CPU/memoria.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/PDF/cli_6000-6100.pdf",
+      "note": "En ArubaOS-Switch: Muestra información general: nombre, contacto, ubicación, uptime, CPU, memoria, MAC base, número de serie y versión de software y ROM."
+    },
+    {
+      "cmd": "show system resource-utilization",
+      "desc": "Muestra uso de CPU, memoria y almacenamiento por daemon y módulo. Útil ante lentitud o CPU alta.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/PDF/cli_8100-8360.pdf"
+    },
+    {
+      "cmd": "show clock",
+      "desc": "Muestra fecha, hora y zona horaria del switch. Clave para correlacionar logs.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aoscx",
+        "aos8",
+        "iap"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/PDF/cli_8100-8360.pdf",
+      "note": "En ArubaOS 8/Instant: Muestra fecha, hora y zona horaria."
+    },
+    {
+      "cmd": "show module",
+      "desc": "Lista módulos (management, line cards, miembros VSF) con estado Active, Standby, Failed o Ready.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "En chasis 6400/8400 muestra slots; en 6300/6200 con VSF muestra cada miembro. Acepta 'vsx-peer' al final para ver la salida del par VSX (requiere ISL arriba).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/HTML/fundamentals_6300-6400/Content/SysHW_cmds/sho-mod-10.htm"
+    },
+    {
+      "cmd": "show environment fan",
+      "desc": "Muestra estado de ventiladores y bandejas (ok, fault, empty).",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "No aplica a modelos sin ventilador (ej. JL679A, 6100 fanless).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_832x/Content/SysHW_cmds/sho-env-fan-10.htm"
+    },
+    {
+      "cmd": "show environment power-supply",
+      "desc": "Muestra estado de fuentes de poder y potencia máxima que entrega cada una.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.07/PDF/5200-7870.pdf"
+    },
+    {
+      "cmd": "show environment temperature detail",
+      "desc": "Muestra temperatura en Celsius de cada sensor y su estado (normal, max, critical, fault, emergency).",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Sin 'detail' muestra el resumen. En VSF acepta 'vsf member <id>'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/SysHW_cmds/sho-env-tem-10.htm"
+    },
+    {
+      "cmd": "show environment power-consumption",
+      "desc": "Muestra consumo eléctrico actual y promedio por módulo o miembro.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "En switches PoE existe además 'show environment power-consumption power-over-ethernet'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/PDF/cli_8100-8360.pdf"
+    },
+    {
+      "cmd": "show capacities-status",
+      "desc": "Muestra uso actual contra el máximo soportado por feature (VLAN, MAC, rutas, ACL). Útil para dimensionar.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "'show capacities' muestra solo los máximos.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.07/HTML/5200-7873/Content/SysHW_cmds/sho-cap-sta-10.htm"
+    },
+    {
+      "cmd": "show boot-history",
+      "desc": "Muestra el motivo y la hora del arranque actual y de los tres anteriores. Clave para investigar reinicios.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "'show boot-history all' incluye management y line modules; en VSF acepta 'vsf member <1-10>'. En ArubaOS-Switch: Historial de reinicios con causa (power cycle, reload, crash) por miembro o slot.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_8400/Content/SysHW_cmds/sho-boo-his.htm"
+    },
+    {
+      "cmd": "show images",
+      "desc": "Muestra versión, fecha, tamaño y SHA-256 de las imágenes primary y secondary, y cuál es la de arranque por defecto.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6000-6100/Content/SysHW_cmds/sho-ima-10.htm"
+    },
+    {
+      "cmd": "show ssh server",
+      "desc": "Muestra configuración del servidor SSH (VRF, versión, algoritmos).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "'show ssh server sessions' lista las sesiones activas.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/PDF/cli_6000-6100.pdf"
+    },
+    {
+      "cmd": "show aruba-central",
+      "desc": "Muestra estado de conexión a HPE Aruba Networking Central y al servidor Activate (VRF, ubicación, fuente de conexión).",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Salida ampliada desde 10.12.1000. No existe comando CLI dedicado para NetEdit; NetEdit se gestiona por REST API.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_6300-6400/Content/Chp_Cent/Cent_cmds/sho-aru-cen-10.htm"
+    },
+    {
+      "cmd": "show interface brief",
+      "desc": "Lista interfaces en formato tabla: VLAN, modo, tipo, estado, motivo y velocidad.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Descripciones largas se truncan; usar 'show interface physical' en ese caso.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_6200/Content/Chp_IfaceCfg/Iface_cmds/sho-int-10.htm"
+    },
+    {
+      "cmd": "show interface {{interfaz}}",
+      "desc": "Muestra estado, velocidad, dúplex, MTU, contadores y errores de una interfaz (formato miembro/slot/puerto).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Acepta rangos (1/1/1-1/1/4). En 6400 la numeración de slot difiere.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.17/HTML/fundamentals_4100i-6000-6100/Content/Chp_IfaceCfg/Iface_cmds/sho-int-10.htm"
+    },
+    {
+      "cmd": "show interface statistics",
+      "desc": "Muestra contadores de paquetes y bytes Tx/Rx, broadcast y multicast por interfaz.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Acepta 'non-zero' y 'human-readable'; 'show interface statistics monitor' refresca en vivo. Validar disponibilidad en releases antiguos con '?'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/HTML/fundamentals_8400/Content/Chp_IfaceCfg/Iface_cmds/sho-int-sta.htm"
+    },
+    {
+      "cmd": "show interface error-statistics",
+      "desc": "Muestra solo contadores de error (CRC, runts, giants, drops) por interfaz. Útil para detectar cableado o óptica defectuosa.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Acepta 'non-zero' para filtrar contadores en cero.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/HTML/fundamentals_8400/Content/Chp_IfaceCfg/Iface_cmds/sho-int-sta.htm"
+    },
+    {
+      "cmd": "show interface transceiver",
+      "desc": "Lista transceivers instalados con tipo, part number y serie. Los no soportados aparecen con asterisco.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_8400/Content/Chp_IfaceCfg/Iface_cmds/sho-int-tra-10.htm"
+    },
+    {
+      "cmd": "show interface {{interfaz}} transceiver detail",
+      "desc": "Muestra DOM del transceiver: temperatura, voltaje, bias, potencia Tx/Rx y alarmas. Clave para fallas de fibra.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "'threshold-violations' en lugar de 'detail' lista solo violaciones de umbral.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_8400/Content/Chp_IfaceCfg/Iface_cmds/sho-int-tra-10.htm"
+    },
+    {
+      "cmd": "show interface dom",
+      "desc": "Muestra lecturas DOM (potencia Rx/Tx, temperatura) de todas las ópticas en formato tabla.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/fundamentals_8400/Content/Chp_IfaceCfg/Iface_cmds/sho-int-dom-10.htm"
+    },
+    {
+      "cmd": "show running-config interface {{interfaz}}",
+      "desc": "Muestra la configuración aplicada a una interfaz.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/l2_bridging_6300-6400/Content/Chp_vlans/vie-vla-cnf-inf.htm"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\n description {{descripcion}}\n no shutdown",
+      "desc": "Asigna descripción y habilita una interfaz.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.17/HTML/fundamentals_4100i-6000-6100/Content/Chp_IfaceCfg/Iface_cmds/sho-int-10.htm"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\n shutdown",
+      "desc": "Deshabilita administrativamente una interfaz. Corta el tráfico del puerto.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.17/HTML/fundamentals_4100i-6000-6100/Content/Chp_IfaceCfg/Iface_cmds/sho-int-10.htm"
+    },
+    {
+      "cmd": "show vlan",
+      "desc": "Lista VLANs con nombre, estado, tipo e interfaces asociadas.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "'show vlan {{vlan}}' muestra una VLAN; 'show vlan summary' entrega totales. Acepta 'vsx-peer' al final para ver la salida del par VSX (requiere ISL arriba). En ArubaOS 8: Muestra VLAN configuradas con puertos y perfiles asociados.",
+      "platforms": [
+        "aoscx",
+        "aos8"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_8100-8360/Content/Chp_VLANs/VLAN_cmds/sho-vla.htm"
+    },
+    {
+      "cmd": "show vlan port {{interfaz}}",
+      "desc": "Muestra las VLANs (acceso, nativa, permitidas) de una interfaz.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/PDF/cli_6300-6400.pdf"
+    },
+    {
+      "cmd": "configure terminal\nvlan {{vlan}}\n name {{nombre}}",
+      "desc": "Crea una VLAN y le asigna nombre.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/l2_bridging_4100i-6000-6100-5420-6200/Content/Chp_vlans/com-vla-com-pvo-com-aos-cx..htm"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\n no routing\n vlan access {{vlan}}",
+      "desc": "Configura un puerto de acceso en la VLAN indicada.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "'no routing' solo aplica en 6300/6400/8xxx/9300/10000 donde el puerto puede ser L3; en 4100i/6000/6100/6200 los puertos son L2 y el comando no es necesario.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/l2_bridging_4100i-6000-6100-5420-6200/Content/Chp_vlans/com-vla-com-pvo-com-aos-cx..htm"
+    },
+    {
+      "cmd": "configure terminal\ninterface {{interfaz}}\n no routing\n vlan trunk native {{vlan_nativa}}\n vlan trunk allowed {{vlans}}",
+      "desc": "Configura un trunk 802.1Q con VLAN nativa y lista de VLANs permitidas (ej. 10,20,30-40 o all).",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "La VLAN nativa debe estar en 'allowed' o el tráfico sin tag se descarta. 'allowed' reemplaza la lista; para sumar VLANs se repite el comando con las nuevas.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_8400/Content/Chp_VLANs/VLAN_cmds/vla-tru-all.htm"
+    },
+    {
+      "cmd": "show mac-address-table",
+      "desc": "Muestra la tabla MAC (MAC, VLAN, tipo, puerto).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Variantes: 'count', 'dynamic', 'static', 'interface <IF>'. Acepta 'vsx-peer' al final para ver la salida del par VSX (requiere ISL arriba).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.11/HTML/cli_8360/Content/Chp_mac/mac_cmds/sho-mac-add-tab-10.htm"
+    },
+    {
+      "cmd": "show mac-address-table vlan {{vlan}}",
+      "desc": "Muestra las MAC aprendidas en una VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.11/HTML/cli_8360/Content/Chp_mac/mac_cmds/sho-mac-add-tab-vla.htm"
+    },
+    {
+      "cmd": "show mac-address-table port {{interfaz}}",
+      "desc": "Muestra las MAC aprendidas en un puerto. Útil para ubicar un equipo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.17/HTML/l2_bridging_8100-83xx-93xx-100xx/Content/Chp_mac/mac_cmds/sho-mac-add-tab-por.htm"
+    },
+    {
+      "cmd": "show lldp neighbor-info",
+      "desc": "Lista vecinos LLDP por interfaz (chassis ID, puerto remoto, nombre de sistema).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/HTML/fundamentals_8400/Content/Chp_Dev_disc/LLDP_cmds/sho-lld-nei-inf-10.htm"
+    },
+    {
+      "cmd": "show lldp neighbor-info {{interfaz}}",
+      "desc": "Muestra el detalle LLDP del vecino en una interfaz: IP de gestión, capacidades, descripción y VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Releases recientes también aceptan 'show lldp neighbor-info detail' y 'show lldp neighbor-info mgmt'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/HTML/fundamentals_8400/Content/Chp_Dev_disc/LLDP_cmds/sho-lld-nei-inf-10.htm"
+    },
+    {
+      "cmd": "show cdp neighbor-info",
+      "desc": "Lista vecinos CDP (equipos Cisco) por interfaz.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Bug conocido 291730 en 10.13.1000 (8400): la dirección del vecino puede no aparecer.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_6200/Content/Chp_Dev_disc/CDP_cmds/sho-cdp-nei-inf-10.htm"
+    },
+    {
+      "cmd": "show spanning-tree",
+      "desc": "Muestra estado STP/MSTP del CIST: root bridge, prioridad, timers y rol/estado por puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.07/HTML/5200-7865/Content/Chp_stp/mstp_cmds/sho-spa-tre-mst-10.6.htm",
+      "note": "En ArubaOS-Switch: Estado de spanning tree: modo, root bridge, costo, puerto raíz y estado/rol por puerto."
+    },
+    {
+      "cmd": "show spanning-tree detail",
+      "desc": "Muestra el detalle del CIST con contadores BPDU y cambios de topología por puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.07/HTML/5200-7838/Content/Chp_stp/mstp_cmds/sho-spa-tre-det-10.htm",
+      "note": "En ArubaOS-Switch: Detalle STP por puerto, incluyendo contadores de BPDU y cambios de topología (TCN)."
+    },
+    {
+      "cmd": "show spanning-tree mst",
+      "desc": "Muestra cada instancia MSTP con VLANs mapeadas, root y roles de puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "'show spanning-tree mst <id> detail' entrega el detalle de una instancia.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.07/HTML/5200-7837/Content/Chp_stp/mstp_cmds/sho-spa-tre-mst-10.htm"
+    },
+    {
+      "cmd": "show spanning-tree mst-config",
+      "desc": "Muestra nombre de región, revisión, digest y mapeo VLAN-instancia. Clave para validar consistencia de región MSTP.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.07/HTML/5200-7867/Content/Chp_stp/mstp_cmds/sho-spa-tre-mst-con-10.htm"
+    },
+    {
+      "cmd": "show loop-protect",
+      "desc": "Muestra estado de loop-protect por puerto y si hay puertos bloqueados por loop.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/PDF/cli_6000-6100.pdf",
+      "note": "En ArubaOS-Switch: Estado de loop protection por puerto: loop detectado, contador y acción."
+    },
+    {
+      "cmd": "show lacp aggregates",
+      "desc": "Muestra cada LAG con interfaces miembro, heartbeat rate (LACP rate), hash y modo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "'show lacp aggregates lag{{id}}' filtra un LAG. Acepta 'vsx-peer' al final para ver la salida del par VSX (requiere ISL arriba).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/HTML/link_aggregation/Content/Chp_LAG/LACP_LAG_cmds/sho-lac-agg-10.htm"
+    },
+    {
+      "cmd": "show lacp interfaces",
+      "desc": "Muestra estado LACP por puerto físico (actor/partner, flags Active, Collecting, Distributing).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "En VSX, 'show lacp interfaces multi-chassis' muestra ambos lados del LAG multi-chassis.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/PDF/link_aggregation.pdf"
+    },
+    {
+      "cmd": "show interface lag{{id}}",
+      "desc": "Muestra estado, velocidad agregada y miembros de un LAG.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "En 10.17 también existe la forma 'show interface lag <ID>'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_8400/Content/Chp_LAG/LACP_LAG_cmds/sho-int.htm"
+    },
+    {
+      "cmd": "configure terminal\ninterface lag {{id}}\n no shutdown\n no routing\n vlan trunk allowed {{vlans}}\n lacp mode active\ninterface {{interfaz}}\n no shutdown\n lag {{id}}",
+      "desc": "Crea un LAG LACP capa 2 en modo trunk y le agrega una interfaz miembro.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "En VSX usar 'interface lag <id> multi-chassis'. Cambiar el modo LACP de un LAG activo provoca reconvergencia breve.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/link_aggregation/Content/Chp_LAG/con-l2-dyn-agg-gro-10.htm"
+    },
+    {
+      "cmd": "show vsx status",
+      "desc": "Muestra estado global de VSX: canal ISL, ISL mgmt, config-sync, NAE y HTTPS server.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Solo plataformas con VSX (6400, 8100, 83xx, 8360, 8400, 9300, 10000). Acepta 'inter-switch-link', 'keepalive' o 'linkup-delay'. Acepta 'vsx-peer' al final para ver la salida del par VSX (requiere ISL arriba).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/vsx/Content/VSX_cmds/sho-vsx-sta-10.htm"
+    },
+    {
+      "cmd": "show vsx brief",
+      "desc": "Resumen VSX: ISL State, Device State, Keepalive State y rol (primary/secondary). Validar In-Sync y Keepalive-Established antes y después de cambios.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Solo plataformas con VSX. Acepta 'vsx-peer' al final para ver la salida del par VSX (requiere ISL arriba).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_8400/Content/VSX_cmds/sho-vsx-bri-10.htm"
+    },
+    {
+      "cmd": "show vsx config-consistency",
+      "desc": "Compara la configuración global entre peers VSX para detectar inconsistencias.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Solo plataformas con VSX.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/PDF/vsx.pdf"
+    },
+    {
+      "cmd": "show vsx config-consistency lacp",
+      "desc": "Compara la configuración LACP de los LAG multi-chassis entre peers VSX.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Acepta el nombre de un LAG al final. Acepta 'vsx-peer' al final para ver la salida del par VSX (requiere ISL arriba).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_9300/Content/VSX_cmds/sho-vsx-con-con-lac-10.htm"
+    },
+    {
+      "cmd": "show vsx status config-sync",
+      "desc": "Muestra estado de la sincronización de configuración (vsx-sync) entre peers.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.17/HTML/vsx/Content/VSX_cmds/sho-vsx-sta-con-syn.htm"
+    },
+    {
+      "cmd": "show vsx status peering",
+      "desc": "Muestra el estado de sincronización por módulo (MAC, neighbor, spanning-tree, route) entre peers VSX.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_10000/Content/VSX_cmds/sho-vsx-sta-peer.htm"
+    },
+    {
+      "cmd": "vsx update-software tftp://{{ip}}/{{imagen}} vrf mgmt",
+      "desc": "Actualiza firmware de ambos switches VSX de forma coordinada: copia imagen, reinicia secundario y luego primario.",
+      "cat": "Alta disponibilidad",
+      "risk": "disruptive",
+      "note": "Reinicia ambos peers en secuencia. Validar 'show vsx brief' antes y después. Usar la VRF por donde se alcanza el servidor.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/vsx/Content/VSX_cmds/vsx-upd-sof-10.19.htm"
+    },
+    {
+      "cmd": "show vsf",
+      "desc": "Muestra estado del stack VSF: miembros, MAC, modelo, estado y rol (Conductor, Standby, Member).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Solo plataformas con VSF (4100i, 6100 desde 10.16, 6200, 6300). Tras un split, el lado secundario aparece 'In Other Fragment'. En ArubaOS-Switch: Estado del stack VSF: dominio, topología, miembros, roles (Commander/Standby/Member) y versión.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/HTML/vsf/Content/VSF_cmds/sho-vsf.htm"
+    },
+    {
+      "cmd": "show vsf detail",
+      "desc": "Muestra detalle por miembro: modelo, ROM, serie, uptime y estado de los enlaces VSF.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/HTML/vsf/Content/VSF_cmds/sho-vsf-det.htm",
+      "note": "En ArubaOS-Switch: Detalle por miembro VSF: modelo, serie, uptime, CPU, memoria y enlaces VSF."
+    },
+    {
+      "cmd": "show vsf link",
+      "desc": "Muestra estado de cada enlace VSF por miembro, peer e interfaces físicas.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "'show vsf link error-details' detalla enlaces caídos por errores.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/vsf/Content/VSF_cmds/sho-vsf-lin.htm"
+    },
+    {
+      "cmd": "show vsf topology",
+      "desc": "Muestra la topología del stack (cadena o anillo) con Conductor y Standby.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.17/HTML/vsf/Content/VSF_cmds/sho-vsf-top.htm",
+      "note": "En ArubaOS-Switch: Topología física del stack VSF (cadena o anillo) y enlaces entre miembros."
+    },
+    {
+      "cmd": "show power-over-ethernet",
+      "desc": "Muestra potencia PoE disponible, reservada y restante del switch o miembro.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Solo modelos PoE. En VSF acepta 'member <id>'. En ArubaOS-Switch: Resumen de PoE del sistema: presupuesto de potencia, consumo y disponible.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_PoE/PoE_cmds/sho-pow-ove-eth.htm"
+    },
+    {
+      "cmd": "show power-over-ethernet brief",
+      "desc": "Muestra estado PoE por puerto: clase, prioridad, detección, potencia asignada y consumida (Delivering, Denied).",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "'show power-over-ethernet {{interfaz}} brief' filtra un puerto. En ArubaOS-Switch: Estado PoE por puerto: habilitado, prioridad, clase, potencia asignada y consumida, y estado de detección.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_PoE/PoE_cmds/sho-pow-ove-eth.htm"
+    },
+    {
+      "cmd": "show ip route",
+      "desc": "Muestra la tabla de rutas IPv4 de la VRF default.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Filtros: 'bgp', 'ospf', 'static', 'connected', 'summary'. 4100i/6000/6100 solo soportan rutas estáticas. En ArubaOS-Switch: Tabla de rutas IP (conectadas, estáticas y dinámicas) con gateway, VLAN, métrica y distancia. En ArubaOS 8/Instant: Tabla de ruteo del controlador.",
+      "platforms": [
+        "aoscx",
+        "aossw",
+        "aos8",
+        "iap"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/ip_route_6300-6400-8100-83xx-9300-10000/Content/Chp_VRF/VRF_cmds/sho-ip-rou.htm"
+    },
+    {
+      "cmd": "show ip route vrf {{vrf}}",
+      "desc": "Muestra la tabla de rutas IPv4 de una VRF específica (ej. mgmt).",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "'show ip route all-vrfs' muestra todas.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/ip_route_6300-6400-8100-83xx-9300-10000/Content/Chp_VRF/VRF_cmds/sho-ip-rou.htm"
+    },
+    {
+      "cmd": "show vrf",
+      "desc": "Lista VRFs con estado e interfaces asociadas.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/ip_route_6300-6400-8100-83xx-9300-10000/Content/Chp_VRF/VRF_cmds/sho-vrf.htm"
+    },
+    {
+      "cmd": "show ip interface {{interfaz}}",
+      "desc": "Muestra dirección IP, estado y parámetros L3 de una interfaz (VLAN, loopback, puerto ruteado).",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/PDF/cli_8100-8360.pdf"
+    },
+    {
+      "cmd": "show ip ospf neighbors",
+      "desc": "Lista vecinos OSPF con estado (Full, 2-Way), DR/BDR e interfaz.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Acepta 'detail', 'vrf <VRF>' o 'all-vrfs'. No disponible en 4100i/6000/6100.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/ip_route_8400/Content/Chp_OSPFv2/OSPFv2_cmds/sho-ip-osp-nei-10.htm"
+    },
+    {
+      "cmd": "show ip ospf interface",
+      "desc": "Muestra interfaces OSPF: área, costo, tipo de red, timers y estado DR/BDR.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Acepta 'brief', 'vrf <VRF>' y 'all-vrfs'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/ip_route_8400/Content/Chp_OSPFv2/OSPFv2_cmds/sho-ip-osp-int-10.htm"
+    },
+    {
+      "cmd": "show bgp all summary",
+      "desc": "Resumen BGP de todas las VRF y address-families: vecinos, estado, uptime y prefijos.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Forma por familia: 'show bgp ipv4 unicast summary'. BGP disponible en 6300/6400 y 8xxx/9300/10000 según licencia/plataforma.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/ip_route_8400/Content/Chp_BGP/BGP_cmds/sho-bgp-sum-10.htm"
+    },
+    {
+      "cmd": "show arp",
+      "desc": "Muestra la tabla ARP de la VRF default (IP, MAC, puerto, estado).",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "'show arp all-vrfs' o 'show arp vrf <VRF>' para otras VRF; 'show arp summary' entrega totales. En ArubaOS-Switch: Tabla ARP del switch (IP, MAC, tipo y puerto). En ArubaOS 8/Instant: Tabla ARP del equipo.",
+      "platforms": [
+        "aoscx",
+        "aossw",
+        "aos8",
+        "iap"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.09/HTML/cli_8400/Content/Chp_ARP/ARP_cmds/sho-arp.htm"
+    },
+    {
+      "cmd": "show ipv6 neighbors",
+      "desc": "Muestra la tabla de vecinos IPv6 (ND) de la VRF default.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Acepta 'all-vrfs' o 'vrf <VRF>'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.12/HTML/ip_services_6300-6400/Content/Chp_ARP/ARP_cmds/sho-ipv-nei.htm"
+    },
+    {
+      "cmd": "show dhcp-relay",
+      "desc": "Muestra configuración del DHCP relay (option 82, hop count) y estadísticas de requests/responses válidos y descartados.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Complementar con 'show ip helper-address' y 'show dhcp-relay bootp-gateway'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.10/HTML/cli_9300/Content/Chp_DHCP/DHCPv4_relay_cmds/sho-dhc-rel-10.htm"
+    },
+    {
+      "cmd": "show dhcp-snooping binding",
+      "desc": "Muestra la tabla de bindings DHCP snooping (MAC, IP, VLAN, puerto, lease).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Desde 10.14. En 10.13 y anteriores usar 'show dhcpv4-snooping binding'. En ArubaOS-Switch: Tabla de bindings DHCP snooping (MAC, IP, VLAN, puerto, lease).",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/ip_services_6200/Content/Chp_DHCP_snoop/Dv4Snoop_cmds/sho-dhc-sno-bin-840-10-cpe.htm"
+    },
+    {
+      "cmd": "show dhcpv4-snooping binding",
+      "desc": "Muestra la tabla de bindings DHCPv4 snooping en releases anteriores a 10.14.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Deprecado en 10.14 (reemplazado por 'dhcp-snooping'). Introducido en 10.09 (6000/6100) y 10.11 (8325/10000).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/HTML/ip_services_8100-83xx-9300-10000/Content/Chp_DHCP_snoop/Dv4Snoop_cmds/sho-dhc-sno-bin-840-10-cpe.htm"
+    },
+    {
+      "cmd": "show access-list",
+      "desc": "Lista ACLs (IPv4, IPv6, MAC) con sus ACEs y dónde están aplicadas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "'commands' muestra la ACL como comandos CLI; 'configuration' muestra lo ingresado aunque no esté programado en hardware. En ArubaOS-Switch: Lista ACL configuradas (estándar y extendidas) con su tipo.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_4100i/Content/Chp_ACLs/ACLs_cmds/sho-acc-lis.htm"
+    },
+    {
+      "cmd": "show access-list hitcounts ip {{acl}}",
+      "desc": "Muestra contadores de coincidencias por ACE (solo ACEs con 'count').",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Acepta 'interface <IF>' o 'vlan <id>' y dirección (in, out, routed-in). Los contadores se reinician al modificar la ACL.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.07/HTML/5200-7830/Content/Chp_ACLs/ACLs_cmds/sho-acc-lis-hit.htm"
+    },
+    {
+      "cmd": "show aaa authentication",
+      "desc": "Muestra métodos de autenticación de gestión por canal (consola, SSH, HTTPS), fail-through y límites de login.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/hardening/Content/Chp_hard-mgmt/aaa.htm"
+    },
+    {
+      "cmd": "show radius-server detail",
+      "desc": "Muestra servidores RADIUS configurados, VRF, timers, tracking y estado de alcanzabilidad.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Shared-secret 'None' indica passkey faltante. Estadísticas: 'show radius-server statistics' (10.15+); en 10.14 'show radius-server authentication statistics'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/HTML/security_6200-6300-6400/Content/Rem_AAA_cmds/sho-rad-ser-10.htm"
+    },
+    {
+      "cmd": "show tacacs-server detail",
+      "desc": "Muestra servidores TACACS+ configurados con parámetros globales y por servidor.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_8400/Content/Rem_AAA_cmds/sho-tac-ser-10.htm"
+    },
+    {
+      "cmd": "show port-access clients",
+      "desc": "Lista clientes autenticados por 802.1X, MAC auth o device profile con método, rol y estado.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Acepta 'interface <IF>' y 'mac <MAC>'. En releases antiguos (antes de 10.09 en 8360) el estado de 802.1X se revisaba con 'show aaa authentication port-access ...'. En ArubaOS-Switch: Vista consolidada de clientes en puertos con 802.1X, MAC auth o web auth.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_Port_acc/Port_acc_gen_cmds/sho-por-acc-cli-fl-ml-10.htm"
+    },
+    {
+      "cmd": "show port-access clients detail",
+      "desc": "Muestra detalle por cliente: VLAN, rol aplicado, atributos RADIUS, sesión y método de autenticación.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Desde 10.12 muestra atributos RADIUS de clientes sin rol local.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/security_8100-8360/Content/Chp_Port_acc/Port_acc_gen_cmds/sho-por-acc-cli-det-fl-ml-pl-10.htm"
+    },
+    {
+      "cmd": "show tech aaa",
+      "desc": "Recolecta en una sola salida la configuración y estado AAA, RADIUS y TACACS+ para soporte.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/HTML/security_8100-8360/Content/Rem_AAA_cmds/sho-tec-aaa-10.htm"
+    },
+    {
+      "cmd": "show events -r",
+      "desc": "Muestra el event log desde el último reinicio, con los eventos más recientes primero.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "'-a' incluye arranques anteriores; '-c <categoria>' filtra por categoría (ej. lldp, lacp); '-n <cantidad>' limita líneas.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_9300/Content/SysHW_cmds/sho-eve-10.htm"
+    },
+    {
+      "cmd": "show events -r -c {{categoria}}",
+      "desc": "Filtra el event log por categoría (lldp, lacp, vsx, etc.), más recientes primero.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "'show events -c' sin categoría lista las categorías disponibles.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_9300/Content/SysHW_cmds/sho-eve-10.htm"
+    },
+    {
+      "cmd": "show logging -r",
+      "desc": "Muestra los mensajes de log locales en orden inverso (más recientes primero).",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "Fuente comunitaria: HPE confirmó que el comando existe pero no figura en la CLI Bank; la guía 10.10 lo lista. Si no responde, usar 'show events -r'. En ArubaOS-Switch: Event Log completo con los eventos más recientes primero.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://airheads.hpe.com/discussion/arubaos-cx-read-logs-in-cli"
+    },
+    {
+      "cmd": "show ntp status",
+      "desc": "Muestra si NTP está habilitado, VRF usada y servidor/stratum de sincronización.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aoscx",
+        "aossw",
+        "aos8"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6000-6100/Content/Chp_IniCfg/NTP_cmds/sho-ntp-sta6.htm",
+      "note": "En ArubaOS-Switch: Estado de NTP: sincronización, stratum, referencia, offset y hora del sistema. En ArubaOS 8: Muestra el estado de sincronización NTP del controlador."
+    },
+    {
+      "cmd": "show ntp associations",
+      "desc": "Lista servidores NTP con ref-ID, stratum, poll y reach. El asterisco marca la referencia activa.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Reach 377 indica que se recibieron los últimos 8 mensajes. En ArubaOS-Switch: Servidores NTP configurados y estado de cada asociación.",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_IniCfg/NTP_cmds/sho-ntp-ass.htm"
+    },
+    {
+      "cmd": "ping {{ip}} vrf mgmt",
+      "desc": "Prueba conectividad ICMP desde la VRF de gestión.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Sin 'vrf' usa la VRF default. Acepta 'repetitions <n>', 'source <IP|IF>' y 'datagram-size'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.17/HTML/diagnostics_8400/Content/Chp_Ping/Ping_cmds/pin.htm"
+    },
+    {
+      "cmd": "ping {{ip}} repetitions {{cantidad}}",
+      "desc": "Envía una cantidad definida de pings en la VRF default.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.17/HTML/diagnostics_8400/Content/Chp_Ping/Ping_cmds/pin.htm"
+    },
+    {
+      "cmd": "ping6 {{ipv6}} vrf {{vrf}}",
+      "desc": "Prueba conectividad ICMPv6 en la VRF indicada.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_8400/Content/Chp_Ping/Ping_cmds/ping6.htm"
+    },
+    {
+      "cmd": "traceroute {{ip}} vrf {{vrf}}",
+      "desc": "Traza la ruta hacia un destino IPv4 en la VRF indicada.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Acepta 'probes' (1-5, defecto 3) y 'maxttl' (defecto 30).",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_TRoute/TRoute_cmds/tra.htm"
+    },
+    {
+      "cmd": "show mirror",
+      "desc": "Muestra sesiones de mirroring con origen, destino y estado (enable, destination_shutdown).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "'show mirror <id>' muestra el detalle de una sesión.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/HTML/monitoring_8100-83xx-9300-10000/Content/Chp_Mirror/Mirror_cmds/sho-mir-10.htm"
+    },
+    {
+      "cmd": "configure terminal\nmirror session {{id}}\n source interface {{origen}} both\n destination interface {{destino}}\n enable",
+      "desc": "Crea una sesión de port mirroring (SPAN) que copia tráfico rx/tx del origen al puerto de captura.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "El número de sesiones activas depende de la plataforma (estado hit_active_sessions_capacity si se excede). Retirar con 'no mirror session <id>'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6300-6400/Content/Chp_Mirror/Mirror_cmds/mir-ses.htm"
+    },
+    {
+      "cmd": "diagnostics",
+      "desc": "Habilita los comandos 'diag' de diagnóstico en la sesión actual.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Necesario antes de 'diag cable-diagnostic' y 'diag event-trap-disable'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.15/PDF/diagnostics_4100i-6000-6100.pdf"
+    },
+    {
+      "cmd": "diag cable-diagnostic test {{interfaz}}",
+      "desc": "Ejecuta prueba TDR del cable en un puerto RJ45 (estado y distancia por par).",
+      "cat": "Diagnóstico",
+      "risk": "disruptive",
+      "note": "Corta el enlace del puerto durante la prueba. Sintaxis con 'test/show/clear' desde 10.10; en releases previos era 'diag cable-diagnostic <IF>'. No disponible en SFP ni en 8320.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/HTML/diagnostics_4100i-6000-6100/Content/Chp_CabDiag/CabDiag_cmds/dia-cab-dianostic.htm"
+    },
+    {
+      "cmd": "diag cable-diagnostic show {{interfaz}}",
+      "desc": "Muestra el resultado de la última prueba TDR (good, open, short, impedancia).",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Requiere ejecutar antes 'diagnostics'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.13/HTML/diagnostics_4100i-6000-6100/Content/Chp_CabDiag/CabDiag_cmds/dia-cab-dianostic.htm"
+    },
+    {
+      "cmd": "show tech",
+      "desc": "Ejecuta los show de todas las features para soporte (TAC). Salida muy extensa.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "'show tech basic' o 'show tech <feature>' acotan la salida; 'show tech local-file' la guarda en archivo. Puede tardar varios minutos. En ArubaOS-Switch: Recolecta datos de soporte (versión, running-config, logs, boot history, puertos, rutas, VLAN).",
+      "platforms": [
+        "aoscx",
+        "aossw"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_832x/Content/SysHW_cmds/sho-tec.htm"
+    },
+    {
+      "cmd": "show core-dump all",
+      "desc": "Lista core dumps de daemons y kernel generados por caídas de procesos.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/PDF/cli_6300-6400.pdf"
+    },
+    {
+      "cmd": "show running-config",
+      "desc": "Muestra la configuración en ejecución (solo valores no predeterminados).",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "'show running-config all' incluye valores por defecto; acepta nombre de feature (ej. 'vsx', 'interface'). En ArubaOS-Switch: Configuración en ejecución (solo parámetros distintos del default de fábrica). En ArubaOS 8/AOS 10/Instant: Muestra la configuración en ejecución incluyendo cambios pendientes de guardar.",
+      "platforms": [
+        "aoscx",
+        "aossw",
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_4100i-6000-6100/Content/SysHW_cmds/sho-run-con-10.htm"
+    },
+    {
+      "cmd": "show startup-config",
+      "desc": "Muestra la configuración guardada que se carga al arrancar.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.16/PDF/cli_6300-6400.pdf"
+    },
+    {
+      "cmd": "show checkpoint",
+      "desc": "Lista los checkpoints guardados (manuales, AUTO y CPC del sistema) con fecha y tipo.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Desde 10.08 reemplaza a 'show checkpoint list all'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_Cfg_FW_mgt/Chk_cmds/sho-che-lis.htm"
+    },
+    {
+      "cmd": "show checkpoint {{checkpoint}}",
+      "desc": "Muestra el contenido de un checkpoint.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Acepta 'json' al final.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_Cfg_FW_mgt/Chk_cmds/sho-che.htm"
+    },
+    {
+      "cmd": "checkpoint diff running-config startup-config",
+      "desc": "Muestra diferencias entre running y startup: '+' líneas solo en la segunda, '-' solo en la primera. Útil para ver cambios no guardados.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Acepta nombres de checkpoint en cualquiera de las dos posiciones.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.10/HTML/cli_6000-6100/Content/Chp_Cfg_FW_mgt/Chk_cmds/che-dif.htm"
+    },
+    {
+      "cmd": "checkpoint diff {{checkpoint}} running-config",
+      "desc": "Compara un checkpoint con la configuración en ejecución.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.10/HTML/cli_6000-6100/Content/Chp_Cfg_FW_mgt/Chk_cmds/che-dif.htm"
+    },
+    {
+      "cmd": "copy running-config checkpoint {{nombre}}",
+      "desc": "Crea un checkpoint con la configuración actual antes de un cambio.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Nombre alfanumérico, guion o guion bajo, máximo 32 caracteres, sin prefijo 'CPC'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_8400/Content/Chp_Cfg_FW_mgt/Chk_cmds/cop-run-con-st-con-che-che-nam.htm"
+    },
+    {
+      "cmd": "write memory",
+      "desc": "Guarda la running-config en la startup-config.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Alias de 'copy running-config startup-config'. En ArubaOS-Switch: Guarda la running-config en la startup-config. En ArubaOS 8/Instant: Guarda la configuración (en MM despliega los cambios del nodo a los MD).",
+      "platforms": [
+        "aoscx",
+        "aossw",
+        "aos8",
+        "iap"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_9300/Content/Chp_Cfg_FW_mgt/Chk_cmds/wri-mem.htm"
+    },
+    {
+      "cmd": "copy running-config startup-config",
+      "desc": "Guarda la configuración en ejecución como configuración de arranque.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_8400/Content/Chp_Cfg_FW_mgt/Chk_cmds/cop-run-con-st-con-che-che-nam.htm"
+    },
+    {
+      "cmd": "checkpoint auto {{minutos}}",
+      "desc": "Inicia modo checkpoint automático: si no se confirma en 1 a 60 minutos, se restaura la configuración previa. Protege cambios remotos riesgosos.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Confirmar con 'checkpoint auto confirm'.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_5420/Content/Chp_Cfg_FW_mgt/Chk_cmds/che-aut.htm"
+    },
+    {
+      "cmd": "checkpoint auto confirm",
+      "desc": "Confirma los cambios hechos en modo checkpoint auto y termina ese modo.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Guarda un checkpoint AUTO<fecha-hora>.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.07/HTML/5200-7852/Content/Chp_Cfg_FW_mgt/Chk_cmds/che-aut-con.htm"
+    },
+    {
+      "cmd": "checkpoint rollback {{checkpoint}}",
+      "desc": "Reemplaza la running-config por un checkpoint (o 'startup-config'). Revierte cambios.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "La configuración actual se pierde; puede cortar servicio si el checkpoint difiere en interfaces o routing. 'checkpoint rollback startup-config' vuelve a lo guardado.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_Cfg_FW_mgt/Chk_cmds/che-rol.htm"
+    },
+    {
+      "cmd": "copy checkpoint {{checkpoint}} startup-config",
+      "desc": "Copia un checkpoint a la startup-config para que aplique en el próximo arranque.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.06/HTML/5200-7685/GUID-E9186678-6695-4E36-91F0-A3A0DFD81E9C.html"
+    },
+    {
+      "cmd": "copy tftp://{{ip}}/{{imagen}} secondary vrf mgmt",
+      "desc": "Descarga una imagen de firmware por TFTP al banco secondary vía VRF mgmt.",
+      "cat": "Sistema",
+      "risk": "change",
+      "note": "Sobrescribe la imagen del banco destino. Acepta sftp:// y bancos primary o hot-patch. Si se omite 'vrf' usa la default.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_6200/Content/Chp_Cfg_FW_mgt/FW_mgt_cmds/cop-rem-url.htm"
+    },
+    {
+      "cmd": "copy primary tftp://{{ip}}/{{imagen}} vrf mgmt",
+      "desc": "Respalda la imagen del banco primary a un servidor TFTP.",
+      "cat": "Sistema",
+      "risk": "change",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/10.14/HTML/fundamentals_8400/Content/Chp_Cfg_FW_mgt/FW_mgt_cmds/cop-pr-sec-rem-url.htm"
+    },
+    {
+      "cmd": "boot set-default secondary",
+      "desc": "Define el banco de imagen que se usará en el próximo arranque, sin reiniciar.",
+      "cat": "Sistema",
+      "risk": "change",
+      "note": "Afecta trabajos programados con el job scheduler.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_832x/Content/Chp_Cfg_FW_mgt/Boot_cmds/boo-set-def.htm"
+    },
+    {
+      "cmd": "boot system",
+      "desc": "Reinicia el switch con la imagen por defecto configurada.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Pide confirmación y ofrece guardar la configuración. En un stack VSF reinicia todos los miembros.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_5420/Content/Chp_Cfg_FW_mgt/Boot_cmds/boo-sys.htm"
+    },
+    {
+      "cmd": "boot system secondary",
+      "desc": "Reinicia con la imagen secondary y la deja como imagen por defecto. Paso final de un upgrade.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "'boot system serviceos' arranca el SO de recuperación sin cambiar el default.",
+      "platforms": [
+        "aoscx"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/AOS-CX/AOSCX-CLI-Bank/cli_5420/Content/Chp_Cfg_FW_mgt/Boot_cmds/boo-sys.htm"
+    },
+    {
+      "cmd": "show system information",
+      "desc": "Detalle de parámetros globales del switch (MAC age time, zona horaria, versión de software, ROM, serie, memoria y paquetes en buffer).",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "En stack VSF admite 'show system information vsf member <id>'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show system fans",
+      "desc": "Estado de los ventiladores del chasis o de cada miembro. Útil ante alarmas de temperatura.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "En VSF: 'show system fans vsf member <id>'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show system power-supply",
+      "desc": "Estado, potencia y temperatura de las fuentes de poder.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "La opción 'detailed' solo está soportada en 5400R. Agrega 'fahrenheit' para ver temperatura en °F.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show system temperature",
+      "desc": "Muestra temperaturas actuales y umbrales de los sensores del chasis.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Documentado en 3810M/5400R y 2930F/M. En VSF: 'show system temperature vsf member <id>'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061577en_us"
+    },
+    {
+      "cmd": "show modules",
+      "desc": "Lista módulos instalados (módulos de expansión, blades del 5400R, management modules) con número de parte, serie y estado.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "En 5400R/3810M agrega 'details' para más información por slot.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show cpu",
+      "desc": "Utilización promedio de CPU en los últimos 1, 5 y 60 segundos. Primer chequeo ante lentitud de gestión o sospecha de loop.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aossw",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us",
+      "note": "En Instant: Muestra la carga de CPU del Instant AP."
+    },
+    {
+      "cmd": "show cpu process",
+      "desc": "Uso de CPU por proceso. Sirve para identificar qué tarea consume CPU.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Admite 'refresh <iteraciones>' y 'slot <slots>' en chasis.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show uptime",
+      "desc": "Tiempo transcurrido desde el último reinicio.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show flash",
+      "desc": "Muestra las imágenes de firmware en flash primaria y secundaria con tamaño, fecha y versión, y la imagen de booteo por defecto.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "show system chassislocate",
+      "desc": "Estado del LED localizador del chasis (On, Off o Blink) y minutos restantes.",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show time",
+      "desc": "Muestra fecha y hora actual del switch.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "menu",
+      "desc": "Abre la interfaz de menú de texto (Main Menu) del switch.",
+      "cat": "Otros",
+      "risk": "change",
+      "note": "Si hay cambios en la CLI sin guardar, al salir del menú puede pedir guardarlos o descartarlos.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "show interfaces brief",
+      "desc": "Resumen de todos los puertos: tipo, alerta, estado enabled, estado up/down, modo (speed/duplex) y flow control.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show interfaces brief {{puertos}}",
+      "desc": "Resumen de estado y modo de los puertos indicados.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Formato de puerto: 1-24, A1 (chasis) o 1/1 (stack o VSF).",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show interfaces {{puerto}}",
+      "desc": "Contadores detallados de un puerto: bytes y paquetes rx/tx, broadcast, multicast, errores, drops, CRC y colisiones.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show interfaces",
+      "desc": "Contadores resumidos de tráfico por puerto (total bytes, frames y errores rx).",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show interfaces config",
+      "desc": "Configuración de cada puerto: tipo, enabled, modo (speed/duplex), flow control y MDI.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show interfaces transceiver",
+      "desc": "Lista los transceivers instalados con tipo, product number, serie y part number.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show interfaces transceiver {{puerto}} detail",
+      "desc": "Información detallada del transceiver del puerto, incluyendo DOM (temperatura, voltaje, bias, potencia Tx/Rx y umbrales) si el módulo lo soporta.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "DOM solo aparece si el campo Diagnostic Support del transceiver indica DOM.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show tech transceivers",
+      "desc": "Inventario de transceivers para soporte, incluyendo módulos no soportados o no Aruba.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "clear statistics {{puertos}}",
+      "desc": "Pone en cero los contadores de los puertos indicados para medir errores desde un punto conocido.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "note": "Usar 'clear statistics global' para todos los puertos. Pierde el historial de contadores.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "interface {{puertos}} disable",
+      "desc": "Deshabilita administrativamente los puertos indicados. Corta el servicio en esos puertos.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "note": "Se vuelve a habilitar con 'interface <puertos> enable'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "interface {{puertos}} enable",
+      "desc": "Habilita administrativamente los puertos indicados.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "interface {{puerto}} name \"{{descripcion}}\"",
+      "desc": "Asigna un nombre descriptivo (friendly port name) al puerto.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "interface {{puerto}} speed-duplex {{modo}}",
+      "desc": "Fija velocidad y duplex del puerto (auto, 100-full, 1000-full, auto-100, etc.). Renegocia el enlace.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show cable-diagnostics {{puertos}}",
+      "desc": "Muestra el resultado del último test de cable (TDR/VCT) de los puertos.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "test cable-diagnostics {{puertos}}",
+      "desc": "Ejecuta diagnóstico de cable en puertos de cobre para detectar cortes, cortocircuitos y distancia a la falla.",
+      "cat": "Diagnóstico",
+      "risk": "disruptive",
+      "note": "El propio comando advierte pérdida de enlace durante unos segundos por puerto.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show power-over-ethernet {{puerto}}",
+      "desc": "Detalle PoE de un puerto: clase, potencia solicitada, entregada, estado y errores (overcurrent, MPS absent).",
+      "cat": "Hardware",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "no interface {{puertos}} power-over-ethernet",
+      "desc": "Desactiva PoE en los puertos indicados. Apaga los equipos alimentados (AP, teléfonos, cámaras).",
+      "cat": "Hardware",
+      "risk": "disruptive",
+      "note": "Para un reset PoE se ejecuta luego 'interface <puertos> power-over-ethernet'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "interface {{puertos}} power-over-ethernet",
+      "desc": "Habilita PoE en los puertos indicados.",
+      "cat": "Hardware",
+      "risk": "change",
+      "note": "Admite prioridad: critical, high o low.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show vlans",
+      "desc": "Lista las VLAN configuradas con VID, nombre, estado y si tienen IP o jumbo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "show vlans {{vlan}}",
+      "desc": "Detalle de una VLAN: puertos miembros y modo (tagged/untagged) de cada uno.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "show vlans ports {{puertos}}",
+      "desc": "VLAN a las que pertenecen los puertos indicados.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show vlan ports {{puertos}} detail",
+      "desc": "Membresía VLAN por puerto con detalle de tagged/untagged.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "vlan {{vlan}}\n name \"{{nombre}}\"\n untagged {{puertos}}\n exit",
+      "desc": "Crea la VLAN (si no existe), le asigna nombre y agrega puertos como untagged (acceso). Un puerto untagged se saca de su VLAN untagged anterior.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Desde (config)#. Un puerto solo puede ser untagged en una VLAN.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "vlan {{vlan}}\n tagged {{puertos}}\n exit",
+      "desc": "Agrega puertos o trunks (Trk1) como tagged (troncal 802.1Q) a la VLAN.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Desde (config)#.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "show mac-address",
+      "desc": "Tabla de direcciones MAC aprendidas con puerto y VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show mac-address {{mac}}",
+      "desc": "Ubica en qué puerto y VLAN se aprendió una MAC.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Formato de MAC: xxxxxx-xxxxxx.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show mac-address vlan {{vlan}}",
+      "desc": "MAC aprendidas en una VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show mac-address {{puerto}}",
+      "desc": "MAC aprendidas en un puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show lldp info remote-device",
+      "desc": "Vecinos LLDP por puerto: chassis ID, puerto remoto, nombre de sistema.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show lldp info remote-device {{puerto}}",
+      "desc": "Detalle LLDP del vecino en un puerto: nombre, descripción, IP de gestión, capacidades y PoE negociado.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show lldp info local-device",
+      "desc": "Información LLDP que el switch anuncia (chassis ID, nombre, IP de gestión, puertos).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show lldp config",
+      "desc": "Configuración LLDP global y por puerto (admin status, intervalos).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show cdp neighbors",
+      "desc": "Vecinos CDP detectados (dispositivos Cisco) por puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "AOS-S solo recibe CDP v1, no lo transmite.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show cdp neighbors detail",
+      "desc": "Detalle de vecinos CDP: plataforma, versión, IP y puerto remoto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show spanning-tree instance ist",
+      "desc": "Estado de la instancia IST de MSTP.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Para otra instancia: 'show spanning-tree instance <1-16>'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "show spanning-tree config",
+      "desc": "Configuración STP global y por puerto (prioridad, costo, admin-edge, bpdu-protection).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "show spanning-tree root-history cst",
+      "desc": "Historial de cambios de root bridge. Útil para detectar inestabilidad o un root no autorizado.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "También 'ist' o 'mst <id>'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "spanning-tree\nspanning-tree mode mstp",
+      "desc": "Habilita spanning tree en modo MSTP (modo por defecto).",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Para RPVST+: 'spanning-tree mode rapid-pvst'. Desde (config)#.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "spanning-tree {{puertos}} admin-edge-port",
+      "desc": "Marca puertos de acceso como edge para que pasen a forwarding de inmediato.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "spanning-tree {{puertos}} bpdu-protection",
+      "desc": "Deshabilita el puerto si recibe BPDU. Protege puertos de usuario contra switches no autorizados.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "loop-protect {{puertos}} receiver-action send-disable",
+      "desc": "Habilita loop protection en los puertos y deshabilita el puerto emisor si detecta un loop.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Solo transmite en puertos con VLAN untagged. Ajustar 'loop-protect disable-timer <seg>' para re-habilitar automáticamente.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "show trunks",
+      "desc": "Grupos de agregación (Trk) con puertos miembros, tipo (trunk o LACP) y estado.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show lacp",
+      "desc": "Estado LACP por puerto: trunk group, partner, estado y modo activo/pasivo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show lacp peer",
+      "desc": "Datos del partner LACP por puerto (system ID, key, puerto remoto).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "trunk {{puertos}} trk{{n}} lacp",
+      "desc": "Crea un trunk Trk<n> con LACP sobre los puertos indicados.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Los puertos heredan la configuración del trunk; puede cortar tráfico mientras negocia. Usar 'trunk' en lugar de 'lacp' para agregación estática.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show stacking",
+      "desc": "Estado del stack por backplane: miembros, roles (Commander/Standby/Member), MAC y prioridad.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Backplane stacking en 2920, 2930M y 3810M.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061571en_us"
+    },
+    {
+      "cmd": "show stacking detail",
+      "desc": "Detalle del stack con información de puertos de stacking por miembro.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061566en_us"
+    },
+    {
+      "cmd": "show ip",
+      "desc": "Direcciones IP por VLAN, default gateway, IP routing y parámetros IP globales.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "ip routing",
+      "desc": "Habilita el enrutamiento IP entre VLAN (Capa 3).",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "note": "Con ip routing activo, el ip default-gateway deja de usarse; usar ruta 0.0.0.0/0.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061574en_us"
+    },
+    {
+      "cmd": "ip route {{red}}/{{prefijo}} {{ip}}",
+      "desc": "Agrega una ruta estática hacia la red indicada vía el next hop.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061574en_us"
+    },
+    {
+      "cmd": "ip default-gateway {{ip}}",
+      "desc": "Define el gateway por defecto del switch cuando opera solo en Capa 2.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "vlan {{vlan}} ip address {{ip}}/{{prefijo}}",
+      "desc": "Asigna IP a la interfaz de VLAN (gestión o SVI). Si es la VLAN de gestión puede cortar la sesión remota.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "También acepta 'ip address dhcp-bootp' en el contexto de la VLAN.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "show ip helper-address",
+      "desc": "DHCP relay: helper addresses configuradas por VLAN.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061574en_us"
+    },
+    {
+      "cmd": "show ip ospf neighbor",
+      "desc": "Vecinos OSPF y estado de adyacencia.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061574en_us"
+    },
+    {
+      "cmd": "show vrrp",
+      "desc": "Estado VRRP por VLAN y VRID (Master/Backup).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "aossw",
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061574en_us",
+      "note": "En ArubaOS 8: Estado de las instancias VRRP (master/backup, prioridad, IP virtual)."
+    },
+    {
+      "cmd": "show ip igmp",
+      "desc": "Estado IGMP snooping/querier por VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061574en_us"
+    },
+    {
+      "cmd": "show dhcp-snooping",
+      "desc": "Estado de DHCP snooping: VLAN habilitadas, servidores autorizados y puertos trusted.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show dhcp-snooping stats",
+      "desc": "Contadores de paquetes DHCP reenviados y descartados por DHCP snooping.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "dhcp-snooping\ndhcp-snooping vlan {{vlan}}\ndhcp-snooping trust {{puertos}}",
+      "desc": "Habilita DHCP snooping en la VLAN y marca como trusted los puertos hacia el servidor DHCP legítimo.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Antes de habilitar, definir los puertos trusted (uplinks) para no bloquear DHCP.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show port-security",
+      "desc": "Configuración de port security por puerto: learn-mode, address-limit y acción ante violación.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show port-security intrusion-log",
+      "desc": "Registro de intrusiones de port security (MAC no autorizada y puerto).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "port-security {{puertos}} learn-mode limited-continuous address-limit {{n}} action send-disable",
+      "desc": "Limita la cantidad de MAC por puerto y deshabilita el puerto ante una violación.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show access-list {{acl}} config",
+      "desc": "Muestra las reglas (ACE) de una ACL tal como están configuradas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show access-list ports {{puertos}}",
+      "desc": "ACL aplicadas a los puertos indicados.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Usar 'all' para todos los puertos.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "ip access-list extended {{acl}}",
+      "desc": "Crea o edita una ACL extendida con nombre y entra a su contexto para agregar reglas permit/deny.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "interface {{puertos}} ip access-group {{acl}} in",
+      "desc": "Aplica una ACL IP de entrada a los puertos. Puede bloquear tráfico de producción si la ACL es incorrecta.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show authentication",
+      "desc": "Métodos de autenticación primario/secundario por tipo de acceso (consola, telnet, SSH, web) e intentos de login.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show radius",
+      "desc": "Servidores RADIUS configurados, puertos de autenticación/accounting y parámetros globales.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show radius authentication",
+      "desc": "Estadísticas de autenticación por servidor RADIUS (requests, accepts, rejects, timeouts).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show tacacs",
+      "desc": "Servidores TACACS+ configurados y contadores de conexiones.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "radius-server host {{ip}} key {{clave}}",
+      "desc": "Agrega un servidor RADIUS con su shared secret.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "tacacs-server host {{ip}} key {{clave}}",
+      "desc": "Agrega un servidor TACACS+ con su llave.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "aaa authentication ssh login radius local",
+      "desc": "Autentica logins SSH contra RADIUS, con usuario local como respaldo.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Validar acceso por consola antes de aplicar en producción.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show port-access authenticator",
+      "desc": "Estado 802.1X por puerto (authenticator): habilitado, clientes, estado de autenticación.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show port-access authenticator clients",
+      "desc": "Clientes 802.1X por puerto con usuario, MAC, VLAN y estado.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show port-access mac-based clients",
+      "desc": "Clientes autenticados por MAC (MAC auth) por puerto.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "aaa port-access authenticator {{puertos}}\naaa port-access authenticator active",
+      "desc": "Habilita 802.1X (authenticator) en los puertos y activa la función globalmente.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Requiere 'aaa authentication port-access eap-radius' y servidor RADIUS.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "aaa port-access mac-based {{puertos}}",
+      "desc": "Habilita autenticación por MAC en los puertos indicados.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show ip ssh",
+      "desc": "Estado del servidor SSH, versión, puerto y sesiones activas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "show crypto host-public-key fingerprint",
+      "desc": "Muestra la huella (fingerprint) de la llave pública del host SSH.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "crypto key generate ssh rsa",
+      "desc": "Genera el par de llaves RSA del servidor SSH.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Regenerar la llave cambia el fingerprint; los clientes verán alerta de host key.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "ip ssh",
+      "desc": "Habilita el servidor SSH.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061588en_us"
+    },
+    {
+      "cmd": "no telnet-server",
+      "desc": "Deshabilita el acceso Telnet al switch.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Validar acceso SSH antes de aplicar si la sesión actual es Telnet.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show logging -a",
+      "desc": "Event Log incluyendo eventos anteriores al último reinicio.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show logging -r {{texto}}",
+      "desc": "Event Log filtrado por texto, en orden inverso.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "logging {{ip}}",
+      "desc": "Envía el Event Log a un servidor syslog.",
+      "cat": "Logs",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "logging severity warning",
+      "desc": "Filtra los mensajes enviados a syslog al nivel indicado o superior.",
+      "cat": "Logs",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show sntp",
+      "desc": "Configuración y estado de SNTP (modo, servidores, intervalo de polling).",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "timesync ntp\nntp unicast\nntp server {{ip}} iburst\nntp enable",
+      "desc": "Configura NTP unicast con un servidor y lo habilita como protocolo de sincronización.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "timesync define el único protocolo activo (timep, sntp o ntp).",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "ping {{ip}}",
+      "desc": "Prueba de alcance ICMP hacia un host.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Opciones: repetitions <1-10000>, timeout <1-60>, source <ip|vlan>. En ArubaOS 8/AOS 10/Instant: Prueba conectividad ICMP desde el equipo.",
+      "platforms": [
+        "aossw",
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "traceroute {{ip}}",
+      "desc": "Traza la ruta IP hacia un host.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aossw",
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us",
+      "note": "En ArubaOS 8/AOS 10/Instant: Traza la ruta hacia un destino desde el equipo."
+    },
+    {
+      "cmd": "show tech all",
+      "desc": "Recolecta toda la información de soporte disponible. Salida muy extensa.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "mirror 1 port {{puerto}}\ninterface {{puertos}} monitor all both mirror 1",
+      "desc": "Configura una sesión de port mirroring local: puerto destino y puertos origen (rx y tx).",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Eliminar con 'no mirror 1' al terminar.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show monitor",
+      "desc": "Sesiones de mirroring configuradas con origen, destino y estado.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "show running-config interface {{puertos}}",
+      "desc": "Configuración en ejecución de los puertos indicados.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "show config",
+      "desc": "Configuración de arranque (startup-config) guardada en flash.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "show config status",
+      "desc": "Compara running-config y startup-config e indica si hay cambios sin guardar.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "show config files",
+      "desc": "Lista los archivos de configuración (hasta 3) y cuál está activo para primary/secondary.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "configure",
+      "desc": "Entra al modo de configuración global (config)#.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "También acepta 'config' o 'configure terminal'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "copy startup-config tftp {{ip}} {{archivo}}",
+      "desc": "Respalda la startup-config en un servidor TFTP.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Variante: 'copy running-config tftp <ip> <archivo>'.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "copy running-config tftp {{ip}} {{archivo}}",
+      "desc": "Respalda la running-config en un servidor TFTP.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "copy tftp startup-config {{ip}} {{archivo}}",
+      "desc": "Descarga una configuración desde TFTP a la startup-config. El switch pide confirmación y se reinicia para aplicarla.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "El archivo debe corresponder al mismo modelo; la primera línea del archivo identifica la plataforma.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "copy tftp flash {{ip}} {{archivo}} secondary",
+      "desc": "Descarga una imagen de firmware vía TFTP a la flash secundaria.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Copiar primero a secondary y bootear desde ahí deja la imagen anterior en primary como respaldo.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061573en_us"
+    },
+    {
+      "cmd": "copy flash flash secondary",
+      "desc": "Copia la imagen de la flash primaria a la secundaria (respaldo antes de un upgrade).",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "boot system flash secondary",
+      "desc": "Reinicia el switch booteando desde la imagen de la flash secundaria.",
+      "cat": "Alta disponibilidad",
+      "risk": "disruptive",
+      "note": "Usar 'boot set-default flash <primary|secondary>' para cambiar la imagen por defecto sin reiniciar.",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "boot set-default flash {{flash}}",
+      "desc": "Define la imagen (primary o secondary) usada en los próximos reinicios, sin reiniciar.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "reload",
+      "desc": "Reinicia el switch con la imagen por defecto. Si hay cambios sin guardar pregunta si guardarlos.",
+      "cat": "Alta disponibilidad",
+      "risk": "disruptive",
+      "note": "Programable con 'reload after <[dd:]hh:mm>' o 'reload at hh:mm'. En ArubaOS 8/Instant: Reinicia el equipo.",
+      "platforms": [
+        "aossw",
+        "aos8",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "erase startup-config",
+      "desc": "Borra la startup-config y reinicia el switch con configuración de fábrica (o la custom default-config si existe).",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "show default-config",
+      "desc": "Muestra la configuración default personalizada, si existe.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aossw"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=a00061582en_us"
+    },
+    {
+      "cmd": "show inventory",
+      "desc": "Muestra inventario de hardware: seriales, MAC, fuentes, ventiladores y tipo de dispositivo (MM/MD). Útil para RMA y auditoría.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "En AOS 10 aplica a Gateways.",
+      "platforms": [
+        "aos8",
+        "aos10"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-44FB7CB9-89CE-4D5C-86C9-2AF5DCB0688F.html"
+    },
+    {
+      "cmd": "show image version",
+      "desc": "Muestra la versión de imagen instalada en cada partición y cuál es la de arranque. Clave antes de un upgrade.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-A54D8AED-5AFF-4270-A63F-71F0FE156D9D.html"
+    },
+    {
+      "cmd": "show boot history",
+      "desc": "Muestra el historial de reinicios y upgrades del controlador. Sirve para correlacionar caídas con eventos de reload.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-DCBD1AE3-3A4A-4FEA-9462-FD45AC985BAE.html"
+    },
+    {
+      "cmd": "show switchinfo",
+      "desc": "Resumen del equipo: rol, hostname, último cambio de configuración y causa del último reinicio.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-DCEB93C4-8E29-4CF3-A360-E39A772BF66E.html"
+    },
+    {
+      "cmd": "show switches",
+      "desc": "Lista los managed devices (MD) conectados al Mobility Conductor con IP, versión, estado y sincronización de configuración.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Opciones: all, summary, state, debug, regulatory.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-5E382D61-6D78-4EF4-AD7C-E4F76B8C2E2A.html"
+    },
+    {
+      "cmd": "show cpuload",
+      "desc": "Muestra la carga de CPU de procesos de sistema y aplicación del controlador.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Variante: show cpuload per-cpu para ver por procesador.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-EDD1B040-0FDA-4783-8D94-7C79BDBC6670.html"
+    },
+    {
+      "cmd": "show memory",
+      "desc": "Muestra la utilización de memoria del equipo. Útil ante lentitud o caídas de procesos.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-99881A57-8F03-49DE-B209-F16359AD2CAD.html"
+    },
+    {
+      "cmd": "show processes sort-by cpu",
+      "desc": "Lista los procesos del sistema ordenados por consumo de CPU para detectar el proceso que satura el controlador.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Usa sort-by memory para ordenar por memoria.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-D0B52796-CA8D-4A74-8E98-F20B7AB3AB5A.html"
+    },
+    {
+      "cmd": "show storage",
+      "desc": "Muestra el uso de los filesystems del controlador (flash, tmp). Revisar antes de copiar imágenes o generar logs.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-BC3F6932-37B5-4E7C-8E22-1BFEC9AEA554.html"
+    },
+    {
+      "cmd": "show crashinfo",
+      "desc": "Lista los crashes de procesos registrados en el controlador.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-919D2761-58D6-44AE-B2AC-1BBDC6FFB1F5.html"
+    },
+    {
+      "cmd": "show license",
+      "desc": "Muestra el estado de licencias (AP, PEF, RFP) del controlador o del pool del Mobility Conductor.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Subopciones: summary, limits, client-table, etc.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-85CABC32-581F-4845-885D-34D651973D08.html"
+    },
+    {
+      "cmd": "show audit-trail",
+      "desc": "Muestra el registro de auditoría de comandos y cambios de configuración. Útil para saber quién cambió qué.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-2B91EB42-9ACB-4538-9550-DA7CF30B8455.html"
+    },
+    {
+      "cmd": "show about",
+      "desc": "Muestra modelo del Instant AP, versión de Instant y fecha de build.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-272CCF36-E371-4B9B-A89C-CD5C4C846AA0.html"
+    },
+    {
+      "cmd": "show ap database",
+      "desc": "Lista todos los AP conocidos (activos e inactivos) con grupo, IP, estado, flags y controlador al que están asociados.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Variante: show ap database long agrega MAC cableada y serial. En AOS 8.2+ desde el MM puede verse vacío; ejecutar en el MD.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-8BA27824-F7D2-4FDD-8260-08E46E780837.html"
+    },
+    {
+      "cmd": "show ap active",
+      "desc": "Muestra los AP registrados y activos en el controlador con radios, clientes, canal y potencia.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Filtrar con | include {{ap}} o con ap-name. Lista ordenada por IP.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-0077A9F6-1EF0-4CD5-8FCE-883964942343.html"
+    },
+    {
+      "cmd": "show ap details ap-name {{ap}}",
+      "desc": "Muestra provisioning, hardware y parámetros operativos detallados de un AP específico.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Agregar advanced para contadores de mensajes, grupo y VAPs.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-4FB6587E-0185-4039-9D32-FAD6F2A426A1.html"
+    },
+    {
+      "cmd": "show ap essid",
+      "desc": "Resumen por ESSID: cantidad de AP, clientes, VLAN y cifrado.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-E863FCF9-D916-46C7-975E-33B8D8ACA1EC.html"
+    },
+    {
+      "cmd": "show ap image version",
+      "desc": "Muestra la versión de imagen que corre cada AP. Útil para detectar AP sin upgrade o con imagen distinta al controlador.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-7A45C4D2-46CC-4B37-8F4E-722708CBF7C3.html"
+    },
+    {
+      "cmd": "show aps",
+      "desc": "Lista los AP activos del cluster con IP, modo, clientes, modelo, canal, potencia y utilización por radio.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "En AOS 10 se ejecuta en la CLI local del AP (SSH/consola) o desde Central > Tools > Commands.",
+      "platforms": [
+        "aos10",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-73E09064-1DAD-42E7-B532-DAD4DB81ED0E.html"
+    },
+    {
+      "cmd": "show ap-env",
+      "desc": "Muestra variables provisionadas del Instant AP: antena, rol de conductor, banda flexible y otros parámetros de ambiente.",
+      "cat": "Sistema",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-6DCC2A71-1D48-4866-8112-ABD5FCA3E90D.html"
+    },
+    {
+      "cmd": "show ap radio-summary",
+      "desc": "Resume los radios de todos los AP: banda, modo, canal, EIRP, ruido y utilización.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Filtros por banda: dot11a/dot11g antes de 8.9.0.0; 2.4GHz/5GHz/6GHz desde 8.9.0.0.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-3BE5910D-B09F-48D0-BDF1-E368793D609F.html"
+    },
+    {
+      "cmd": "show ap debug radio-stats ap-name {{ap}} radio {{radio}}",
+      "desc": "Estadísticas agregadas de debug del radio: retries, errores, frames TX/RX, utilización y ruido. Base para diagnosticar problemas RF.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Radio 0, 1 o 2 (2 desde 8.6.0.0). Agregar advanced en AOS 8. En IAP y AOS 10 se indica solo el ID de radio en la CLI del AP.",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap",
+            "aos10"
+          ],
+          "cmd": "show ap debug radio-stats {{radio}}"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-F25E9ADD-454D-4059-9898-DB0C501E97F0.html"
+    },
+    {
+      "cmd": "show ap arm rf-summary ap-name {{ap}}",
+      "desc": "Estado y estadísticas de todos los canales monitoreados por el AP. Sirve para validar salud RF o explicar AP en el mismo canal.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Agregar verbose para historial de calidad de canal (AOS 8). En IAP y AOS 10 se ejecuta en la CLI del AP sin parámetros.",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap",
+            "aos10"
+          ],
+          "cmd": "show ap arm rf-summary"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-951D036C-8FA0-4332-A485-4EEEFBDC9085.html"
+    },
+    {
+      "cmd": "show ap arm history ap-name {{ap}}",
+      "desc": "Historial de cambios de canal y potencia aplicados por ARM/AirMatch en cada radio del AP.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap"
+          ],
+          "cmd": "show ap arm history"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-0F5520C1-9FB1-4446-83A1-D6B23E16D361.html"
+    },
+    {
+      "cmd": "show ap arm neighbors ap-name {{ap}}",
+      "desc": "Muestra los AP vecinos que escucha el AP con canal y SNR. Útil para detectar interferencia cocanal o rogues.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap"
+          ],
+          "cmd": "show ap arm neighbors"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-A9B7A5E8-ECAF-4440-9BCE-03E09DD9A545.html"
+    },
+    {
+      "cmd": "show airmatch solution ap-name {{ap}}",
+      "desc": "Muestra el historial de soluciones AirMatch (canal, ancho, EIRP) aplicadas a los radios del AP.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Ejecutar en el Mobility Conductor, que corre AirMatch.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-BF08A1EE-C555-4D81-B362-0C6A81F510E1.html"
+    },
+    {
+      "cmd": "show airmatch event all-events all-aps",
+      "desc": "Lista eventos de radar y ruido detectados por los AP, usados por AirMatch para mover canales.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Ejecutar en el Mobility Conductor.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-5E02E161-6180-458A-A832-28EE4C1C09E5.html"
+    },
+    {
+      "cmd": "airmatch runnow quick",
+      "desc": "Fuerza un cálculo rápido de AirMatch y despliega la solución sin esperar el ciclo programado. Puede cambiar canal y potencia de los AP.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Ejecutar en el Mobility Conductor. Opciones: full, incremental, eirp, opmode. Los cambios de canal provocan reasociación de clientes.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-4FD27874-27BB-4D4A-A257-9CA0147A90EC.html"
+    },
+    {
+      "cmd": "show radio stats",
+      "desc": "Muestra las estadísticas de radio del Instant AP.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Otras opciones: show radio config, show radio profile {{nombre}}.",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-A46F6DAD-D168-45D6-B2B9-8CB63B8D364B.html"
+    },
+    {
+      "cmd": "show ap debug system-status ap-name {{ap}}",
+      "desc": "Estado detallado del AP: uptime, radios, memoria, CPU, tablas ARP y ruteo. Uso bajo guía de TAC.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap",
+            "aos10"
+          ],
+          "cmd": "show ap debug system-status"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-19983D04-E864-4630-BB77-1D2F898A3B64.html"
+    },
+    {
+      "cmd": "show ap debug crash-info ap-name {{ap}}",
+      "desc": "Muestra el log de crash del AP si existe. Se borra de la flash al reiniciar el AP, capturarlo antes de un reboot.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap",
+            "aos10"
+          ],
+          "cmd": "show ap debug crash-info"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-B7BD60B9-87BB-4CB2-BEAB-CDAA5433B173.html"
+    },
+    {
+      "cmd": "show ap tech-support ap-name {{ap}}",
+      "desc": "Recolecta toda la información de diagnóstico de un AP para TAC; opcionalmente la guarda en un archivo.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-4B392792-502E-4B0D-A466-917D21963635.html"
+    },
+    {
+      "cmd": "show user-table",
+      "desc": "Tabla de usuarios del controlador o gateway: IP, MAC, nombre, rol, método de autenticación, AP, ESSID y tiempo de conexión.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Filtros: mac {{mac}}, ip {{ip}}, essid, ap-name, role. En AOS 8 muestra solo usuarios que terminan en ese MD. En AOS 10 aplica a Gateways.",
+      "platforms": [
+        "aos8",
+        "aos10"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-7D269797-526C-4A3E-A2B8-C9C47A576731.html"
+    },
+    {
+      "cmd": "show ap association",
+      "desc": "Tabla de asociaciones 802.11: cliente, BSSID, ESSID, AP, PHY, flags y tiempo asociado. Valida si un cliente está asociado (flag A).",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "En AOS 8 admite filtros client-mac, ap-name, essid. Útil cuando un cliente no aparece en user-table por no tener IP.",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-7C76C849-2C72-4921-9D08-5A2999AB076D.html"
+    },
+    {
+      "cmd": "show ap bss-table",
+      "desc": "Lista BSSID por AP con ESSID, banda, canal, EIRP y clientes. Confirma que el AP está anunciando la SSID.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "En AOS 8 filtra con ap-name {{ap}} o essid {{ssid}}. Datos desde STM del controlador; show ap remote bss-table los consulta en el AP.",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-9E50EB93-0526-40F0-A3DC-E96E8785D091.html"
+    },
+    {
+      "cmd": "show ap debug client-table ap-name {{ap}}",
+      "desc": "Clientes asociados al AP con Tx/Rx rate y SNR. Clave para revisar tasas bajas o SNR pobre.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap",
+            "aos10"
+          ],
+          "cmd": "show ap debug client-table"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-1C34A91C-0D0B-497E-AD7B-15217DC35E33.html"
+    },
+    {
+      "cmd": "show ap debug client-stats client-mac {{mac}}",
+      "desc": "Estadísticas detalladas de un cliente desde el AP: tramas, retries, rates y errores.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap"
+          ],
+          "cmd": "show ap debug client-stats {{mac}}"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-293853B3-230A-4914-8FC9-986E907A2DC6.html"
+    },
+    {
+      "cmd": "show ap client trail-info {{mac}}",
+      "desc": "Historial de actividad y roaming del cliente, con razones de desautenticación y alertas.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-F6390631-991C-47EB-881E-B1EF083EF1DF.html"
+    },
+    {
+      "cmd": "show ap remote debug mgmt-frames ap-name {{ap}} client-mac {{mac}}",
+      "desc": "Muestra las tramas de gestión 802.11 (auth, assoc, deauth) trazadas por el AP para un cliente.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap"
+          ],
+          "cmd": "show ap debug mgmt-frames {{mac}}"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-ED2FCCA3-F74C-431E-BFB5-3626D4E14B27.html"
+    },
+    {
+      "cmd": "show clients",
+      "desc": "Tabla de clientes de los AP: nombre, IP, MAC, SO, ESSID, AP, canal, señal y velocidad.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Usar show clients status {{mac}} para detalle de un cliente.",
+      "platforms": [
+        "aos10",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-61881AE5-44AB-4BC8-88EB-90CEE3F478A1.html"
+    },
+    {
+      "cmd": "show clients status {{mac}}",
+      "desc": "Detalle de un cliente específico en el Instant AP (rol, VLAN, autenticación, señal).",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-61881AE5-44AB-4BC8-88EB-90CEE3F478A1.html"
+    },
+    {
+      "cmd": "show ap client-match-history",
+      "desc": "Historial de acciones de ClientMatch (steering de banda y AP) sobre los clientes.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-08D8EF7A-463B-4101-860F-9B9B4523A3B1.html"
+    },
+    {
+      "cmd": "show stats global",
+      "desc": "Estadísticas agregadas del cluster Instant (tráfico, clientes).",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Otras opciones: show stats ap {{ip}}, show stats client {{mac}}, show stats network {{red}}.",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-083A888E-6884-4F6E-B7A4-5C1198D374F8.html"
+    },
+    {
+      "cmd": "show datapath session table",
+      "desc": "Muestra los flujos IP activos en el datapath (origen, destino, puertos, flags). Útil para ver tráfico denegado o NAT.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "note": "Filtrar por IP: show datapath session table {{ip}}. En AOS 10 aplica a Gateways.",
+      "platforms": [
+        "aos8",
+        "aos10"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-F7FFADD5-CE62-48EC-89A8-562C7E772FBD.html"
+    },
+    {
+      "cmd": "show datapath session",
+      "desc": "Sesiones del datapath del Instant AP. Útil para validar ACL y tráfico de un cliente.",
+      "cat": "Conexiones y tráfico",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-E512C782-43B0-4831-9E8D-B77D8C0FF4B0.html"
+    },
+    {
+      "cmd": "aaa user delete mac {{mac}}",
+      "desc": "Elimina un cliente de la tabla de usuarios para forzar reautenticación. Corta la sesión del cliente.",
+      "cat": "Seguridad",
+      "risk": "disruptive",
+      "note": "Opción all elimina todos los clientes conectados.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-4BE29903-727B-4D8A-92C0-A22EEE7F90A5.html"
+    },
+    {
+      "cmd": "show auth-tracebuf mac {{mac}}",
+      "desc": "Trace buffer de autenticación (EAP, 4-way handshake, RADIUS) filtrado por cliente. Primer paso para fallas 802.1X.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Opciones: count 1-250, failures. El buffer rota rápido; capturar apenas ocurre la falla.",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap"
+          ],
+          "cmd": "show ap debug auth-trace-buf 50 {{mac}}"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-EA97308E-DCB7-443F-93BA-1A69D1A99FDA.html"
+    },
+    {
+      "cmd": "show aaa authentication-server all",
+      "desc": "Tabla de servidores de autenticación (internos y externos): tipo, IP, puertos, estado y cantidad de requests.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-EA751A2F-6AB2-4B97-8D14-1B9A7DC2057E.html"
+    },
+    {
+      "cmd": "show aaa authentication-server radius statistics",
+      "desc": "Estadísticas de todos los servidores RADIUS: requests, timeouts, rechazos y tiempos de respuesta.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-BC9BB910-DC3A-4130-BCDB-33CE9F9C992D.html"
+    },
+    {
+      "cmd": "show radius status",
+      "desc": "Muestra el estado del túnel TLS hacia el proxy RadSec cuando RADIUS sobre TLS está habilitado.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-FB3BA697-2B8C-4F69-B929-C0E401A0C7E0.html"
+    },
+    {
+      "cmd": "show ap debug radius-statistics",
+      "desc": "Estadísticas RADIUS vistas desde el AP.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "CLI local del AP AOS 10.",
+      "platforms": [
+        "aos10"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/CLI-Bank/Content/aos10/sh-ap-debug-rs.htm"
+    },
+    {
+      "cmd": "aaa test-server {{servidor}} username {{usuario}} password {{clave}} auth-type {{tipo}}",
+      "desc": "Prueba la autenticación contra un servidor RADIUS configurado desde el Instant AP.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "No dejar credenciales reales en el historial ni en tickets.",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-2B12F053-6E79-4848-8A33-56F342C800B5.html"
+    },
+    {
+      "cmd": "show crypto ipsec sa",
+      "desc": "Muestra las SA IPsec activas (RAP, túneles site-to-site, cluster).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-B3B55F00-D2D6-4F22-9D7C-DED86AADEE8F.html"
+    },
+    {
+      "cmd": "show log system 50",
+      "desc": "Muestra las últimas líneas del log de sistema.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "Tipos: all, errorlog, security, network, user, user-debug, wireless, ap-debug.",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap"
+          ],
+          "cmd": "show log system"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-1F21EE58-5B9C-49D0-ADB8-C15209BB760D.html"
+    },
+    {
+      "cmd": "show log errorlog 50",
+      "desc": "Muestra el log de errores del controlador.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-1F21EE58-5B9C-49D0-ADB8-C15209BB760D.html"
+    },
+    {
+      "cmd": "show log security 50",
+      "desc": "Muestra el log de seguridad (autenticación, IDS, administración).",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "variants": [
+        {
+          "platforms": [
+            "iap"
+          ],
+          "cmd": "show log security"
+        }
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-1F21EE58-5B9C-49D0-ADB8-C15209BB760D.html"
+    },
+    {
+      "cmd": "show log user-debug 100",
+      "desc": "Muestra los logs de user-debug (requiere logging user-debug activo para la MAC).",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-1F21EE58-5B9C-49D0-ADB8-C15209BB760D.html"
+    },
+    {
+      "cmd": "show log debug",
+      "desc": "Muestra el log completo del AP; admite indicar número de líneas desde el final.",
+      "cat": "Logs",
+      "risk": "read",
+      "platforms": [
+        "aos10",
+        "iap"
+      ],
+      "source": "https://arubanetworking.hpe.com/techdocs/CLI-Bank/Content/aos10/sh-log-debug.htm"
+    },
+    {
+      "cmd": "logging user-debug {{mac}} level debugging",
+      "desc": "Activa logs de debug para un cliente específico. Desactivar al terminar con no logging user-debug {{mac}} level debugging.",
+      "cat": "Logs",
+      "risk": "change",
+      "note": "Fuente comunitaria valida la forma 8.x (en 6.x era logging level debugging user-debug {{mac}}). Modo config.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-3264826F-7759-4EAC-8BD8-03080865299D.html"
+    },
+    {
+      "cmd": "show configuration effective {{ruta_nodo}}",
+      "desc": "Muestra la configuración efectiva (heredada más local) de los dispositivos bajo un nodo de la jerarquía MM, por ejemplo /md/sitio.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-99B72AF3-0E05-41C9-B642-35F570F58B23.html"
+    },
+    {
+      "cmd": "show configuration committed {{ruta_nodo}}",
+      "desc": "Muestra la configuración comprometida en un nodo de la jerarquía del Mobility Conductor.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-99B72AF3-0E05-41C9-B642-35F570F58B23.html"
+    },
+    {
+      "cmd": "show configuration pending",
+      "desc": "Muestra cambios aún no aplicados (pendientes de write memory) en el nodo actual.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-99B72AF3-0E05-41C9-B642-35F570F58B23.html"
+    },
+    {
+      "cmd": "cd {{ruta_nodo}}",
+      "desc": "Cambia el nodo de configuración en la jerarquía del Mobility Conductor (ej. /md, /md/sitio, /mm/mynode).",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Sólo navega; los cambios aplican al nodo donde se ejecutan.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-F8971E71-349D-458F-8A69-73B82EB0E104.html"
+    },
+    {
+      "cmd": "mdconnect",
+      "desc": "Abre una sesión en el managed device del nodo actual sin pedir credenciales (desde el Mobility Conductor). Solo permite comandos show.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Forma corta: mdc. Ejecutar tras cd al nodo del MD.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-89A31759-A45E-4EC8-BCCC-3DEE7F0841DF.html"
+    },
+    {
+      "cmd": "commit apply",
+      "desc": "Aplica y guarda en todo el cluster los cambios hechos en la sesión del Instant AP.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "commit apply no-save aplica sin guardar; commit revert revierte.",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-1B464EC0-4F3B-47E2-95DD-0D55093B3BFE.html"
+    },
+    {
+      "cmd": "show uncommitted-config",
+      "desc": "Muestra cambios configurados en la sesión aún no aplicados con commit apply.",
+      "cat": "Configuración",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-BDF02C21-786B-41D3-879A-FE61E09A2817.html"
+    },
+    {
+      "cmd": "configure terminal",
+      "desc": "Entra a modo configuración del Instant AP.",
+      "cat": "Configuración",
+      "risk": "change",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-5AB64103-BB9F-400D-ADC9-0E30FE54E693.html"
+    },
+    {
+      "cmd": "show network",
+      "desc": "Lista las redes (SSID) configuradas en el cluster con clientes, banda, autenticación y estado.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "show network {{nombre}} para el detalle de un perfil.",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-6C6FC7BA-B75A-4231-8BD5-0E4FE0FCD4AD.html"
+    },
+    {
+      "cmd": "apboot ap-name {{ap}}",
+      "desc": "Reinicia un AP específico desde el controlador. Corta servicio a sus clientes.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Variantes: ap-group, ip-addr, wired-mac, all (reinicia todos los AP).",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-8C5F15D7-7109-4FA8-97DF-354D45C8AB9E.html"
+    },
+    {
+      "cmd": "ap-regroup ap-name {{ap}} {{grupo}}",
+      "desc": "Mueve un AP a otro AP group. El AP se reinicia automáticamente.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Ejecutar en el Mobility Conductor.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-98F77FA7-FD2D-4B1E-92DA-BE7A7516CD0A.html"
+    },
+    {
+      "cmd": "ap-rename ap-name {{ap}} {{nuevo_nombre}}",
+      "desc": "Renombra un AP. El AP se reinicia automáticamente.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Modo enable o config en Mobility Conductor.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-8726EC0D-D99F-458E-B335-B935E8444805.html"
+    },
+    {
+      "cmd": "show lc-cluster group-membership",
+      "desc": "Miembros activos del cluster de controladores/gateways: IP, prioridad, tipo de conexión y estado (L2/L3 connected).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "En AOS 10 aplica a clusters de Gateways desde 10.3.1.0.",
+      "platforms": [
+        "aos8",
+        "aos10"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-EB2610B0-64B6-45FE-BF5C-48422AA56422.html"
+    },
+    {
+      "cmd": "show lc-cluster load distribution ap",
+      "desc": "Distribución de carga de AP entre los nodos del cluster.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-EB2610B0-64B6-45FE-BF5C-48422AA56422.html"
+    },
+    {
+      "cmd": "show master-redundancy",
+      "desc": "Configuración de redundancia del Mobility Conductor (VRRP ID, estado, peer).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Equivalente: show conductor-redundancy (nomenclatura nueva).",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-D67244A8-42CC-4CE7-8383-4DCED955DED1.html"
+    },
+    {
+      "cmd": "show database synchronize",
+      "desc": "Estado de sincronización de base de datos entre Mobility Conductors primario y standby.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-C267B7F3-B17E-4852-AD36-0B6053EA28B8.html"
+    },
+    {
+      "cmd": "show swarm state",
+      "desc": "Estado del cluster (swarm) Instant.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Opciones: mode, image-sync.",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-F7BB152E-3AA4-469A-99DC-1820703DB850.html"
+    },
+    {
+      "cmd": "show election statistics",
+      "desc": "Estadísticas de elección del Instant AP conductor (Virtual Controller).",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-E40FDC4E-1D1D-4AC8-99C0-CC618B27D5BC.html"
+    },
+    {
+      "cmd": "show ip interface brief",
+      "desc": "Resumen IP de interfaces (VLAN, loopback, mgmt) con estado admin/protocolo y VRRP-IP.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "aos10"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-DC746AA5-6F56-4CA6-9363-80ADE47AC4A1.html"
+    },
+    {
+      "cmd": "show interface",
+      "desc": "Estado y contadores de interfaces físicas, port-channel, VLAN y túneles.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Ej.: show interface gigabitethernet 0/0/0.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-03841EE6-2F3B-488B-A609-70C06F3211A3.html"
+    },
+    {
+      "cmd": "show port status",
+      "desc": "Estado de cada puerto: admin, operativo, velocidad, dúplex y PoE.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-32C791E4-B243-416B-BB97-39877A84E8D6.html"
+    },
+    {
+      "cmd": "show interface counters",
+      "desc": "Contadores de paquetes de las interfaces Ethernet del Instant AP.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-1CBE1A4E-D530-4D39-8169-C8B7E20A60BF.html"
+    },
+    {
+      "cmd": "show uplink status",
+      "desc": "Estado de los uplinks del Instant AP (Ethernet, 3G/4G, Wi-Fi) y cuál está activo.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-C85860F9-206E-4FA4-A5BC-363692541437.html"
+    },
+    {
+      "cmd": "show tech-support",
+      "desc": "Volcado completo de diagnóstico para TAC. Salida extensa; revisar datos sensibles antes de compartir.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aos8",
+        "aos10",
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-2E4D07F7-CCF3-4281-8B07-00BB586CD913.html"
+    },
+    {
+      "cmd": "tar logs tech-support",
+      "desc": "Genera logs.tar con tech-support en la flash del controlador para descargar y enviar a TAC.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Descargar luego con copy flash: logs.tar tftp: / scp:.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-BFE35BCA-0719-4829-B55B-CEBC87C8D973.html"
+    },
+    {
+      "cmd": "packet-capture udp {{puertos}}",
+      "desc": "Activa captura controlpath de puertos UDP (ej. 1812,1813 RADIUS) en la sesión actual. Guarda en /var/log/oslog/filter.pcap.",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Activo solo en la sesión, no se guarda en la configuración. Revisar con show packet-capture y retirar con la forma no del comando.",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-FD8C01AE-B628-4D8E-9B75-8496F625B2D9.html"
+    },
+    {
+      "cmd": "show packet-capture",
+      "desc": "Estado de captura de paquetes: destino y filtros activos en controlpath y datapath.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "platforms": [
+        "aos8"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007692en_us&page=GUID-904021E5-A878-4EF9-B0CA-0E20FB889377.html"
+    },
+    {
+      "cmd": "pcap start {{bssid}} {{ip}} {{puerto}} {{formato}} {{maxlen}}",
+      "desc": "Inicia captura inalámbrica en el Instant AP y la envía a un analizador remoto (Wireshark/AirMagnet).",
+      "cat": "Diagnóstico",
+      "risk": "change",
+      "note": "Detener con pcap stop {{bssid}} {{id}}.",
+      "platforms": [
+        "iap"
+      ],
+      "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007691en_us&page=GUID-29C782B5-C66C-43AA-80B0-75B843A6D9F9.html"
+    }
+  ]
+}

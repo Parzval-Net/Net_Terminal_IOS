@@ -1,0 +1,13 @@
+# Topología sin CDP ni LLDP
+
+En muchas redes CDP y LLDP están apagados. Para esos casos están las Fuentes de descubrimiento, en el panel derecho. Son tres, vienen apagadas y, apagadas, no envían ningún comando.
+
+Vecinos de ruteo suma consultas OSPF, EIGRP y BGP: si dos routers son vecinos, hay un camino entre ellos. Aparecen con su router ID o su IP y borde punteado, y toman su nombre real cuando los exploras.
+
+Sugerencias por descripción lee el texto de cada puerto, por ejemplo un uplink hacia el switch de distribución, y propone ese enlace. Necesita Estado de puertos.
+
+Sugerencias por MAC y fabricante lee las tablas MAC y ARP de los puertos sin enlace. La confianza es alta si hay una MAC virtual de HSRP o VRRP, porque ahí hay un router; media con varias MAC o una de un fabricante de red; y baja en los casos dudosos.
+
+Nada de esto se dibuja solo. En Sugerencias, revisa cada una y pulsa Confirmar o Descartar. Las descartadas se recuerdan por equipo. Son pistas, no pruebas: una descripción puede estar vieja, el fabricante de la MAC no dice qué equipo es, y la tabla MAC envejece.
+
+Lo que la app no ve, agrégalo en Manual: más Equipo, con nombre e IP, y más Enlace, con los dos equipos y sus interfaces. Cada origen tiene su tipo de línea en la Leyenda.

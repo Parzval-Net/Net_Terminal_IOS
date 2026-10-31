@@ -1,0 +1,14 @@
+{
+  "id": "diagnostico-basico",
+  "name": "Diagnóstico básico",
+  "version": "1.1.0",
+  "description": "Consulta la versión y las interfaces del equipo conectado y prueba conectividad. Solo comandos de lectura.",
+  "author": "Equipo de redes",
+  "entry": "main.py",
+  "permissions": ["session"],
+  "actions": [
+    { "id": "version", "label": "Versión", "description": "show version" },
+    { "id": "interfaces", "label": "Interfaces", "description": "show interfaces" },
+    { "id": "ping", "label": "Ping de prueba", "description": "ping 192.0.2.1" }
+  ]
+}

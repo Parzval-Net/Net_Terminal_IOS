@@ -1,0 +1,345 @@
+{
+ "vendor": "Cisco",
+ "entries": [
+  {
+   "family": "Catalyst 9200/9200L/9200CX",
+   "match": [
+    "^C9200"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Cisco recomienda 17.18.4 o 17.15.6 (doc 214814 rev 27.0, sep 2026). Latest segun release notes 26.2.x: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9200/software/release/26-2/release_notes/ol-26-2-x-9200.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 9300/9300L/9300LM/9300X",
+   "match": [
+    "^C9300"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Cisco recomienda 17.18.4 o 17.15.6. Latest segun release notes 26.2.x: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/26-2/release_notes/ol-26-2-x-9300.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 9400",
+   "match": [
+    "^C94[0-9]{2}R"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6 para SUP-1/1XL/1XL-Y y SUP-2/2XL. Tablas HW de 26.x solo listan C9400X-SUP-2/2XL; validar SUP-1 antes de subir a 26.x. Latest: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/26-2/release_notes/ol-26-2-x-9400.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 9500 (UADP 2.0: 12Q/16X/24Q/40X/24X/48X)",
+   "match": [
+    "^C9500-(12Q|16X|24Q|40X|24X|48X)"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "17.18.5",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6. Modelos no listados en tabla HW de release notes 26.x; ultima verificada 17.18.5 (oct 2026): https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-18/release_notes/ol-17-18-9500.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 9500 High Performance",
+   "match": [
+    "^C9500-(24Y4C|32C|32QC|48Y4C)"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6. Latest: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/26-2/release_notes/ol-26-2-x-9500.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 9500X",
+   "match": [
+    "^C9500X-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6. Latest: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/26-2/release_notes/ol-26-2-x-9500.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 9600",
+   "match": [
+    "^C96[0-9]{2}R"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6 para SUP-1 y C9600X-SUP-2. Latest: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9600/software/release/26-2/release_notes/ol-26-2-x-9600.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 1000",
+   "match": [
+    "^C1000(FE)?-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": null,
+   "notes": "Recomendado segun doc 214946 (mar 2026). Latest segun release notes 15.2(7)Ex: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst1000/software/releases/15_2_7_e/release_notes/ol_15_2_7_e_c1000.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 2960-X/2960-XR",
+   "match": [
+    "^WS-C2960XR?-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance oct 2023; fixes PSIRT hasta oct 2027, puede salir otra release. Latest segun release notes: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2960x/software/15-2_7_e/release_notes/Release_notes_2960x_2960xr_1527E.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 2960-L",
+   "match": [
+    "^WS-C2960L-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance oct 2022; PSIRT hasta oct 2026. Latest segun release notes: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2960l/software/15-2_7_e/release_note/Release_notes_2960l_1527E10.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 2960-Plus",
+   "match": [
+    "^WS-C2960\\+"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance oct 2022; PSIRT hasta oct 2026. Latest segun release notes: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/releasenotes/ol_15_2_7_ex_c2960c_p.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 2960-C",
+   "match": [
+    "^WS-C2960C-",
+    "^WS-C2960CG-",
+    "^WS-C2960CPD-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance oct 2021 y PSIRT oct 2025 vencidos. Latest segun release notes: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/releasenotes/ol_15_2_7_ex_c2960c_p.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 2960-CX",
+   "match": [
+    "^WS-C2960CX-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance abr 2025; PSIRT hasta abr 2029. Latest segun release notes: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2960cx_3650cx/software/release/15-2_7_e/release_notes/Release_Notes_2960cx_3560cx_1527E.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 3560-CX",
+   "match": [
+    "^WS-C3560CX-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance abr 2025; PSIRT hasta abr 2029. Latest segun release notes: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2960cx_3650cx/software/release/15-2_7_e/release_notes/Release_Notes_2960cx_3560cx_1527E.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 3750-X/3560-X",
+   "match": [
+    "^WS-C3750X-",
+    "^WS-C3560X-"
+   ],
+   "os": "IOS",
+   "recommended": null,
+   "latest": "15.2(4)E10",
+   "lastAvailable": "15.2(4)E10",
+   "notes": "Sin release recomendada publicada (no figura en doc 214946). Ultima release documentada en release notes 15.2(4)E.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3750x_3560x/software/release/15-2_4_e/releasenotes/rn-1524e-3750x3560x.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 3650",
+   "match": [
+    "^WS-C3650-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "16.12.14",
+   "latest": "16.12.14",
+   "lastAvailable": "16.12.14",
+   "notes": "End of SW maintenance oct 2022; PSIRT hasta oct 2026. Latest segun release notes 16.12.x: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3650/software/release/16-12/release_notes/ol-16-12-3650.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 3850",
+   "match": [
+    "^WS-C3850-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "16.12.14",
+   "latest": "16.12.14",
+   "lastAvailable": "16.12.14",
+   "notes": "Modelos no XS con PSIRT vencido oct 2025; 3850-XS con PSIRT hasta abr 2027. Latest segun release notes 16.12.x: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3850/software/release/16-12/release_notes/ol-16-12-3850.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 4500-E",
+   "match": [
+    "^WS-C45(03|06|07R|10R)(\\+)?-?E"
+   ],
+   "os": "IOS-XE",
+   "recommended": "3.11.13E",
+   "latest": "3.11.13E",
+   "lastAvailable": "3.11.13E",
+   "notes": "Recomendacion aplica a Sup 8-E, 8L-E y 9-E. Sup 6/7 no cubiertos por el doc. Latest segun release notes 3.11.xE: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst4500/release/note/ol-311xe-4500e.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 4500-X",
+   "match": [
+    "^WS-C4500X-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "3.11.13E",
+   "latest": "3.11.13E",
+   "lastAvailable": "3.11.13E",
+   "notes": "End of SW maintenance oct 2021 y PSIRT oct 2025 vencidos. Latest segun release notes 3.11.xE: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst4500/release/note/ol-311xe-4500x.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 6500/6800",
+   "match": [
+    "^WS-C65[0-9]{2}",
+    "^C68[0-9]{2}-X",
+    "^C6840-X",
+    "^C6880-X",
+    "^C6807-XL",
+    "^WS-C6807"
+   ],
+   "os": "IOS",
+   "recommended": "15.5(1)SY16",
+   "latest": "15.5(1)SY17",
+   "lastAvailable": "15.5(1)SY17",
+   "notes": "Recomendado para Sup 2T, Sup 6T, C6840-X y C6880-X. Sup 6T con PSIRT hasta abr 2027. SY17 figura en caveats de release notes 15.5SY: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst6500/ios/15-5SY/release_notes/release_notes_15_5_SY_6k.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Catalyst 1200/1300",
+   "match": [
+    "^C1200-",
+    "^C1300-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "4.1.9.94",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendada para esta serie.",
+   "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/campus-lan-switches-access/Catalyst-1200-and-1300-Switches/release-notes/rn_cat-1200-1300.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Cisco Business 250/350",
+   "match": [
+    "^CBS250-",
+    "^CBS350-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "3.5.3.3",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendada para esta serie.",
+   "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/csbms/CBS_250_350/Release-Notes/b_RN_cbs-250-350-3533.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Small Business 250/350/350X/550X",
+   "match": [
+    "^S[FGX](250|350|550)(X|XG)?-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "2.5.9.55",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendada. Cubre SF250, SG250, SF350, SG350/350X/350XG, SF550X, SG550X/550XG, SX350X, SX550X.",
+   "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/csbms/350xseries/2_5_9/Release-note/b_tesla-release-2_5_9_55.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Small Business 220",
+   "match": [
+    "^S[FG]220-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "1.2.1.5",
+   "lastAvailable": null,
+   "notes": "Ultima release notes publicada dic 2021. Sin release recomendada.",
+   "source": "https://www.cisco.com/c/en/us/support/switches/small-business-220-series-smart-plus-switches/products-release-notes-list.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "family": "Small Business 200/300/500",
+   "match": [
+    "^SF200-(24|48)",
+    "^SG200-(18|26|50|52)",
+    "^SF30[02]-",
+    "^SG300-",
+    "^SF500-",
+    "^SG500(X|XG)?-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "1.4.11.5",
+   "lastAvailable": "1.4.11.5",
+   "notes": "Serie retirada. Release notes jun 2020 cubren estos modelos; SG200-08/SF200E no incluidos.",
+   "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/csbss/sf20x_sg20x/release_notes/R_1_4_11_5_RN.pdf",
+   "checked": "2026-10-28"
+  }
+ ]
+}

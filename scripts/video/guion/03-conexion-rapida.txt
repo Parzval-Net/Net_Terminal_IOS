@@ -1,0 +1,7 @@
+# Conexión rápida
+La conexión rápida abre un equipo sin guardarlo como sesión.
+Úsala con el rayo, antes del más en el panel de sesiones, o con ⌘O; en Windows y Linux es Ctrl+Shift+O.
+Elige SSH, Telnet, TCP crudo o Serial y completa el destino.
+Con Conectar se abre una pestaña marcada con un rayo.
+Si quieres conservarla, usa Guardar como sesión en la barra de estado o en el menú de la pestaña.
+Con ⌘K buscas una sesión guardada o escribes usuario arroba host para conectar al instante, y los destinos recientes quedan a mano.

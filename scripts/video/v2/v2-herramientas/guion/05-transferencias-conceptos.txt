@@ -1,0 +1,9 @@
+# Transferencias: conceptos
+
+Antes de mover un firmware, elige bien el protocolo: importa quién inicia la copia y si viaja cifrada.
+
+Con TFTP, HTTP y FTP, tu PC es el servidor y el equipo descarga con un comando copy. Con SCP y SFTP es al revés: el PC se conecta por SSH al equipo.
+
+TFTP es el más compatible, pero no pide contraseña, no cifra y es lento, porque envía un bloque y espera la confirmación antes del siguiente. HTTP tampoco cifra, pero es más rápido para imágenes grandes. FTP pide usuario y contraseña, aunque viajan en claro. SCP y SFTP van cifrados dentro de SSH: son la mejor opción cuando el equipo los soporta.
+
+Los tres servidores usan la misma carpeta compartida. Archivos compartidos muestra su contenido, y el selector IP de este PC, las direcciones de tu computador. El equipo debe alcanzar esa IP: con Wi-Fi, VPN o máquinas virtuales verás varias, elige la de la red de gestión. Si el firewall pregunta, permite el acceso solo en redes privadas.

@@ -1,0 +1,12 @@
+# Notas y notas protegidas
+Con ⌘J se abre Notas, un panel lateral con notas de texto que se guardan solas.
+El texto se resalta según el fabricante, y puedes buscar en todas las notas.
+⌘Enter envía la línea o la selección a la sesión activa, y Todo envía la nota completa.
+Las variables entre llaves dobles convierten la nota en plantilla: al enviarla, la app pide cada valor.
+Los valores se recuerdan, salvo los que parecen contraseñas, que se piden ocultos.
+Capturar agrega a la nota el texto que seleccionaste en la terminal.
+Una nota con datos sensibles se puede proteger con contraseña.
+Queda cifrada en disco y se bloquea a mano, por inactividad o al cerrar el panel.
+Para abrirla escribes su contraseña.
+En Protección de la nota cambias el bloqueo, la contraseña o quitas la protección.
+Las notas protegidas no aparecen en la búsqueda de contenido.

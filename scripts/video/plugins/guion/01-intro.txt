@@ -1,0 +1,7 @@
+# Introducción
+
+En este tutorial vas a aprender a extender NetTerminal con tus propias automatizaciones: botones, scripts, comandos al conectar, packs de comandos y plugins.
+
+Todo lo que verás usa datos ficticios, IPs de documentación y solo comandos de consulta, como show version, show interfaces y ping.
+
+Partimos por lo más simple y terminamos con los plugins, que tienen su propio modelo de seguridad.

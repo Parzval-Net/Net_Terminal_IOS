@@ -1,0 +1,11 @@
+# Qué se puede automatizar
+
+En este tutorial vas a automatizar tareas en NetTerminal, de lo más simple a lo más avanzado: botones, plantillas, comandos al conectar, scripts de Python, plugins, packs de comandos y agentes de IA. Todo usa equipos ficticios, IPs de documentación y comandos de consulta.
+
+Primero, tres principios de seguridad. Uno: la app clasifica cada comando en tres niveles. Consulta, cambia configuración o estado, y puede cortar servicio. Lo que no reconoce como consulta lo trata como cambio y pide confirmación.
+
+Dos: los comandos encadenados se evalúan por partes. Show version, punto y coma, reload, no pasa como consulta: es disruptivo y siempre se confirma.
+
+Tres: casi todo pasa por ese motor: botones de texto, Notas, catálogo, envío a varias sesiones, y cada línea que envía un script o un plugin. La excepción son los comandos al conectar, que se envían tal cual. Y los agentes de IA muestran cada comando con su riesgo para que tú lo apruebes.
+
+Por eso la regla de este video es: primero, solo lectura.

@@ -1,0 +1,10 @@
+# Avisos de cargo audit revisados y aceptados. Revisar en cada actualización de dependencias.
+[advisories]
+ignore = [
+    # zip 4.x dentro de tauri-plugin-updater: solo descomprime en Windows un paquete .zip de
+    # actualización, después de verificar su firma con nuestra clave. Publicamos el instalador
+    # .exe directo (sin zip), así que ese camino no se ejecuta. Nuestro código usa zip 9.
+    "RUSTSEC-2026-0367",
+    "RUSTSEC-2026-0368",
+    "RUSTSEC-2026-0369",
+]

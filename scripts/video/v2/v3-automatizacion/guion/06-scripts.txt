@@ -1,0 +1,19 @@
+# Scripts de Python
+
+Un script es un archivo de Python en la carpeta de scripts: en la barra de botones, Scripts, Abrir carpeta de scripts. Ahí la app deja el módulo netterminal, que no hay que instalar.
+
+Al ejecutarlo desde el menú Scripts se abre un diálogo. Eliges el destino: la pestaña actual, pestañas elegidas, una carpeta o los paneles visibles. El script solo puede usar esas sesiones. Viene en solo lectura: cada comando que cambia configuración pide confirmación, y lo que puede cortar servicio se confirma siempre, incluso con Permitir cambios. También eliges cuántas sesiones en paralelo, hasta cuatro, y un tiempo máximo.
+
+Mientras corre, lo que escribas en sus pestañas no se envía, y Detener script, en la barra de botones, lo corta en cualquier momento.
+
+El primero lee el nombre y el host de la sesión, y con run envía show version: run escribe el comando, espera el prompt y devuelve solo la salida. Lo que imprimes con print aparece como aviso.
+
+Para más control, run se arma con cuatro piezas: clear descarta la salida anterior, sendline envía una línea, wait_for espera el prompt con un tiempo máximo, y read lee hasta que el equipo deja de enviar.
+
+Este segundo script hace ping a tres destinos. Si el prompt no vuelve en ocho segundos, wait_for avisa con un error de tiempo agotado. El script lo atrapa, termina de leer con read y sigue con el siguiente destino.
+
+Ahora uno avanzado: un inventario en CSV de varios equipos. Con sessions ves los destinos elegidos, con on trabajas sobre uno por su nombre, y for_each ejecuta una función en cada uno, de a uno o en paralelo. Lee show version y show interfaces status, y anota modelo, serie, versión y puertos por estado, una fila por equipo. Si el equipo no tiene el comando, como este router, lo anota en vez de fallar; si no responde a tiempo, la fila queda marcada con el motivo.
+
+Para pedir un secreto, como una clave de enable, usa ask_secret: se escribe en un campo oculto y la app lo enmascara en los mensajes del script.
+
+¿Por qué solo consultas? Porque un error en un script de consulta deja un CSV incompleto; en uno de cambios, puede dejar un equipo sin servicio.

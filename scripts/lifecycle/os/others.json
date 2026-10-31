@@ -1,0 +1,1239 @@
+{
+ "vendor": "Varios",
+ "entries": [
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS120",
+   "match": [
+    "^MS120"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS125",
+   "match": [
+    "^MS125"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS130",
+   "match": [
+    "^MS130"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS150",
+   "match": [
+    "^MS150"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS210",
+   "match": [
+    "^MS210"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS225",
+   "match": [
+    "^MS225"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS250",
+   "match": [
+    "^MS250"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS350",
+   "match": [
+    "^MS350"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS355",
+   "match": [
+    "^MS355"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS410",
+   "match": [
+    "^MS410"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS425",
+   "match": [
+    "^MS425"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS450",
+   "match": [
+    "^MS450"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current segun tabla de restricciones. Meraki no publica la version recomendada MS en documentation.meraki.com; se ve en Dashboard > Organization > Firmware upgrades (requiere login). Tren mas nuevo listado: MS 18.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS390",
+   "match": [
+    "^MS390"
+   ],
+   "os": "MS firmware (MS390, base IOS XE)",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current. Firmware MS390 se documenta en Cloud Management with IOS XE; version recomendada solo visible en Dashboard.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS220",
+   "match": [
+    "^MS220"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "16.9",
+   "notes": "Tope MS 16.9; MS 17 no disponible para este modelo.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS22/MS42/MS320",
+   "match": [
+    "^MS(22|42)P?(-|$)",
+    "^MS320"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "17.2.2",
+   "notes": "Tope MS 17.2.2; MS 17.2.1 no disponible para estos modelos.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS420",
+   "match": [
+    "^MS420"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "15.23",
+   "notes": "Tope MS 15.23.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MR Wi-Fi 6/6E (vigentes)",
+   "match": [
+    "^MR(28|36H?|44|46E?|56|57|76|78|86)\\b"
+   ],
+   "os": "MR firmware",
+   "recommended": "32.2.4",
+   "latest": "32.2.4",
+   "lastAvailable": null,
+   "notes": "Cisco Recommended y GA = MR 32.2.4. Beta actual MR 33.1.3.",
+   "source": "https://documentation.meraki.com/Wireless/Product_Information/Compatibility_and_Firmware/MR_Firmware_Release_Status_and_Nomenclature",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki CW91xx (modo Meraki)",
+   "match": [
+    "^CW91\\d\\d"
+   ],
+   "os": "MR firmware",
+   "recommended": "32.2.4",
+   "latest": "32.2.4",
+   "lastAvailable": null,
+   "notes": "Aplica a CW916x/917x gestionados por Meraki. Minimo segun modelo (ej. CW9171/CW9174 MR 32.1.5). Beta actual MR 33.1.3.",
+   "source": "https://documentation.meraki.com/Wireless/Product_Information/Compatibility_and_Firmware/MR_Firmware_Release_Status_and_Nomenclature",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MR legacy (tope MR 26)",
+   "match": [
+    "^MR(12|16|18|24|26|32|34|62|66|72)\\b"
+   ],
+   "os": "MR firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "26",
+   "notes": "Modelo limitado a MR 26. Restriccion en https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MR Wi-Fi 5 (tope MR 30)",
+   "match": [
+    "^MR(20|30H|33|42E?|52|53E?|70|74|84)\\b"
+   ],
+   "os": "MR firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "30",
+   "notes": "Modelo limitado a MR 30.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MR45/MR55 (tope MR 31)",
+   "match": [
+    "^MR(45|55)\\b"
+   ],
+   "os": "MR firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "31",
+   "notes": "Modelo limitado a MR 31.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MX vigentes",
+   "match": [
+    "^MX(67|68|75|85|95|105|250|450)(W|C|CW)?(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soportan firmware Current. Recomendada MX solo visible en Dashboard (login). Linea GA documentada: MX 26.2.X.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MX64/65/84/100 (tope MX 18.1)",
+   "match": [
+    "^MX(64|65|84|100)W?(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "18.1",
+   "notes": "No suben a MX 18.2+; corren el MX 18.1 indicado en release notes.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MX400/MX600 (tope MX 16)",
+   "match": [
+    "^MX(400|600)(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "16",
+   "notes": "Modelo limitado a MX 16.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MX60/MX90/Z1 (tope MX 14)",
+   "match": [
+    "^MX(60W?|90)(-|$)",
+    "^Z1(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "14",
+   "notes": "No suben a MX 15+. MX80 excluido del match por choque con Juniper MX80 (tambien tope MX 14).",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki Z3/Z3C (tope MX 19.2)",
+   "match": [
+    "^Z3C?(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "19.2",
+   "notes": "Modelo limitado a MX 19.2.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki Z4/Z4C",
+   "match": [
+    "^Z4C?(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Soporta firmware Current. Recomendada MX solo visible en Dashboard (login). Linea GA documentada: MX 26.2.X.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MG41/MG51/MG52",
+   "match": [
+    "^MG(41|51|52)E?(-|$)"
+   ],
+   "os": "MG firmware",
+   "recommended": "3.212",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Directorio oficial marca 'Stable Release - MG 3.212' y beta MG 26.1; no publica GA/latest numerico.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Cellular_Gateway_(MG)_Firmware_Features_Directory",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MG21",
+   "match": [
+    "^MG21E?(-|$)"
+   ],
+   "os": "MG firmware",
+   "recommended": "3.212",
+   "latest": null,
+   "lastAvailable": "4",
+   "notes": "Tope MG21 = 4.x segun tabla de restricciones. Stable MG 3.212 segun directorio de features. Tope en el tren 4.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX2300",
+   "match": [
+    "^EX2300"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Latest no verificado: release notes 26.2R1 no listan EX2300 en tablas de plataformas. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX3400",
+   "match": [
+    "^EX3400"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4000",
+   "match": [
+    "^EX4000"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4100-H-12T",
+   "match": [
+    "^EX4100-H-12T"
+   ],
+   "os": "Junos",
+   "recommended": "25.4R1-S3",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4100",
+   "match": [
+    "^EX4100(?!-H-12T)"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4300-MP",
+   "match": [
+    "^EX4300-\\d+MP"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Latest no verificado en release notes 26.2R1.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4300",
+   "match": [
+    "^EX4300(?!-\\d+MP)"
+   ],
+   "os": "Junos",
+   "recommended": "21.4R3",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Latest no verificado; 26.2R1 no lista EX4300. Tren 21.4R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4400",
+   "match": [
+    "^EX4400"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. EX4400-48XP: 24.4R2-S4. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4650",
+   "match": [
+    "^EX4650"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX9200 (EX9204/9208/9214)",
+   "match": [
+    "^EX92(00|04|08|14)\\b"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX9251/EX9253",
+   "match": [
+    "^EX925[13]\\b"
+   ],
+   "os": "Junos",
+   "recommended": "21.4R3",
+   "latest": null,
+   "lastAvailable": "21.4R3",
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Marcado LSV (ultima version soportada). Tren 21.4R3 (último service release -S de ese tren). Tren 21.4R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5100",
+   "match": [
+    "^QFX5100"
+   ],
+   "os": "Junos",
+   "recommended": "21.4R3",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. KB marca LSV 21.4 por EOL de QFX5100-48SH/48TH. 26.2R1 lista QFX5100VC. Tren 21.4R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5110",
+   "match": [
+    "^QFX5110"
+   ],
+   "os": "Junos",
+   "recommended": "25.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Virtual Chassis: 23.4R2-Sx. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 25.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5120",
+   "match": [
+    "^QFX5120"
+   ],
+   "os": "Junos",
+   "recommended": "25.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Virtual Chassis: 23.4R2-Sx. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 25.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5200-48Y",
+   "match": [
+    "^QFX5200-48Y"
+   ],
+   "os": "Junos",
+   "recommended": "21.1R3",
+   "latest": null,
+   "lastAvailable": "21.1R3",
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Marcado LSV por EOL. Tren 21.1R3 (último service release -S de ese tren). Tren 21.1R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5200-32C",
+   "match": [
+    "^QFX5200(?!-48Y)"
+   ],
+   "os": "Junos",
+   "recommended": "25.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 lista 'QFX5200'. Tren 25.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5210",
+   "match": [
+    "^QFX5210"
+   ],
+   "os": "Junos",
+   "recommended": "25.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 25.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX300 series",
+   "match": [
+    "^SRX3(00|20|40|45|80)\\b"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Ver TSB92728 antes de subir a 24.4R1+. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX1500",
+   "match": [
+    "^SRX1500"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX1600",
+   "match": [
+    "^SRX1600"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX4100/4200/4600",
+   "match": [
+    "^SRX4(100|200|600)\\b"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX4120/SRX4700",
+   "match": [
+    "^SRX4(120|700)\\b"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX4300",
+   "match": [
+    "^SRX4300"
+   ],
+   "os": "Junos",
+   "recommended": "24.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX204/MX240/MX480/MX960",
+   "match": [
+    "^MX(204|240|480|960)(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Valor 'MX Series' general; MX960 con MPC10E o SCBE3: 24.4R2-Sx. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX304",
+   "match": [
+    "^MX304(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX10003/10004/10008/10016",
+   "match": [
+    "^MX100(03|04|08|16)(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Con LC4802: 25.2R1-S3. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX2008",
+   "match": [
+    "^MX2008(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX2010/MX2020",
+   "match": [
+    "^MX20(10|20)(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX150",
+   "match": [
+    "^MX150(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "23.2R2",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Latest no verificado en 26.2R1. Tren 23.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX5/MX10/MX40/MX104",
+   "match": [
+    "^MX(5|10|40|104)(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "21.2R3",
+   "latest": null,
+   "lastAvailable": "21.2R3",
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. LSV. MX5: 21.2R3-S9. MX80 (tambien LSV 21.2R3-Sx) excluido del match por choque con Meraki MX80. Tren 21.2R3 (último service release -S de ese tren). Tren 21.2R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 6000/6100",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?(6000|6100)"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007246en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 6200",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?6200",
+    "^(JL724A|JL725A|JL726A|JL727A|JL728A|R8Q67A|R8Q68A|R8Q69A|R8Q70A|R8Q71A|R8Q72A|R8V08A|R8V09A|R8V10A|R8V11A|R8V12A|R8V13A|S0G13A|S0G14A|S0G15A|S0G16A|S0G17A|S0M81A|S0M82A|S0M83A|S0M84A|S0M85A|S0M86A|S0M87A|S0M88A|S0M89A|S0M90A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "PN parciales (solo los con version minima en RN). Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007247en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 6300/6300L/6300M/6400",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?(6300|6400)",
+    "^(JL665A|JL666A|JL667A|JL668A|JL741A|R0X26A|R0X27A|R0X31A|R0X41A|R0X42A|R0X43A|R0X44A|R0X45A|R8S89A|R8S90A|R8S91A|R8S92A|S0E48A|S0E91A|S0E92A|S0E93A|S0F99A|S0G00A|S0G01A|S0G02A|S0G03A|S0G04A|S0G05A|S0G06A|S0G95A|S0G96A|S0G97A|S0G98A|S0X44A|S1T83A|S3L75A|S3L76A|S3L77A|S4V98A|S6X58A|S6X59A|S6X60A|S7K41A|S7K42A|S7K43A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "PN parciales (ej. JL659A no listado). Central: 6300M recomienda 10.16.1000+. Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007248en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 8100/8360",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?(8100|8360)",
+    "^(R9W94A|R9W95A|R9W96A|R9W97A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007250en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 8320",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?8320",
+    "^(JL479A|JL579A|JL581A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Aun soportado en 10.18.1002. Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007251en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 8325/8325P/8325H",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?8325",
+    "^(JL624A|JL625A|JL626A|JL627A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007252en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 8400",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?8400",
+    "^(JL363A|JL366A|JL687A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007254en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 9300",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?9300(?!S)",
+    "^(R8Z96A|R9A29A|R9A30A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007257en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 9300S/10040",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?(9300S|10040)"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007258en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 10000",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?10000",
+    "^(R8P13A|R8P14A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007259en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 5420",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?5420",
+    "^(S0U55A|S0U58A|S0U60A|S0U63A|S0U64A|S0U65A|S0U66A|S0U67A|S0U68A|S0U70A|S0U71A|S0U72A|S0U73A|S0U74A|S0U75A|S0U76A|S0U77A|S0U78A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007240en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 2530",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?2530",
+    "^(J977[2-9]A|J978[0-3]A|JL070A|J985[3-6]A)\\b"
+   ],
+   "os": "AOS-S (YA/YB.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 2540",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?2540",
+    "^(JL35[4-7]A)\\b"
+   ],
+   "os": "AOS-S (YC.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 2930F/2930M",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?2930",
+    "^(JL25[3-689]A|JL26[0-4]A|JL319A|JL32[0-4]A|JL55[7-9]A|JL69[23]A|R0M6[78]A)\\b"
+   ],
+   "os": "AOS-S (WC.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 3810M",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?3810",
+    "^(JL07[1-6]A)\\b"
+   ],
+   "os": "AOS-S (KB.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 5400R",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(5400R|540[6]R|5412R)",
+    "^(JL00[1-3]A|JL095A)\\b"
+   ],
+   "os": "AOS-S (KB.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei S5700 (legacy)",
+   "match": [
+    "^S5700(-|$)"
+   ],
+   "os": "VRP V200",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo).",
+   "source": "https://support.huawei.com/enterprise/en/switches/cloudengine-s5735-s24t4x-i-pid-251348968",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei S5720",
+   "match": [
+    "^S5720"
+   ],
+   "os": "VRP V200",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo). Docs publicas S5700/S6700 muestran release notes V200R024C10SPC500 (2025-04-21) y parche V200R024SPH222 (2026-10-09); aplicabilidad por submodelo no verificada.",
+   "source": "https://support.huawei.com/enterprise/en/switches/cloudengine-s5735-s24t4x-i-pid-251348968",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei S5731",
+   "match": [
+    "^(CLOUDENGINE[ -]?)?S5731"
+   ],
+   "os": "VRP V200 / YunShan V600",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo). Docs publicas S5700/S6700 muestran release notes V200R024C10SPC500 (2025-04-21) y parche V200R024SPH222 (2026-10-09); aplicabilidad por submodelo no verificada.",
+   "source": "https://support.huawei.com/enterprise/en/switches/cloudengine-s5735-s24t4x-i-pid-251348968",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei S5735",
+   "match": [
+    "^(CLOUDENGINE[ -]?)?S5735"
+   ],
+   "os": "VRP V200 / YunShan V600",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo). Docs publicas S5700/S6700 muestran release notes V200R024C10SPC500 (2025-04-21) y parche V200R024SPH222 (2026-10-09); aplicabilidad por submodelo no verificada.",
+   "source": "https://support.huawei.com/enterprise/en/switches/cloudengine-s5735-s24t4x-i-pid-251348968",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei S6720",
+   "match": [
+    "^S6720"
+   ],
+   "os": "VRP V200",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo). Docs publicas S5700/S6700 muestran release notes V200R024C10SPC500 (2025-04-21) y parche V200R024SPH222 (2026-10-09); aplicabilidad por submodelo no verificada.",
+   "source": "https://support.huawei.com/enterprise/en/switches/cloudengine-s5735-s24t4x-i-pid-251348968",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei S6730",
+   "match": [
+    "^(CLOUDENGINE[ -]?)?S6730"
+   ],
+   "os": "VRP V200 / YunShan V600",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo). Docs publicas S5700/S6700 muestran release notes V200R024C10SPC500 (2025-04-21) y parche V200R024SPH222 (2026-10-09); aplicabilidad por submodelo no verificada.",
+   "source": "https://support.huawei.com/enterprise/en/switches/cloudengine-s5735-s24t4x-i-pid-251348968",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei CloudEngine CE6800",
+   "match": [
+    "^(CLOUDENGINE[ -]?)?CE68\\d\\d"
+   ],
+   "os": "VRP V200 (CloudEngine)",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo).",
+   "source": "https://support.huawei.com/enterprise/en/index.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei CloudEngine CE12800",
+   "match": [
+    "^(CLOUDENGINE[ -]?)?CE128\\d\\d"
+   ],
+   "os": "VRP V200 (CloudEngine)",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo).",
+   "source": "https://support.huawei.com/enterprise/en/index.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei AR1200",
+   "match": [
+    "^(HUAWEI[ -]?)?AR12\\d\\d"
+   ],
+   "os": "VRP V300 / V600 (AR)",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo).",
+   "source": "https://support.huawei.com/enterprise/en/index.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei AR2200",
+   "match": [
+    "^(HUAWEI[ -]?)?AR22\\d\\d"
+   ],
+   "os": "VRP V300 / V600 (AR)",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo).",
+   "source": "https://support.huawei.com/enterprise/en/index.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei AR6100",
+   "match": [
+    "^(HUAWEI[ -]?)?AR61\\d\\d"
+   ],
+   "os": "VRP V300 / V600 (AR)",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo).",
+   "source": "https://support.huawei.com/enterprise/en/index.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Huawei",
+   "family": "Huawei AR6300",
+   "match": [
+    "^(HUAWEI[ -]?)?AR63\\d\\d"
+   ],
+   "os": "VRP V300 / V600 (AR)",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Huawei no publica version recomendada; descargas y matriz por modelo requieren login (support.huawei.com bloquea acceso anonimo).",
+   "source": "https://support.huawei.com/enterprise/en/index.html",
+   "checked": "2026-10-28"
+  }
+ ]
+}

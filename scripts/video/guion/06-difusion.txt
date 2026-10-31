@@ -1,0 +1,7 @@
+# Enviar a varias sesiones
+Enviar a varias sesiones manda los mismos comandos a más de un equipo.
+Desde Notas, el catálogo o la barra de botones eliges el destino: pestaña actual, pestañas elegidas, una carpeta o los paneles visibles.
+En este ejemplo elegimos pestañas elegidas y marcamos los dos switches core.
+Antes de enviar, la app muestra la lista de equipos y el riesgo de cada línea.
+Si hay cambios de configuración, confirmas escribiendo la cantidad de equipos.
+El envío es secuencial, omite terminales locales y pestañas desconectadas, y lo puedes detener en cualquier momento.

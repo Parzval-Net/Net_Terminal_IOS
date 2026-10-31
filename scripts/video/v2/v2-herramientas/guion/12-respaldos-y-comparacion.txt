@@ -1,0 +1,7 @@
+# Respaldos y comparación
+
+Respaldos guarda la configuración de tus sesiones abiertas con solo comandos de consulta, como show running-config. Marca los equipos, revisa su perfil y pulsa Respaldar. Respalda hasta tres a la vez.
+
+Enmascarar secretos viene activo: contraseñas, llaves y comunidades quedan como asteriscos. Aun así, al comparar dos fechas del mismo equipo, la app marca secreto cambiado si una contraseña enmascarada cambió, usando una huella, sin guardar el secreto.
+
+En Respaldos guardados eliges A y B, el mismo equipo en dos fechas o dos equipos distintos, y pulsas Comparar: ves las líneas agregadas y quitadas, lo que no cambió se pliega, y el resultado se exporta.

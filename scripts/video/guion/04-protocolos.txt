@@ -1,0 +1,11 @@
+# SSH, Telnet y Serial
+Al editar una sesión ves las opciones de cada protocolo.
+SSH usa el OpenSSH del sistema y respeta tu configuración, el agente y las llaves.
+Admite llave privada, jump host, argumentos extra validados y túneles locales, remotos o dinámicos.
+Telnet es un cliente nativo, y TCP crudo sirve para servidores de consola que no negocian Telnet.
+En Serial eliges puerto, velocidad, datos, paridad y control de flujo.
+En Opciones de terminal defines comandos al conectar, reconexión automática, qué envía Enter y la codificación.
+Algunos equipos antiguos solo ofrecen algoritmos que OpenSSH desactiva por defecto, y la conexión falla.
+La app lo detecta y te ofrece presionar L para activar la compatibilidad legacy en esa sesión y reconectar.
+La misma opción está en la sesión, y en Ajustes, Terminal, puede activarse de forma automática.
+Son algoritmos débiles: úsalos solo en redes de gestión confiables.

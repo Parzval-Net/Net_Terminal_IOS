@@ -1,0 +1,10 @@
+# Recorrido por Ajustes
+Ajustes se abre con ⌘, y agrupa las opciones por tema.
+El buscador encuentra cualquier opción, por ejemplo, contraseña.
+En Terminal defines el historial, copiar al seleccionar, pegar con clic derecho y la barra de botones.
+La barra de botones guarda comandos rápidos con variables, o scripts de Python.
+Un botón nuevo lleva una etiqueta y sus comandos, y con clic derecho lo editas.
+Los scripts usan una API mínima: run, send, wait_for y read.
+En Módulos muestras u ocultas cada herramienta, sin perder su configuración.
+Agentes IA expone un servidor MCP local, apagado por defecto y con aprobación de cada comando.
+Los cambios se aplican al instante.

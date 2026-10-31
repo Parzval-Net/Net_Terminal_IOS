@@ -1,0 +1,13 @@
+# Packs de comandos
+
+El catálogo de comandos se amplía con packs: archivos JSON que solo contienen datos y nunca se ejecutan al importarlos.
+
+Para crear tus comandos, usa el botón Propio del catálogo: comando, descripción, categoría y riesgo. Si declaras un riesgo menor al real, la app te avisa y usa el mayor.
+
+Tus comandos quedan en un pack personal por fabricante. En la ventana Packs de comandos lo activas, lo desactivas o lo exportas para compartirlo.
+
+El formato es netterminal-commands, versión 1: un id, un nombre, el fabricante, plataformas opcionales con una expresión para detectarlas, y los comandos, cada uno con descripción, categoría y riesgo: read, change o disruptive.
+
+Al importar, la app valida el esquema, descarta comandos con caracteres ocultos o variables inválidas y recalcula el riesgo. Ves un resumen antes de confirmar, y si el id ya existe, reemplaza al pack instalado.
+
+Al compartir un pack, no incluyas IPs, nombres de equipos ni credenciales reales: usa variables.

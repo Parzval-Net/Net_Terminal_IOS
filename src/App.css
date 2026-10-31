@@ -1,0 +1,227 @@
+@import "tailwindcss";
+@import "@xterm/xterm/css/xterm.css";
+
+/* Tokens de color. El modo lo fija App en <html data-theme> (sistema, claro u oscuro). */
+:root {
+  --bg: #ffffff;
+  --chrome: #f4f5f7;
+  --panel: #ffffff;
+  --field: #ffffff;
+  --border: #e1e4e8;
+  --text: #1f2328;
+  /* muted/accent/warn: texto >= 4,5:1 sobre chrome, hover y selected (WCAG 1.4.3). */
+  --muted: #5f6773;
+  --accent: #1d5be0;
+  --accent-fg: #ffffff;
+  /* Borde de controles de formulario y pistas de switches: ≥3:1 (WCAG 1.4.11). */
+  --field-border: #858c97;
+  /* Intensidad del fondo de líneas agregadas/quitadas en diffs (texto ≥4.5:1). */
+  --diff-tint: 8%;
+  --hover: rgba(15, 23, 42, 0.05);
+  --selected: rgba(37, 99, 235, 0.1);
+  --danger: #d1242f;
+  --danger-fg: #ffffff;
+  --ok: #1a7f37;
+  --warn: #8a5a00;
+  /* Tráfico sin velocidad conocida en Topología: gris violeta, distinto del azul de
+     selección y ruta (5,6:1 sobre panel claro, 6,6:1 sobre panel oscuro). */
+  --util-unknown: #6e5f99;
+  /* Rayo de conexión rápida: relleno amarillo con borde oscuro, legible sobre cualquier
+     fondo de pestaña (interfaz o tema de terminal, claro u oscuro). Igual en ambos modos. */
+  --bolt: #f5b83d;
+  --bolt-edge: #5c3b00;
+  --shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0e1116;
+  --chrome: #15181e;
+  --panel: #1b1f26;
+  --field: #12151a;
+  --border: #272c35;
+  --text: #e4e7eb;
+  --muted: #99a0ab;
+  --accent: #5b8def;
+  /* Texto oscuro sobre el azul: el blanco daba 3,2:1. */
+  --accent-fg: #0b1220;
+  --field-border: #6b7280;
+  --diff-tint: 14%;
+  --hover: rgba(255, 255, 255, 0.05);
+  --selected: rgba(91, 141, 239, 0.16);
+  --danger: #f2606a;
+  --danger-fg: #0e1116;
+  --ok: #4cc472;
+  --warn: #e0aa45;
+  --util-unknown: #a99bd6;
+  --shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-chrome: var(--chrome);
+  --color-panel: var(--panel);
+  --color-field: var(--field);
+  --color-line: var(--border);
+  --color-field-line: var(--field-border);
+  --color-fg: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-hover: var(--hover);
+  --color-selected: var(--selected);
+  --color-danger: var(--danger);
+  --color-danger-fg: var(--danger-fg);
+  --color-bolt: var(--bolt);
+  --color-bolt-edge: var(--bolt-edge);
+  --color-term: var(--term-bg, var(--bg));
+  --color-term-fg: var(--term-fg, var(--text));
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --shadow-pop: var(--shadow);
+  --font-sans: system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, Ubuntu,
+    Cantarell, "Noto Sans", sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input,
+select,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+button {
+  cursor: default;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.field {
+  width: 100%;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid var(--field-border);
+  background: var(--field);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+}
+
+@media (max-width: 639px), (pointer: coarse) {
+  .field {
+    height: 38px;
+    padding: 0 11px;
+    border-radius: 10px;
+    font-size: 13.5px;
+  }
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 17px;
+    height: 17px;
+  }
+}
+
+/* El placeholder por defecto del navegador queda en ~3,2:1; se usa el gris del tema. */
+.field::placeholder {
+  color: var(--muted);
+  opacity: 1;
+}
+
+.field:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--selected);
+}
+
+.xterm {
+  padding: 6px 0 0 10px;
+  height: 100%;
+}
+
+.xterm .xterm-viewport {
+  background-color: transparent !important;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted) 35%, transparent);
+  border-radius: 10px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* El texto del editor es transparente (se ve la capa resaltada); el placeholder no. */
+/* Editor de Notas y CLI Lab: el anillo de foco va por dentro (por fuera quedaba recortado y solo se
+   veía una franja en el borde izquierdo). */
+.code-editor:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.code-editor::placeholder {
+  -webkit-text-fill-color: var(--muted);
+  color: var(--muted);
+  opacity: 0.6;
+  font-style: italic;
+}
+
+/* Fondo de los diálogos: sobre la interfaz oscura un negro al 25 % no se distingue. */
+:root[data-theme="dark"] .bg-black\/25,
+:root[data-theme="dark"] .bg-black\/30,
+:root[data-theme="dark"] .bg-black\/35 {
+  background-color: rgb(0 0 0 / 0.6);
+}
+
+/* Topología: puntos que viajan en el sentido del tráfico. Solo stroke-dashoffset en CSS (sin renders
+   de React por cuadro). Un trazo de largo 0 con punta redonda dibuja un círculo; el periodo (16 px)
+   es FLOW_GAP de topology.ts. La duración y los pasos van en cada carril según su tráfico
+   (flowTiming), a 30 pasos por segundo. Se omite si el sistema pide reducir movimiento. */
+.topo-flow {
+  stroke-dasharray: 0 16;
+  animation-name: topo-flow;
+  animation-iteration-count: infinite;
+  pointer-events: none;
+}
+.topo-flow-rev {
+  animation-direction: reverse;
+}
+@keyframes topo-flow {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topo-flow {
+    animation: none;
+  }
+}

@@ -1,0 +1,7 @@
+# Comandos al conectar
+
+Cada sesión remota puede preparar el equipo al conectarse. Edita la sesión, abre Opciones de terminal y escribe los comandos al conectar, uno por línea. Por ejemplo, terminal length 0 en Cisco, o screen-length 0 temporary en Huawei, para quitar la paginación.
+
+La app no los envía a ciegas. Espera el prompt, una línea que termina en numeral, mayor que, dólar, porcentaje o corchete, o un segundo y medio de silencio. Si la pantalla pide usuario, contraseña o un código, no envía nada y te da hasta dos minutos para escribirlo.
+
+Se ejecutan en cada conexión, también al reconectar, y no pasan por el motor de riesgo: úsalos solo para preparar la sesión. Por seguridad, nunca se importan desde otros clientes ni desde archivos JSON.

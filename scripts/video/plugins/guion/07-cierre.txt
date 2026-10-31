@@ -1,0 +1,5 @@
+# Cierre
+
+En resumen: botones con variables para lo frecuente, scripts para lógica en Python, comandos al conectar para preparar la sesión, packs para compartir comandos y plugins para empaquetar acciones con revisión y control de cambios.
+
+Encuentra los ejemplos en docs/ejemplos y el detalle en el README. Gracias por tu atención.

@@ -1,0 +1,1921 @@
+{
+ "generated": "2026-10-28",
+ "entries": [
+  {
+   "vendor": "Cisco",
+   "family": "ISR 4000 (4221/4321/4331/4351/4431/4451)",
+   "match": [
+    "^ISR4(2\\d|3\\d|4[0-5])\\d"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.9.10",
+   "latest": "17.12.8",
+   "lastAvailable": "17.12.8",
+   "notes": "Cisco recomienda 17.9.10 o 17.12.8 segun features. EoSW 31-08-2025 (EOL14896); 17.12.x es el tren final, 17.12.8 es el rebuild mas alto publicado. Cisco puede emitir rebuilds ad hoc hasta nov 2028. Release notes 17.12.x: https://www.cisco.com/c/en/us/td/docs/routers/access/4400/release/xe-17-12/isr4",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ISR 4461",
+   "match": [
+    "^ISR4461"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.12.8",
+   "latest": "17.18.5",
+   "lastAvailable": "17.18.5",
+   "notes": "Cisco recomienda 17.12.8 o 17.15.6 segun features. EoSW 20-01-2026 (EOL15446); 17.18.x es el tren final y 17.18.5 el rebuild mas alto publicado. Release notes 17.18.x: https://www.cisco.com/c/en/us/td/docs/routers/access/isr4400/Release-notes/17-18-x/isr4k-rel-notes-xe-17-18.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ISR 1000 (C11xx)",
+   "match": [
+    "^C11\\d{2}[A-Z-]"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.12.8",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Cisco recomienda 17.12.8 o 17.15.6. Desde 17.4 o anterior se requiere salto intermedio (17.5 a 17.10) antes de 17.11+. Latest segun release notes 26.2.x (28-09-2026): https://www.cisco.com/c/en/us/td/docs/routers/access/1100/release/isr1k-release-notes-xe-26-2-x.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ISR 800 (C8xx)",
+   "match": [
+    "^C8\\d{2}(?!\\d)",
+    "^CISCO8\\d{2}(?!\\d)"
+   ],
+   "os": "IOS",
+   "recommended": null,
+   "latest": "15.9(3)M13",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendado. 15.9(3)M13 es el rebuild mas alto en las release notes 15.9(3)M (act. 09-04-2026), que soportan Cisco 800/800M. Validar soporte por modelo, los 880 antiguos pueden no estar soportados.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/15-9m/release/notes/15-9-3-m-rel-notes.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ISR 900 (C9xx)",
+   "match": [
+    "^C9\\d{2}(?!\\d)"
+   ],
+   "os": "IOS",
+   "recommended": null,
+   "latest": "15.9(3)M13",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendado. Cisco indica que 15.9.3 sera el ultimo tren soportado (EoS 28-07-2026, aun en mantenimiento). C921/C931 requieren 15.8(3)Mb o superior.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/15-9m/release/notes/15-9-3-m-rel-notes.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 8200/8300/8500 Edge",
+   "match": [
+    "^C8[235]00L?-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.12.8",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Cisco recomienda 17.12.8 o 17.15.6 segun features. 26.2.1 publicado 31-08-2026; release notes 26.2.x para C8200/C8300 (27-09-2026): https://www.cisco.com/c/en/us/td/docs/routers/cloud_edge/c8300/rel_notes/26-x/release-notes-catalyst-8200-and-catalyst-8300-series-edge-platforms-release-26-2-x.html. C",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ISR G2 1900/2900/3900",
+   "match": [
+    "^CISCO(19|29|39)\\d{2}"
+   ],
+   "os": "IOS",
+   "recommended": null,
+   "latest": "15.7(3)M9",
+   "lastAvailable": "15.7(3)M9",
+   "notes": "Sin release recomendado vigente. EoSW 10-05-2023 y LDoS 31-05-2027 (EOL14566). 15.7(3)M9 es el ultimo rebuild en release notes 15.7(3)M. EoL: https://www.cisco.com/c/en/us/products/collateral/routers/1900-series-integrated-services-routers-isr/select-isr-1900-2900-3900-software-eol.html",
+   "source": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/15-7m/release/notes/15-7-3-m-rel-notes.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ASR 1001-X / 1002-X",
+   "match": [
+    "^ASR100[12]-X(?![A-Z])"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.9.10",
+   "latest": "17.9.10",
+   "lastAvailable": "17.9.10",
+   "notes": "17.9 es el ultimo tren para ASR1001-X, ASR1002-X y RP2. EoSW 01-08-2023 (EOL14624). 17.9.10 es el rebuild mas alto en release notes 17.9.x: https://www.cisco.com/c/en/us/td/docs/routers/asr1000/release/notes/xe-17-9/asr1000-rel-notes-xe-17-9.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ASR 1000 (HX y modulares)",
+   "match": [
+    "^ASR100[12]-HX",
+    "^ASR100[469](-X)?(?![A-Z0-9])",
+    "^ASR1013"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "17.18.5",
+   "lastAvailable": null,
+   "notes": "17.15.6 recomendado para RP3. Chasis modulares con RP2 quedan en 17.9.10 (ultimo tren RP2). Latest segun release notes 17.18.x: https://www.cisco.com/c/en/us/td/docs/routers/asr1000/release/notes/xe-17-18/asr1000-rel-notes-xe-17-18.html. ASR1001/ASR1002 originales no incluidos.",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xe-16/215567-recommended-releases-for-asr1000-isr400.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ASR 920",
+   "match": [
+    "^ASR-920"
+   ],
+   "os": "IOS-XE",
+   "recommended": null,
+   "latest": "17.15.6",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendado para ASR 920. 17.15.6 es el rebuild mas alto en caveats 17.15.x (act. 18-09-2026). EoS anunciado: 31-03-2027.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr920/release/notes/17-15-1/b-rn-xe-17-15-1-asr920/m-caveats-17-15-x-asr920.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ASR 900 (902/903/907/914)",
+   "match": [
+    "^ASR-9(0[2-7]|14)(?!\\d)"
+   ],
+   "os": "IOS-XE",
+   "recommended": null,
+   "latest": "17.15.6",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendado para ASR 900. 17.15.6 es el rebuild mas alto en caveats 17.15.x. EoL de la serie anunciado 01-04-2026.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/routers/asr903/release/notes/17-15-1/b-rn-xe-17-15-x-asr900/m-caveats-17-15-x-asr900.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "ASR 9000",
+   "match": [
+    "^ASR-?9\\d{3}(?!\\d)",
+    "^ASR9K"
+   ],
+   "os": "IOS-XR",
+   "recommended": "25.2.21",
+   "latest": "26.3.1",
+   "lastAvailable": null,
+   "notes": "Recomendado para ASR9000 64-bit (eXR), doc 222669 act. 27-07-2026. 6.9.2 es el ultimo release para hardware solo 32-bit (cXR). Latest segun lista de release notes (26.3.1, 11-09-2026): https://www.cisco.com/c/en/us/support/routers/asr-9000-series-aggregation-services-routers/products-release-notes-l",
+   "source": "https://www.cisco.com/c/en/us/support/docs/ios-nx-os-software/ios-xr-software/222669-recommended-releases-for-ios-xr-routers.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Nexus 9000",
+   "match": [
+    "^N9K-"
+   ],
+   "os": "NX-OS",
+   "recommended": "10.5(6)M",
+   "latest": "10.6(4)M",
+   "lastAvailable": null,
+   "notes": "Recomendado 10.5(6)M o 10.6(4)M (doc act. 01-10-2026). Hardware sin 10.5: 10.4(7)M; -EX sin 10.4: 10.3(8)M; sin 10.x: 9.3(16). Aplica a modo NX-OS, no ACI.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus9000/sw/recommended_release/b_Minimum_and_Recommended_Cisco_NX-OS_Releases_for_Cisco_Nexus_9000_Series_Switches.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Nexus 3500/3600",
+   "match": [
+    "^N3K-C3[56]"
+   ],
+   "os": "NX-OS",
+   "recommended": "10.5(6)M",
+   "latest": "10.6(4)M",
+   "lastAvailable": null,
+   "notes": "Recomendado 10.5(6)M o 10.6(4)M para hardware con soporte 10.5/10.6; si no soporta 10.x, 9.3(16). Latest segun release notes N3K: https://www.cisco.com/c/en/us/support/switches/nexus-3000-series-switches/products-release-notes-list.html",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus3000/sw/recommended_release/b_Minimum_and_Recommended_Cisco_NX-OS_Releases_for_Cisco_Nexus_3000_Series_Switches.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Nexus 3000/3100/3200/3400-S",
+   "match": [
+    "^N3K-C3[0-4]"
+   ],
+   "os": "NX-OS",
+   "recommended": "9.3(16)",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "9.3(16) recomendado para hardware sin soporte 10.x y no pasado LDoS. Latest no verificable por modelo; algunos modelos 3100/3200 pueden soportar 10.x, validar en release notes.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus3000/sw/recommended_release/b_Minimum_and_Recommended_Cisco_NX-OS_Releases_for_Cisco_Nexus_3000_Series_Switches.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Nexus 5500",
+   "match": [
+    "^N5K-C55"
+   ],
+   "os": "NX-OS",
+   "recommended": "7.3(13)N1(1)",
+   "latest": "7.3(17)N1(1)",
+   "lastAvailable": "7.3(17)N1(1)",
+   "notes": "Recomendado segun doc 5500 (antiguo, minimo 7.3(8)N1(1)). EoSW de NX-OS 7.3 para 5500/5600/6000: 04-08-2021 (https://www.cisco.com/c/en/us/products/collateral/switches/nexus-5000-series-switches/eos-eol-notice-c51-743752.html). Current release 7.3(17)N1(1) segun release notes 7.x.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5500/sw/release/recommended_releases/n5500_recommended_nx-os_releases.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Nexus 5600",
+   "match": [
+    "^N5K-C56",
+    "^N56-"
+   ],
+   "os": "NX-OS",
+   "recommended": null,
+   "latest": "7.3(17)N1(1)",
+   "lastAvailable": "7.3(17)N1(1)",
+   "notes": "Sin documento de release recomendado para 5600. Current release 7.3(17)N1(1) (release notes 7.x, 15-12-2025). EoSW de NX-OS 7.3: 04-08-2021 (EoL c51-743752).",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus5600/sw/release/notes/7x/Nexus5600_Release_Notes_7x.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Nexus 7000/7700",
+   "match": [
+    "^N7K-C70",
+    "^N77-C77"
+   ],
+   "os": "NX-OS",
+   "recommended": "8.4(10)",
+   "latest": "8.4(14)",
+   "lastAvailable": "8.4(14)",
+   "notes": "Recomendado 8.4(10) (doc act. 11-02-2025). EoSW de NX-OS 8.4: 06-11-2024, LDoS 30-11-2028. 8.4(14) es el current release (23-09-2026): https://www.cisco.com/c/en/us/td/docs/switches/datacenter/nexus7000/sw/release/notes/cisco_nexus7000_release_notes_84.html",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/sw/nx-os/recommended_releases/recommended_nx-os_releases.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "MDS 9000",
+   "match": [
+    "^DS-C9\\d{3}"
+   ],
+   "os": "NX-OS",
+   "recommended": "9.4(5)",
+   "latest": "9.4(5a)",
+   "lastAvailable": null,
+   "notes": "Recomendado 9.4(5) (doc act. 06-08-2026). FICON en directores 9706/9710/9718: 9.4(3b). Latest 9.4(5a) (01-09-2026): https://www.cisco.com/c/en/us/support/storage-networking/mds-9000-nx-os-san-os-software/products-release-notes-list.html",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/datacenter/mds9000/sw/b_MDS_NX-OS_Recommended_Releases.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 9200/9200L/9200CX",
+   "match": [
+    "^C9200"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Cisco recomienda 17.18.4 o 17.15.6 (doc 214814 rev 27.0, sep 2026). Latest segun release notes 26.2.x: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9200/software/release/26-2/release_notes/ol-26-2-x-9200.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 9300/9300L/9300LM/9300X",
+   "match": [
+    "^C9300"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Cisco recomienda 17.18.4 o 17.15.6. Latest segun release notes 26.2.x: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9300/software/release/26-2/release_notes/ol-26-2-x-9300.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 9400",
+   "match": [
+    "^C94[0-9]{2}R"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6 para SUP-1/1XL/1XL-Y y SUP-2/2XL. Tablas HW de 26.x solo listan C9400X-SUP-2/2XL; validar SUP-1 antes de subir a 26.x. Latest: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9400/software/release/26-2/release_notes/ol-26-2-x-9400.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 9500 (UADP 2.0: 12Q/16X/24Q/40X/24X/48X)",
+   "match": [
+    "^C9500-(12Q|16X|24Q|40X|24X|48X)"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "17.18.5",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6. Modelos no listados en tabla HW de release notes 26.x; ultima verificada 17.18.5 (oct 2026): https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/17-18/release_notes/ol-17-18-9500.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 9500 High Performance",
+   "match": [
+    "^C9500-(24Y4C|32C|32QC|48Y4C)"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6. Latest: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/26-2/release_notes/ol-26-2-x-9500.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 9500X",
+   "match": [
+    "^C9500X-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6. Latest: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9500/software/release/26-2/release_notes/ol-26-2-x-9500.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 9600",
+   "match": [
+    "^C96[0-9]{2}R"
+   ],
+   "os": "IOS-XE",
+   "recommended": "17.15.6",
+   "latest": "26.2.1",
+   "lastAvailable": null,
+   "notes": "Recomendado 17.18.4 o 17.15.6 para SUP-1 y C9600X-SUP-2. Latest: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst9600/software/release/26-2/release_notes/ol-26-2-x-9600.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/214814-recommended-releases-for-catalyst-9200-9.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 1000",
+   "match": [
+    "^C1000(FE)?-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": null,
+   "notes": "Recomendado segun doc 214946 (mar 2026). Latest segun release notes 15.2(7)Ex: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst1000/software/releases/15_2_7_e/release_notes/ol_15_2_7_e_c1000.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 2960-X/2960-XR",
+   "match": [
+    "^WS-C2960XR?-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance oct 2023; fixes PSIRT hasta oct 2027, puede salir otra release. Latest segun release notes: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2960x/software/15-2_7_e/release_notes/Release_notes_2960x_2960xr_1527E.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 2960-L",
+   "match": [
+    "^WS-C2960L-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance oct 2022; PSIRT hasta oct 2026. Latest segun release notes: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2960l/software/15-2_7_e/release_note/Release_notes_2960l_1527E10.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 2960-Plus",
+   "match": [
+    "^WS-C2960\\+"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance oct 2022; PSIRT hasta oct 2026. Latest segun release notes: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/releasenotes/ol_15_2_7_ex_c2960c_p.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 2960-C",
+   "match": [
+    "^WS-C2960C-",
+    "^WS-C2960CG-",
+    "^WS-C2960CPD-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance oct 2021 y PSIRT oct 2025 vencidos. Latest segun release notes: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst2960/software/releasenotes/ol_15_2_7_ex_c2960c_p.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 2960-CX",
+   "match": [
+    "^WS-C2960CX-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance abr 2025; PSIRT hasta abr 2029. Latest segun release notes: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2960cx_3650cx/software/release/15-2_7_e/release_notes/Release_Notes_2960cx_3560cx_1527E.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 3560-CX",
+   "match": [
+    "^WS-C3560CX-"
+   ],
+   "os": "IOS",
+   "recommended": "15.2(7)E13",
+   "latest": "15.2(7)E14",
+   "lastAvailable": "15.2(7)E14",
+   "notes": "End of SW maintenance abr 2025; PSIRT hasta abr 2029. Latest segun release notes: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst2960cx_3650cx/software/release/15-2_7_e/release_notes/Release_Notes_2960cx_3560cx_1527E.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 3750-X/3560-X",
+   "match": [
+    "^WS-C3750X-",
+    "^WS-C3560X-"
+   ],
+   "os": "IOS",
+   "recommended": null,
+   "latest": "15.2(4)E10",
+   "lastAvailable": "15.2(4)E10",
+   "notes": "Sin release recomendada publicada (no figura en doc 214946). Ultima release documentada en release notes 15.2(4)E.",
+   "source": "https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3750x_3560x/software/release/15-2_4_e/releasenotes/rn-1524e-3750x3560x.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 3650",
+   "match": [
+    "^WS-C3650-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "16.12.14",
+   "latest": "16.12.14",
+   "lastAvailable": "16.12.14",
+   "notes": "End of SW maintenance oct 2022; PSIRT hasta oct 2026. Latest segun release notes 16.12.x: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3650/software/release/16-12/release_notes/ol-16-12-3650.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 3850",
+   "match": [
+    "^WS-C3850-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "16.12.14",
+   "latest": "16.12.14",
+   "lastAvailable": "16.12.14",
+   "notes": "Modelos no XS con PSIRT vencido oct 2025; 3850-XS con PSIRT hasta abr 2027. Latest segun release notes 16.12.x: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst3850/software/release/16-12/release_notes/ol-16-12-3850.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 4500-E",
+   "match": [
+    "^WS-C45(03|06|07R|10R)(\\+)?-?E"
+   ],
+   "os": "IOS-XE",
+   "recommended": "3.11.13E",
+   "latest": "3.11.13E",
+   "lastAvailable": "3.11.13E",
+   "notes": "Recomendacion aplica a Sup 8-E, 8L-E y 9-E. Sup 6/7 no cubiertos por el doc. Latest segun release notes 3.11.xE: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst4500/release/note/ol-311xe-4500e.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 4500-X",
+   "match": [
+    "^WS-C4500X-"
+   ],
+   "os": "IOS-XE",
+   "recommended": "3.11.13E",
+   "latest": "3.11.13E",
+   "lastAvailable": "3.11.13E",
+   "notes": "End of SW maintenance oct 2021 y PSIRT oct 2025 vencidos. Latest segun release notes 3.11.xE: https://www.cisco.com/c/en/us/td/docs/switches/lan/catalyst4500/release/note/ol-311xe-4500x.html",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 6500/6800",
+   "match": [
+    "^WS-C65[0-9]{2}",
+    "^C68[0-9]{2}-X",
+    "^C6840-X",
+    "^C6880-X",
+    "^C6807-XL",
+    "^WS-C6807"
+   ],
+   "os": "IOS",
+   "recommended": "15.5(1)SY16",
+   "latest": "15.5(1)SY17",
+   "lastAvailable": "15.5(1)SY17",
+   "notes": "Recomendado para Sup 2T, Sup 6T, C6840-X y C6880-X. Sup 6T con PSIRT hasta abr 2027. SY17 figura en caveats de release notes 15.5SY: https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/catalyst6500/ios/15-5SY/release_notes/release_notes_15_5_SY_6k.pdf",
+   "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-6500-series-switches/214946-recommended-releases-for-catalyst-2960-3.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Catalyst 1200/1300",
+   "match": [
+    "^C1200-",
+    "^C1300-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "4.1.9.94",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendada para esta serie.",
+   "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/campus-lan-switches-access/Catalyst-1200-and-1300-Switches/release-notes/rn_cat-1200-1300.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Cisco Business 250/350",
+   "match": [
+    "^CBS250-",
+    "^CBS350-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "3.5.3.3",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendada para esta serie.",
+   "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/csbms/CBS_250_350/Release-Notes/b_RN_cbs-250-350-3533.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Small Business 250/350/350X/550X",
+   "match": [
+    "^S[FGX](250|350|550)(X|XG)?-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "2.5.9.55",
+   "lastAvailable": null,
+   "notes": "Cisco no publica release recomendada. Cubre SF250, SG250, SF350, SG350/350X/350XG, SF550X, SG550X/550XG, SX350X, SX550X.",
+   "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/csbms/350xseries/2_5_9/Release-note/b_tesla-release-2_5_9_55.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Small Business 220",
+   "match": [
+    "^S[FG]220-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "1.2.1.5",
+   "lastAvailable": null,
+   "notes": "Ultima release notes publicada dic 2021. Sin release recomendada.",
+   "source": "https://www.cisco.com/c/en/us/support/switches/small-business-220-series-smart-plus-switches/products-release-notes-list.html",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco",
+   "family": "Small Business 200/300/500",
+   "match": [
+    "^SF200-(24|48)",
+    "^SG200-(18|26|50|52)",
+    "^SF30[02]-",
+    "^SG300-",
+    "^SF500-",
+    "^SG500(X|XG)?-"
+   ],
+   "os": "Firmware",
+   "recommended": null,
+   "latest": "1.4.11.5",
+   "lastAvailable": "1.4.11.5",
+   "notes": "Serie retirada. Release notes jun 2020 cubren estos modelos; SG200-08/SF200E no incluidos.",
+   "source": "https://www.cisco.com/c/dam/en/us/td/docs/switches/lan/csbss/sf20x_sg20x/release_notes/R_1_4_11_5_RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate/FortiWiFi/Rugged entrada (30G, 31G, 40F, 50G/51G, 60F, 61F, 70F/71F, 70G/71G, 80F, 81F, 90G, 91G)",
+   "match": [
+    "^FORTIGATE-(?:30G|31G|40F|50G|51G|60F|61F|70F|70G|71F|71G|80F|81F|90G|91G|50G-5G|51G-5G|50G-DSL|50G-SFP|70G-POE|71G-POE|40F-3G4G|50G-SFP-POE|51G-SFP-POE)(?![-\\w])",
+    "^FORTIGATERUGGED-(?:60F|70F|60F-3G4G|70F-3G4G)(?![-\\w])",
+    "^FORTIWIFI-(?:30G|40F|50G|51G|60F|61F|70G|71G|50G-5G|50G-DSL|50G-SFP|70G-POE|40F-3G4G)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.6.8",
+   "latest": "8.0.2",
+   "lastAvailable": null,
+   "notes": "Recomendada 7.6.8 segun KB Fortinet actualizada 27-oct-2026 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639). Ultima rama soportada 8.0.",
+   "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate mid-range (100F a 901G, 200E/300E/400E/500E/600E, 800D, 900D)",
+   "match": [
+    "^FORTIGATE-(?:100F|101F|120G|121G|200E|200F|200G|201E|201F|201G|300E|301E|400E|400F|401E|401F|500E|501E|600E|600F|601E|601F|700G|701G|800D|900D|900G|901G|400E-BP)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.6.8",
+   "latest": "8.0.2",
+   "lastAvailable": null,
+   "notes": "Recomendada 7.6.8 segun KB Fortinet del 27-oct-2026 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate high-end (1000D a 4801F, sin 3000D/3100D/3200D/3700D)",
+   "match": [
+    "^FORTIGATE-(?:1000D|1000F|1001F|1100E|1101E|1800F|1801F|2000E|2200E|2201E|2500E|2600F|2601F|3000F|3001F|3200F|3201F|3300E|3301E|3400E|3401E|3500F|3501F|3600E|3601E|3700F|3701F|3960E|3980E|4200F|4201F|4400F|4401F|4800F|4801F)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.6.8",
+   "latest": "8.0.2",
+   "lastAvailable": null,
+   "notes": "Recomendada 7.6.8 segun KB Fortinet del 27-oct-2026 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate chasis 6000F/7000E/7000F",
+   "match": [
+    "^FORTIGATE-(?:6000F|6001F|6300F|6301F|6500F|6501F|7000E|7000F|7030E|7040E|7060E|7081F|7121F)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.6.8",
+   "latest": "8.0.2",
+   "lastAvailable": null,
+   "notes": "Recomendada 7.6.8 segun KB (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639). Modulos 6001F/6300F/6301F/6500F/6501F, 7030E/7040E/7060E, 7081F/7121F.",
+   "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate-VM64 (ALI, AWS, Azure, GCP, HV, IBM, KVM, Xen)",
+   "match": [
+    "^FORTIGATE-(?:VM64|VM64-HV|VM64-ALI|VM64-AWS|VM64-GCP|VM64-IBM|VM64-KVM|VM64-XEN|VM64-AZURE)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.6.8",
+   "latest": "8.0.2",
+   "lastAvailable": null,
+   "notes": "KB recomienda 7.6.8 para FortiGate-VM64 todas las versiones (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate actuales sin recomendacion explicita (variantes 80F/81F, FWF-31G, FWF-80F/81F-2R, 400G/401G, 3000G/3500G/3800G, Rugged G, FortiFirewall, ARM64)",
+   "match": [
+    "^FORTIFIREWALL-(?:VM64|1801F|2600F|3001F|3501F|3980E|4200F|4400F|4401F|4801F|VM64-KVM)(?![-\\w])",
+    "^FORTIGATE-(?:400G|401G|3000G|3001G|3500G|3501G|3800G|3801G|80F-BP|80F-DSL|80F-POE|81F-POE|ARM64-AWS|ARM64-GCP|ARM64-KVM|ARM64-OCI|ARM64-AZURE)(?![-\\w])",
+    "^FORTIGATERUGGED-(?:60G|70G|50G-5G|60G-5G|70G-5G|60G-M12|70G-5G-D)(?![-\\w])",
+    "^FORTIWIFI-(?:31G|80F-2R|81F-2R|81F-2R-POE|80F-2R-3G4G-DSL|81F-2R-3G4G-DSL|81F-2R-3G4G-POE)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": null,
+   "latest": "8.0.2",
+   "lastAvailable": null,
+   "notes": "Soportan 8.0.2 pero no aparecen en la KB de release recomendado; consultar modelo base o TAC.",
+   "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate 3000D/3100D/3200D/3700D y VM64-OPC/RAXONDEMAND (tope 7.6)",
+   "match": [
+    "^FORTIGATE-(?:3000D|3100D|3200D|3700D|VM64-OPC|VM64-RAXONDEMAND)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.6.8",
+   "latest": "7.6.8",
+   "lastAvailable": "7.6.8",
+   "notes": "No soportados en 8.0. Recomendada 7.6.8 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639). Pueden recibir mas parches 7.6.",
+   "source": "https://docs.fortinet.com/document/fortigate/7.6.8/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate-5001E/5001E1 (tope 7.6)",
+   "match": [
+    "^FORTIGATE-(?:5001E|5001E1)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": null,
+   "latest": "7.6.8",
+   "lastAvailable": "7.6.8",
+   "notes": "No soportados en 8.0 y no listados en la KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortigate/7.6.8/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate/FortiWiFi serie E entrada (60E, 80E, 81E, 90E, 140E; tope 7.4)",
+   "match": [
+    "^FORTIGATE-(?:60E|80E|81E|90E|140E)(?![-\\w])",
+    "^FORTIWIFI-(?:60E)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.4.13",
+   "latest": "7.4.13",
+   "lastAvailable": "7.4.13",
+   "notes": "No soportados en 7.6. Recomendada 7.4.13 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/7.4.13/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate/FortiWiFi serie E variantes (61E, 91E, -POE, -DSL, -DSLJ; tope 7.4)",
+   "match": [
+    "^FORTIGATE-(?:61E|91E|60E-DSL|60E-POE|80E-POE|81E-POE|140E-POE|60E-DSLJ)(?![-\\w])",
+    "^FORTIWIFI-(?:61E|60E-DSL|60E-DSLJ)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": null,
+   "latest": "7.4.13",
+   "lastAvailable": "7.4.13",
+   "notes": "No soportados en 7.6. No listados en la KB de release recomendado (modelo base: 7.4.13).",
+   "source": "https://docs.fortinet.com/document/fortigate/7.4.13/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate 100E/101E/1500D/1500DT (tope 7.2)",
+   "match": [
+    "^FORTIGATE-(?:100E|101E|1500D|1500DT)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.2.14",
+   "latest": "7.2.14",
+   "lastAvailable": "7.2.14",
+   "notes": "No soportados en 7.4. End of Engineering Support cumplido. Recomendada 7.2.14 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/7.2.14/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate-100EF y VM64-SVM/VMX (tope 7.2)",
+   "match": [
+    "^FORTIGATE-(?:100EF|VM64-SVM|VM64-VMX)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": null,
+   "latest": "7.2.14",
+   "lastAvailable": "7.2.14",
+   "notes": "No soportados en 7.4. No listados en la KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortigate/7.2.14/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate 1200D/3800D (tope 7.0)",
+   "match": [
+    "^FORTIGATE-(?:1200D|3800D)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "7.0.19",
+   "latest": "7.0.19",
+   "lastAvailable": "7.0.19",
+   "notes": "No soportados en 7.2. End of Engineering Support cumplido. Recomendada 7.0.19 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/7.0.19/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate-5001D (tope 6.4)",
+   "match": [
+    "^FORTIGATE-(?:5001D)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "6.4.16",
+   "latest": "6.4.16",
+   "lastAvailable": "6.4.16",
+   "notes": "No soportado en 7.0. End of Engineering Support cumplido (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/6.4.16/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate 300D/400D/500D/600D/3810D/3815D (tope 6.4)",
+   "match": [
+    "^FORTIGATE-(?:300D|400D|500D|600D|3810D|3815D)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": null,
+   "latest": "6.4.16",
+   "lastAvailable": "6.4.16",
+   "notes": "No soportados en 7.0. No listados en la KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortigate/6.4.16/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate/FortiWiFi 30E, 50E, 51E, 52E y Rugged-35D (tope 6.2)",
+   "match": [
+    "^FORTIGATE-(?:30E|50E|51E|52E)(?![-\\w])",
+    "^FORTIGATERUGGED-(?:35D)(?![-\\w])",
+    "^FORTIWIFI-(?:30E|50E|51E)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "6.2.17",
+   "latest": "6.2.17",
+   "lastAvailable": "6.2.17",
+   "notes": "No soportados en 6.4. End of Engineering Support cumplido (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/6.2.17/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate 30E variantes, 92D, 100D, 140D, FWF-50E-2R, Rugged 30D/90D (tope 6.2)",
+   "match": [
+    "^FORTIGATE-(?:92D|100D|140D|30E-MG|140D-POE|30E_3G4G_NAM|30E_3G4G_INTL)(?![-\\w])",
+    "^FORTIGATERUGGED-(?:30D|90D)(?![-\\w])",
+    "^FORTIWIFI-(?:50E-2R|30E_3G4G_NAM|30E_3G4G_INTL)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": null,
+   "latest": "6.2.17",
+   "lastAvailable": "6.2.17",
+   "notes": "No soportados en 6.4. No listados en la KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortigate/6.2.17/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate 98D-POE, 240D, 280D-POE (tope 6.0)",
+   "match": [
+    "^FORTIGATE-(?:240D|98D-POE|280D-POE)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": "6.0.18",
+   "latest": "6.0.18",
+   "lastAvailable": "6.0.18",
+   "notes": "No soportados en 6.2. KB lista FortiGate-280D; release notes solo incluyen FG-280D-POE (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+   "source": "https://docs.fortinet.com/document/fortigate/6.0.18/fortios-release-notes/760203/introduction-and-supported-models",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiGate/FortiWiFi serie D legacy (30D, 60D, 70D, 80D, 90D, 94D, 200D, 240D-POE; tope 6.0)",
+   "match": [
+    "^FORTIGATE-(?:30D|60D|70D|80D|90D|200D|30D-POE|60D-POE|70D-POE|90D-POE|94D-POE|200D-POE|240D-POE)(?![-\\w])",
+    "^FORTIGATERUGGED-(?:60D)(?![-\\w])",
+    "^FORTIWIFI-(?:30D|60D|90D|92D|30D-POE|60D-POE|90D-POE)(?![-\\w])"
+   ],
+   "os": "FortiOS",
+   "recommended": null,
+   "latest": "6.0.18",
+   "lastAvailable": "6.0.18",
+   "notes": "No soportados en 6.2. No listados en la KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortigate/6.0.18/fortios-release-notes/760203",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiSwitch actuales (1xxF/G, 2xxD/E, 4xxE, 6xxF, 1024E/1048E/1048G, T1024, 2048F, 3032E/G, Rugged F)",
+   "match": [
+    "^(?:FORTISWITCH|FS)-(?:108F|124F|124G|148F|224E|248D|424E|448E|624F|648F|1024E|1048E|1048G|2048F|3032E|3032G|T1024E|108F-POE|124F-POE|148F-POE|224E-POE|248E-POE|424E-POE|448E-POE|108F-FPOE|110G-FPOE|124F-FPOE|124G-FPOE|148F-FPOE|224D-FPOE|248E-FPOE|424E-FPOE|448E-FPOE|624F-FPOE|648F-FPOE|424E-FIBER|M426E-FPOE|T1024F-FPOE)(?![-\\w])",
+    "^(?:FORTISWITCHRUGGED|FSR)-(?:108F|112F-POE|216F-POE|424F-POE)(?![-\\w])"
+   ],
+   "os": "FortiSwitchOS",
+   "recommended": null,
+   "latest": "8.0.1",
+   "lastAvailable": null,
+   "notes": "Fortinet no publica KB de release recomendado por modelo para FortiSwitchOS.",
+   "source": "https://docs.fortinet.com/document/fortiswitch/8.0.1/fortiswitchos-release-notes/784383/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiSwitch 124E/148E y 5xxD (tope 7.6)",
+   "match": [
+    "^(?:FORTISWITCH|FS)-(?:124E|148E|524D|548D|124E-POE|148E-POE|124E-FPOE|524D-FPOE|548D-FPOE)(?![-\\w])"
+   ],
+   "os": "FortiSwitchOS",
+   "recommended": null,
+   "latest": "7.6.8",
+   "lastAvailable": "7.6.8",
+   "notes": "No listados en FortiSwitchOS 8.0.1. Sin KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortiswitch/7.6.8/fortiswitchos-release-notes/784383/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiSwitch 3xxG (324G, 348G)",
+   "match": [
+    "^(?:FORTISWITCH|FS)-(?:324G|348G|324G-FPOE|348G-FPOE)(?![-\\w])"
+   ],
+   "os": "FortiSwitchOS",
+   "recommended": null,
+   "latest": "7.6.8",
+   "lastAvailable": null,
+   "notes": "Listados en 7.6.8 pero no en 8.0.1; no hay confirmacion oficial de tope de rama.",
+   "source": "https://docs.fortinet.com/document/fortiswitch/7.6.8/fortiswitchos-release-notes/784383/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiSwitch 108E, 1024D y Rugged 112D/124D (tope 7.4)",
+   "match": [
+    "^(?:FORTISWITCH|FS)-(?:108E|1024D|108E-POE|108E-FPOE)(?![-\\w])",
+    "^(?:FORTISWITCHRUGGED|FSR)-(?:112D-POE|124D)(?![-\\w])"
+   ],
+   "os": "FortiSwitchOS",
+   "recommended": null,
+   "latest": "7.4.10",
+   "lastAvailable": "7.4.10",
+   "notes": "No soportados en 7.6. Sin KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortiswitch/7.4.10/fortiswitchos-release-notes/784383/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiSwitch 424D/448D, 1048D, 3032D (tope 7.0)",
+   "match": [
+    "^(?:FORTISWITCH|FS)-(?:424D|448D|1048D|3032D|424D-POE|448D-POE|424D-FPOE|448D-FPOE)(?![-\\w])"
+   ],
+   "os": "FortiSwitchOS",
+   "recommended": null,
+   "latest": "7.0.12",
+   "lastAvailable": "7.0.12",
+   "notes": "No soportados en 7.2. Sin KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortiswitch/7.0.12/release-notes/784383/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiAP serie G (Wi-Fi 6E) y K (Wi-Fi 7: 231K, 23JK, 241K, 243K, 441K, 443K)",
+   "match": [
+    "^(?:FORTIAP|FAP)-(?:231G|233G|234G|431G|432G|433G|231K|23JK|241K|243K|441K|443K)(?![-\\w])"
+   ],
+   "os": "FortiAP",
+   "recommended": null,
+   "latest": "8.0.0",
+   "lastAvailable": null,
+   "notes": "Fortinet no publica release recomendado por modelo para FortiAP; validar matriz de compatibilidad con FortiOS.",
+   "source": "https://docs.fortinet.com/document/fortiap/8.0.0/fortiap-release-notes/720334/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiAP K nuevos (221K, 222KL, 244K)",
+   "match": [
+    "^(?:FORTIAP|FAP)-(?:221K|222KL|244K)(?![-\\w])"
+   ],
+   "os": "FortiAP",
+   "recommended": null,
+   "latest": "7.6.5",
+   "lastAvailable": null,
+   "notes": "Soportados en 7.6.5 con build especifico (6592/6570); no listados en 8.0.0.",
+   "source": "https://docs.fortinet.com/document/fortiap/7.6.5/fortiap-release-notes/720334/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiAP serie F (Wi-Fi 6: 231F, 234F, 23JF, 431F, 432F, 432FR, 433F, 831F; tope 7.6)",
+   "match": [
+    "^(?:FORTIAP|FAP)-(?:231F|234F|23JF|431F|432F|432FR|433F|831F)(?![-\\w])"
+   ],
+   "os": "FortiAP",
+   "recommended": null,
+   "latest": "7.6.5",
+   "lastAvailable": "7.6.5",
+   "notes": "No soportados en FortiAP 8.0.0. Pueden recibir mas parches 7.6.",
+   "source": "https://docs.fortinet.com/document/fortiap/7.6.5/fortiap-release-notes/720334/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiAP-U (U221EV a U423EV, U231F, U234F, U431F, U432F, U433F)",
+   "match": [
+    "^(?:FORTIAP|FAP)-U(?:221EV|223EV|24JEV|321EV|323EV|421EV|422EV|423EV|231F|234F|431F|432F|433F)(?![-\\w])"
+   ],
+   "os": "FortiAP-U",
+   "recommended": null,
+   "latest": "7.0.6",
+   "lastAvailable": null,
+   "notes": "Ultima version publicada de FortiAP-U. Sin KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortiap-u/7.0.6/fortiap-u-release-notes/608012/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Fortinet",
+   "family": "FortiExtender (211E, 101F, 200F, 201F, 202F, 212F, 311F, 511F, 101G, 211G, 511G, Vehicle, Rugged 511G)",
+   "match": [
+    "^(?:FORTIEXTENDER|FEX)-(?:211E|101F(?:-AM|-EA)?|200F|201F(?:-AM|-EA)?|202F(?:-AM|-EA)?|212F|311F|511F|101G|211G|511G(?:-WIFI)?)(?![-\\w])",
+    "^(?:FORTIEXTENDERVEHICLE|FEV)-(?:211F(?:-AM)?|212F(?:-AM)?|511G)(?![-\\w])",
+    "^FORTIEXTENDER-RUGGEDIZED-511G(?![-\\w])"
+   ],
+   "os": "FortiExtender",
+   "recommended": null,
+   "latest": "8.0.1",
+   "lastAvailable": null,
+   "notes": "Todos los modelos listados soportan 8.0.1. Sin KB de release recomendado.",
+   "source": "https://docs.fortinet.com/document/fortiextender/8.0.1/release-notes/351118/introduction",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS220",
+   "match": [
+    "^MS220"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "16.9",
+   "notes": "Tope MS 16.9; MS 17 no disponible para este modelo.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS22/MS42/MS320",
+   "match": [
+    "^MS(22|42)P?(-|$)",
+    "^MS320"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "17.2.2",
+   "notes": "Tope MS 17.2.2; MS 17.2.1 no disponible para estos modelos.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MS420",
+   "match": [
+    "^MS420"
+   ],
+   "os": "MS firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "15.23",
+   "notes": "Tope MS 15.23.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MR Wi-Fi 6/6E (vigentes)",
+   "match": [
+    "^MR(28|36H?|44|46E?|56|57|76|78|86)\\b"
+   ],
+   "os": "MR firmware",
+   "recommended": "32.2.4",
+   "latest": "32.2.4",
+   "lastAvailable": null,
+   "notes": "Cisco Recommended y GA = MR 32.2.4. Beta actual MR 33.1.3.",
+   "source": "https://documentation.meraki.com/Wireless/Product_Information/Compatibility_and_Firmware/MR_Firmware_Release_Status_and_Nomenclature",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki CW91xx (modo Meraki)",
+   "match": [
+    "^CW91\\d\\d"
+   ],
+   "os": "MR firmware",
+   "recommended": "32.2.4",
+   "latest": "32.2.4",
+   "lastAvailable": null,
+   "notes": "Aplica a CW916x/917x gestionados por Meraki. Minimo segun modelo (ej. CW9171/CW9174 MR 32.1.5). Beta actual MR 33.1.3.",
+   "source": "https://documentation.meraki.com/Wireless/Product_Information/Compatibility_and_Firmware/MR_Firmware_Release_Status_and_Nomenclature",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MR legacy (tope MR 26)",
+   "match": [
+    "^MR(12|16|18|24|26|32|34|62|66|72)\\b"
+   ],
+   "os": "MR firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "26",
+   "notes": "Modelo limitado a MR 26. Restriccion en https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MR Wi-Fi 5 (tope MR 30)",
+   "match": [
+    "^MR(20|30H|33|42E?|52|53E?|70|74|84)\\b"
+   ],
+   "os": "MR firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "30",
+   "notes": "Modelo limitado a MR 30.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MR45/MR55 (tope MR 31)",
+   "match": [
+    "^MR(45|55)\\b"
+   ],
+   "os": "MR firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "31",
+   "notes": "Modelo limitado a MR 31.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MX64/65/84/100 (tope MX 18.1)",
+   "match": [
+    "^MX(64|65|84|100)W?(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "18.1",
+   "notes": "No suben a MX 18.2+; corren el MX 18.1 indicado en release notes.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MX400/MX600 (tope MX 16)",
+   "match": [
+    "^MX(400|600)(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "16",
+   "notes": "Modelo limitado a MX 16.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MX60/MX90/Z1 (tope MX 14)",
+   "match": [
+    "^MX(60W?|90)(-|$)",
+    "^Z1(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "14",
+   "notes": "No suben a MX 15+. MX80 excluido del match por choque con Juniper MX80 (tambien tope MX 14).",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki Z3/Z3C (tope MX 19.2)",
+   "match": [
+    "^Z3C?(-|$)"
+   ],
+   "os": "MX firmware",
+   "recommended": null,
+   "latest": null,
+   "lastAvailable": "19.2",
+   "notes": "Modelo limitado a MX 19.2.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MG41/MG51/MG52",
+   "match": [
+    "^MG(41|51|52)E?(-|$)"
+   ],
+   "os": "MG firmware",
+   "recommended": "3.212",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Directorio oficial marca 'Stable Release - MG 3.212' y beta MG 26.1; no publica GA/latest numerico.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Cellular_Gateway_(MG)_Firmware_Features_Directory",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Cisco Meraki",
+   "family": "Meraki MG21",
+   "match": [
+    "^MG21E?(-|$)"
+   ],
+   "os": "MG firmware",
+   "recommended": "3.212",
+   "latest": null,
+   "lastAvailable": "4",
+   "notes": "Tope MG21 = 4.x segun tabla de restricciones. Stable MG 3.212 segun directorio de features. Tope en el tren 4.",
+   "source": "https://documentation.meraki.com/Platform_Management/Product_Information/Compatibility_and_Firmware/Firmware_Upgrades/Product_Firmware_Version_Restrictions",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX2300",
+   "match": [
+    "^EX2300"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Latest no verificado: release notes 26.2R1 no listan EX2300 en tablas de plataformas. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX3400",
+   "match": [
+    "^EX3400"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4000",
+   "match": [
+    "^EX4000"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4100-H-12T",
+   "match": [
+    "^EX4100-H-12T"
+   ],
+   "os": "Junos",
+   "recommended": "25.4R1-S3",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4100",
+   "match": [
+    "^EX4100(?!-H-12T)"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4300-MP",
+   "match": [
+    "^EX4300-\\d+MP"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Latest no verificado en release notes 26.2R1.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4300",
+   "match": [
+    "^EX4300(?!-\\d+MP)"
+   ],
+   "os": "Junos",
+   "recommended": "21.4R3",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Latest no verificado; 26.2R1 no lista EX4300. Tren 21.4R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4400",
+   "match": [
+    "^EX4400"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. EX4400-48XP: 24.4R2-S4. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX4650",
+   "match": [
+    "^EX4650"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2-S5",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes.",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX9200 (EX9204/9208/9214)",
+   "match": [
+    "^EX92(00|04|08|14)\\b"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper EX9251/EX9253",
+   "match": [
+    "^EX925[13]\\b"
+   ],
+   "os": "Junos",
+   "recommended": "21.4R3",
+   "latest": null,
+   "lastAvailable": "21.4R3",
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Marcado LSV (ultima version soportada). Tren 21.4R3 (último service release -S de ese tren). Tren 21.4R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5100",
+   "match": [
+    "^QFX5100"
+   ],
+   "os": "Junos",
+   "recommended": "21.4R3",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. KB marca LSV 21.4 por EOL de QFX5100-48SH/48TH. 26.2R1 lista QFX5100VC. Tren 21.4R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5110",
+   "match": [
+    "^QFX5110"
+   ],
+   "os": "Junos",
+   "recommended": "25.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Virtual Chassis: 23.4R2-Sx. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 25.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5120",
+   "match": [
+    "^QFX5120"
+   ],
+   "os": "Junos",
+   "recommended": "25.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Virtual Chassis: 23.4R2-Sx. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 25.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5200-48Y",
+   "match": [
+    "^QFX5200-48Y"
+   ],
+   "os": "Junos",
+   "recommended": "21.1R3",
+   "latest": null,
+   "lastAvailable": "21.1R3",
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Marcado LSV por EOL. Tren 21.1R3 (último service release -S de ese tren). Tren 21.1R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5200-32C",
+   "match": [
+    "^QFX5200(?!-48Y)"
+   ],
+   "os": "Junos",
+   "recommended": "25.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 lista 'QFX5200'. Tren 25.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper QFX5210",
+   "match": [
+    "^QFX5210"
+   ],
+   "os": "Junos",
+   "recommended": "25.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 25.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX300 series",
+   "match": [
+    "^SRX3(00|20|40|45|80)\\b"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Ver TSB92728 antes de subir a 24.4R1+. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX1500",
+   "match": [
+    "^SRX1500"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX1600",
+   "match": [
+    "^SRX1600"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX4100/4200/4600",
+   "match": [
+    "^SRX4(100|200|600)\\b"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX4120/SRX4700",
+   "match": [
+    "^SRX4(120|700)\\b"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper SRX4300",
+   "match": [
+    "^SRX4300"
+   ],
+   "os": "Junos",
+   "recommended": "24.2R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX204/MX240/MX480/MX960",
+   "match": [
+    "^MX(204|240|480|960)(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Valor 'MX Series' general; MX960 con MPC10E o SCBE3: 24.4R2-Sx. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX304",
+   "match": [
+    "^MX304(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX10003/10004/10008/10016",
+   "match": [
+    "^MX100(03|04|08|16)(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Con LC4802: 25.2R1-S3. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX2008",
+   "match": [
+    "^MX2008(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "23.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 23.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX2010/MX2020",
+   "match": [
+    "^MX20(10|20)(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "24.4R2",
+   "latest": "26.2R1",
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. 26.2R1 es el release mas nuevo con la plataforma listada en release notes. Tren 24.4R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX150",
+   "match": [
+    "^MX150(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "23.2R2",
+   "latest": null,
+   "lastAvailable": null,
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. Latest no verificado en 26.2R1. Tren 23.2R2 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "Juniper",
+   "family": "Juniper MX5/MX10/MX40/MX104",
+   "match": [
+    "^MX(5|10|40|104)(-|$)"
+   ],
+   "os": "Junos",
+   "recommended": "21.2R3",
+   "latest": null,
+   "lastAvailable": "21.2R3",
+   "notes": "Sugerida segun KB21476 (act. 2026-10-20). 'Sx' = ultimo service release del tren. LSV. MX5: 21.2R3-S9. MX80 (tambien LSV 21.2R3-Sx) excluido del match por choque con Meraki MX80. Tren 21.2R3 (último service release -S de ese tren). Tren 21.2R3 (último service release -S de ese tren).",
+   "source": "https://supportportal.juniper.net/s/article/Junos-Software-Versions-Suggested-Releases-to-Consider-and-Evaluate",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 6000/6100",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?(6000|6100)"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007246en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 6200",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?6200",
+    "^(JL724A|JL725A|JL726A|JL727A|JL728A|R8Q67A|R8Q68A|R8Q69A|R8Q70A|R8Q71A|R8Q72A|R8V08A|R8V09A|R8V10A|R8V11A|R8V12A|R8V13A|S0G13A|S0G14A|S0G15A|S0G16A|S0G17A|S0M81A|S0M82A|S0M83A|S0M84A|S0M85A|S0M86A|S0M87A|S0M88A|S0M89A|S0M90A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "PN parciales (solo los con version minima en RN). Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007247en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 6300/6300L/6300M/6400",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?(6300|6400)",
+    "^(JL665A|JL666A|JL667A|JL668A|JL741A|R0X26A|R0X27A|R0X31A|R0X41A|R0X42A|R0X43A|R0X44A|R0X45A|R8S89A|R8S90A|R8S91A|R8S92A|S0E48A|S0E91A|S0E92A|S0E93A|S0F99A|S0G00A|S0G01A|S0G02A|S0G03A|S0G04A|S0G05A|S0G06A|S0G95A|S0G96A|S0G97A|S0G98A|S0X44A|S1T83A|S3L75A|S3L76A|S3L77A|S4V98A|S6X58A|S6X59A|S6X60A|S7K41A|S7K42A|S7K43A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "PN parciales (ej. JL659A no listado). Central: 6300M recomienda 10.16.1000+. Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007248en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 8100/8360",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?(8100|8360)",
+    "^(R9W94A|R9W95A|R9W96A|R9W97A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007250en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 8320",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?8320",
+    "^(JL479A|JL579A|JL581A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Aun soportado en 10.18.1002. Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007251en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 8325/8325P/8325H",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?8325",
+    "^(JL624A|JL625A|JL626A|JL627A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007252en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 8400",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?8400",
+    "^(JL363A|JL366A|JL687A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007254en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 9300",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?9300(?!S)",
+    "^(R8Z96A|R9A29A|R9A30A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007257en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 9300S/10040",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?(9300S|10040)"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007258en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 10000",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?10000",
+    "^(R8P13A|R8P14A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007259en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-CX 5420",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(CX[ -]?)?5420",
+    "^(S0U55A|S0U58A|S0U60A|S0U63A|S0U64A|S0U65A|S0U66A|S0U67A|S0U68A|S0U70A|S0U71A|S0U72A|S0U73A|S0U74A|S0U75A|S0U76A|S0U77A|S0U78A)\\b"
+   ],
+   "os": "AOS-CX",
+   "recommended": null,
+   "latest": "10.18.1002",
+   "lastAvailable": null,
+   "notes": "Sin release recomendado publico por serie (aos-cx_releases.pdf ya no esta publicado). Central recomienda 10.13.1110 o superior como minimo. 10.18 es SSR; ultimo LSR: 10.16.1060 (10.13.1190 en tren 10.13).",
+   "source": "https://support.hpe.com/hpesc/public/docDisplay?docId=sd00007240en_us&docLocale=en_US",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 2530",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?2530",
+    "^(J977[2-9]A|J978[0-3]A|JL070A|J985[3-6]A)\\b"
+   ],
+   "os": "AOS-S (YA/YB.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 2540",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?2540",
+    "^(JL35[4-7]A)\\b"
+   ],
+   "os": "AOS-S (YC.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 2930F/2930M",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?2930",
+    "^(JL25[3-689]A|JL26[0-4]A|JL319A|JL32[0-4]A|JL55[7-9]A|JL69[23]A|R0M6[78]A)\\b"
+   ],
+   "os": "AOS-S (WC.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 3810M",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?3810",
+    "^(JL07[1-6]A)\\b"
+   ],
+   "os": "AOS-S (KB.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  },
+  {
+   "vendor": "HPE Aruba Networking",
+   "family": "AOS-S 5400R",
+   "match": [
+    "^(ARUBA[ -]?|HPE[ -]?)?(5400R|540[6]R|5412R)",
+    "^(JL00[1-3]A|JL095A)\\b"
+   ],
+   "os": "AOS-S (KB.16.11)",
+   "recommended": "16.11.0032",
+   "latest": "16.11.0032",
+   "lastAvailable": null,
+   "notes": "16.11.0032 (2026-09-24) es el ultimo build 16.11 publicado y el minimo que recomienda HPESBNW05156 (CVE criticos). Boletin: https://support.hpe.com/hpesc/public/docDisplay?docId=hpesbnw05156en_us",
+   "source": "https://arubanetworking.hpe.com/techdocs/AOS-Switch/RN/16.11/AOS-SSwitch16.11.0032RN.pdf",
+   "checked": "2026-10-28"
+  }
+ ]
+}

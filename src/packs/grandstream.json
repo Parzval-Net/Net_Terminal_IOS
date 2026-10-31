@@ -1,0 +1,1071 @@
+{
+  "vendor": "grandstream",
+  "name": "Grandstream",
+  "platforms": [
+    {
+      "id": "gwn-sw",
+      "label": "GWN78xx switches gestionables (GWN780x/781x/782x/783x)",
+      "detect": "Device Model\\s*:\\s*GWN78",
+      "note": "CLI tipo Cisco vía SSH, Telnet o consola (115200). Prompt hostname# y hostname(config)#. Puertos Ethernet unidad/0/puerto, ej. 1/0/1."
+    }
+  ],
+  "detectCommand": "show info",
+  "commands": [
+    {
+      "cmd": "show info",
+      "desc": "Muestra nombre, modelo, MAC, IP de gestión, versiones de loader/firmware/hardware, número de serie y uptime. Primer comando para identificar el equipo.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show version",
+      "desc": "Muestra versión y fecha de bootloader y firmware. Útil antes de un upgrade o para validar release.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show cpu utilization",
+      "desc": "Muestra el uso de CPU del switch. Usar ante lentitud de gestión o sospecha de tormentas.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show cpu input rate",
+      "desc": "Muestra la tasa de paquetes que llegan a la CPU por tipo. Ayuda a detectar tráfico de control excesivo.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show memory statistics",
+      "desc": "Muestra memoria total, usada, libre, buffer y cache en KB.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show clock detail",
+      "desc": "Muestra fecha, hora, zona horaria y fuente de reloj. Clave para correlacionar logs.",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show users",
+      "desc": "Muestra las sesiones de usuarios conectadas actualmente al switch.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show username",
+      "desc": "Lista las cuentas locales configuradas y su nivel de privilegio.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show temperature",
+      "desc": "Muestra la temperatura del equipo. Solo en modelos con sensor (ver guía por modelo).",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show fan",
+      "desc": "Muestra el estado y velocidad de los ventiladores. Solo modelos con ventilador.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show alarm",
+      "desc": "Muestra la configuración de alarmas del sistema (CPU, memoria, temperatura, PoE, ventilador).",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show interfaces brief",
+      "desc": "Resumen de todas las interfaces: estado físico y de protocolo, uso de ancho de banda y errores. Primer chequeo de puertos.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}}",
+      "desc": "Detalle de un puerto o LAG: estado, velocidad, duplex, contadores. Ej. interfaz = Ethernet 1/0/1 o lag 1.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}} status",
+      "desc": "Estado resumido del puerto: nombre, estado, VLAN, duplex, velocidad y tipo.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show interfaces description",
+      "desc": "Muestra la descripción configurada en cada interfaz.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show interfaces Ethernet {{puerto}} mib-counters",
+      "desc": "Contadores MIB detallados del puerto (errores, CRC, broadcast, etc.). Usar para diagnosticar errores de capa física. Ej. puerto = 1/0/1.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "clear interfaces {{interfaz}} counters",
+      "desc": "Limpia los contadores del puerto para medir errores desde cero.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show fiber-transceiver interfaces Ethernet {{puerto}}",
+      "desc": "Muestra información y niveles ópticos del transceptor SFP del puerto.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show cable-diag interfaces Ethernet {{puerto}}",
+      "desc": "Ejecuta y muestra el diagnóstico de cable cobre (largo y estado de pares).",
+      "cat": "Diagnóstico",
+      "risk": "disruptive",
+      "note": "Modo Privileged EXEC (Switch#). La prueba de cable corta el enlace del puerto mientras corre.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "configure",
+      "desc": "Entra al modo de configuración global.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "interface Ethernet {{puerto}}",
+      "desc": "Entra a la configuración de un puerto. Ej. puerto = 1/0/1. Para rangos: interface range Ethernet 1/0/1-1/0/5.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "description {{texto}}",
+      "desc": "Asigna una descripción al puerto.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "shutdown",
+      "desc": "Deshabilita administrativamente el puerto. Corta el servicio conectado.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "no shutdown",
+      "desc": "Habilita administrativamente el puerto.",
+      "cat": "Interfaces",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "speed {{velocidad}}",
+      "desc": "Fija la velocidad del puerto (10, 100, 1000, 2500, 10000) o speed auto. Puede renegociar el enlace.",
+      "cat": "Interfaces",
+      "risk": "disruptive",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show vlan",
+      "desc": "Lista las VLAN con sus puertos tagged y untagged.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#). Acepta show vlan {VLAN-LIST}.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "vlan {{vlan}}",
+      "desc": "Crea la VLAN (o rango, ej. 2-4) y entra a su configuración (config-vlan).",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "switchport mode access",
+      "desc": "Configura el puerto como access. Alternativas: hybrid, trunk.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "switchport access vlan {{vlan}}",
+      "desc": "Asigna la VLAN de acceso del puerto.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "switchport mode trunk",
+      "desc": "Configura el puerto como trunk.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "switchport trunk allowed vlan add {{vlanes}}",
+      "desc": "Agrega VLANs permitidas al trunk (usar remove para quitar).",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "switchport trunk native vlan {{vlan}}",
+      "desc": "Define la VLAN nativa del trunk.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show voice-vlan",
+      "desc": "Muestra la configuración de Voice VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show mac address-table",
+      "desc": "Muestra la tabla MAC completa. Para ubicar en qué puerto está un equipo.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show mac address-table vlan {{vlan}}",
+      "desc": "Muestra las MAC aprendidas en una VLAN.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show mac address-table interfaces {{interfaz}}",
+      "desc": "Muestra las MAC aprendidas en un puerto o LAG.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show mac address-table counters",
+      "desc": "Muestra la cantidad de entradas MAC del switch.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show mac address-table flapping record",
+      "desc": "Muestra el registro de MAC flapping. Útil para detectar loops.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show lldp neighbor",
+      "desc": "Muestra los vecinos LLDP (equipo, puerto remoto). Para validar topología física.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show lldp interfaces Ethernet {{puerto}} neighbor",
+      "desc": "Muestra el vecino LLDP de un puerto específico.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show lldp",
+      "desc": "Muestra la configuración global de LLDP y su estado por puerto.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show lldp statistics",
+      "desc": "Muestra estadísticas LLDP (tramas enviadas, recibidas, descartadas).",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show spanning-tree interfaces {{interfaz}}",
+      "desc": "Muestra el estado STP de un puerto (rol, estado, costo). Agregar statistic para contadores BPDU.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show spanning-tree mst configuration",
+      "desc": "Muestra la región MST: nombre, revisión y mapeo de instancias a VLANs.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "spanning-tree mode {{modo}}",
+      "desc": "Cambia el modo STP (stp, rstp, mstp, pvst, rpvst). Provoca reconvergencia.",
+      "cat": "Capa 2",
+      "risk": "disruptive",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "spanning-tree priority {{prioridad}}",
+      "desc": "Define la prioridad del puente para la elección de root.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "spanning-tree edge true",
+      "desc": "Marca el puerto como edge (portfast). Solo hacia equipos finales.",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x. Valores: auto, true, false.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "spanning-tree bpdu-guard",
+      "desc": "Activa BPDU guard en el puerto para bloquearlo si recibe BPDU.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show errdisable recovery",
+      "desc": "Muestra causas y tiempo de recuperación automática de puertos en error-disable.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show lag",
+      "desc": "Muestra los grupos de agregación (LAG), modo y puertos miembros.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show lacp neighbor",
+      "desc": "Muestra los vecinos LACP por puerto. Para validar que el LAG negoció con el par.",
+      "cat": "Capa 2",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#). También: show lacp counters | internal | sys-id.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "lag {{lag}} mode active",
+      "desc": "Agrega el puerto al LAG indicado con LACP activo (static o passive como alternativas).",
+      "cat": "Capa 2",
+      "risk": "change",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show poe",
+      "desc": "Muestra el estado PoE global: potencia total, usada y reservada.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#). Solo modelos P (PoE).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show poe Ethernet {{puerto}}",
+      "desc": "Muestra el estado PoE del puerto: clase, consumo y prioridad.",
+      "cat": "Hardware",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#). Solo modelos P (PoE).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "poe mode disable",
+      "desc": "Desactiva PoE en el puerto. Apaga el equipo alimentado (AP, teléfono, cámara).",
+      "cat": "Hardware",
+      "risk": "disruptive",
+      "note": "Modo interfaz (Switch(config-if)#), tras interface Ethernet 1/0/x. Valores: enable, forcepower, disable.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show ip interface",
+      "desc": "Muestra las interfaces IPv4 (VLAN y loopback) con su dirección.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show ip default-gateway",
+      "desc": "Muestra el gateway por defecto IPv4.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show ip route",
+      "desc": "Muestra la tabla de rutas IPv4. Opciones: connected, static, detail.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#). Modelos L3 (GWN781x/782x/783x).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "ip route {{red}}/{{prefijo}} {{next_hop}}",
+      "desc": "Agrega una ruta estática IPv4. Opcional: preference {1-255}.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#). Modelos L3.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "interface vlan {{vlan}}",
+      "desc": "Entra a la interfaz VLAN (SVI) para asignarle IP con ip address {ip}/{prefijo}.",
+      "cat": "Enrutamiento",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show arp",
+      "desc": "Muestra la tabla ARP. Filtros: ip-address, mac-address, vlan, interface.",
+      "cat": "Enrutamiento",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show ip acl",
+      "desc": "Muestra las ACL IPv4 configuradas y sus reglas. Acepta nombre de ACL.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Según la guía se ejecuta en modo configuración global; con do show ip acl desde config.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show mac acl",
+      "desc": "Muestra las ACL MAC configuradas y sus reglas.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Según la guía se ejecuta en modo configuración global.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "ip acl {{nombre}}",
+      "desc": "Crea una ACL IPv4 y entra a su edición para agregar reglas sequence permit/deny.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show port-security",
+      "desc": "Muestra el estado de port security global y por puerto.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show ip arp inspection",
+      "desc": "Muestra el estado de Dynamic ARP Inspection.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show ip source binding",
+      "desc": "Muestra la tabla de bindings de IP Source Guard.",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show aaa authentication login lists",
+      "desc": "Muestra las listas de métodos de autenticación de login (local, RADIUS, TACACS+).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "username {{usuario}} privilege admin secret {{password}}",
+      "desc": "Crea un usuario local con privilegio admin y clave cifrada. Privilegios: admin, operator, monitor.",
+      "cat": "Seguridad",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show line ssh",
+      "desc": "Muestra la configuración de acceso SSH (puerto, timeout).",
+      "cat": "Seguridad",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#). También show line telnet / console.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show storm-control",
+      "desc": "Muestra la configuración de storm control por puerto.",
+      "cat": "QoS",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show qos interfaces Ethernet {{puerto}}",
+      "desc": "Muestra la configuración QoS del puerto.",
+      "cat": "QoS",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show logging",
+      "desc": "Muestra el log del sistema. Filtros: include, exclude, severity.",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show logging include {{texto}}",
+      "desc": "Filtra el log por un texto (ej. un puerto o fecha).",
+      "cat": "Logs",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "logging server 1 host {{ip}}",
+      "desc": "Envía logs a un servidor syslog remoto (hasta 3). Opcional: port, severity, facility, protocol.",
+      "cat": "Logs",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "clear logging",
+      "desc": "Borra el log local del switch.",
+      "cat": "Logs",
+      "risk": "change",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "ping {{ip}}",
+      "desc": "Prueba conectividad ICMP. Opcional: size, count, vlan.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "traceroute {{ip}}",
+      "desc": "Traza la ruta hacia un destino. Opcional: max_hop, vlan.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show tech-support",
+      "desc": "Genera la salida completa de diagnóstico (one-click debugging) para soporte.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#). Salida extensa.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show mirror",
+      "desc": "Muestra las sesiones de port mirroring configuradas.",
+      "cat": "Diagnóstico",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show running-config",
+      "desc": "Muestra la configuración en ejecución.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show startup-config",
+      "desc": "Muestra la configuración guardada que carga al reiniciar.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show flash",
+      "desc": "Lista los archivos en flash, incluidas imágenes de firmware activa y de respaldo.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "save",
+      "desc": "Guarda la configuración en ejecución en startup-config. Equivale a copy running-config startup-config.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "copy running-config startup-config",
+      "desc": "Guarda la configuración en ejecución en startup-config.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "copy running-config tftp://{{ip}}/{{archivo}}",
+      "desc": "Respalda la configuración en ejecución en un servidor TFTP.",
+      "cat": "Configuración",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "backup-config create running-config",
+      "desc": "Crea un respaldo local de la configuración en ejecución.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Modo Privileged EXEC (Switch#). Ver respaldos con backup-config list.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "backup-config list",
+      "desc": "Lista los respaldos de configuración locales con su fecha.",
+      "cat": "Configuración",
+      "risk": "change",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show upgrade",
+      "desc": "Muestra la configuración de actualización de firmware (protocolo, servidor).",
+      "cat": "Sistema",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "show stack",
+      "desc": "Muestra los miembros del stack, roles y prioridades.",
+      "cat": "Alta disponibilidad",
+      "risk": "read",
+      "note": "Modo Privileged EXEC (Switch#). Solo modelos con stacking.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "reboot",
+      "desc": "Reinicia el switch. Corta el servicio durante el arranque.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "restore-defaults",
+      "desc": "Restaura valores de fábrica (equivale a delete startup-config). Pregunta si reiniciar.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "delete startup-config",
+      "desc": "Borra la configuración guardada; al reiniciar el equipo vuelve a fábrica.",
+      "cat": "Configuración",
+      "risk": "disruptive",
+      "note": "Modo Privileged EXEC (Switch#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "upgrade protocol {{protocolo}}",
+      "desc": "Define el método de upgrade de firmware: http, https, tftp, ftp o ftps. Por defecto http.",
+      "cat": "Sistema",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "upgrade server {{servidor}}",
+      "desc": "Define el servidor de firmware (IP o URL). Por defecto fm.grandstream.com/gs. Acepta usuario y clave al final.",
+      "cat": "Sistema",
+      "risk": "change",
+      "note": "Modo configuración global (Switch(config)#).",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    },
+    {
+      "cmd": "upgrade",
+      "desc": "Inicia el upgrade inmediato desde el servidor configurado. Pide confirmar y si guardar la configuración. El switch reinicia.",
+      "cat": "Sistema",
+      "risk": "disruptive",
+      "note": "Modo Privileged EXEC (Switch#). Acepta un servidor como argumento opcional.",
+      "platforms": [
+        "gwn-sw"
+      ],
+      "source": "https://documentation.grandstream.com/knowledge-base/gwn78xx-cli-guide/"
+    }
+  ]
+}

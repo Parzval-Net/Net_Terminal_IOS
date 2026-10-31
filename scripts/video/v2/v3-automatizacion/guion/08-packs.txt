@@ -1,0 +1,9 @@
+# Packs de comandos
+
+Los packs amplían el catálogo, que abres con ⌘L; en Windows y Linux, Ctrl+Shift+L. Un pack es un archivo JSON con comandos y explicaciones: solo datos, nunca se ejecuta al importarlo.
+
+Para crear tus comandos, presiona Propio en el catálogo: comando, explicación, categoría y el riesgo que declaras. Si declaras consulta pero el comando cambia estado, como clear counters, la app avisa que lo tratará como cambio: siempre manda el riesgo mayor.
+
+Tus comandos quedan en Mis comandos, un pack por fabricante, que puedes activar, desactivar o exportar en la ventana Packs de comandos.
+
+Al importar un pack ajeno ves un resumen: comandos por riesgo, cuántos declaraban menos riesgo del real y si reemplaza un pack con el mismo id. Al compartir, usa variables en lugar de IPs, nombres de equipos o credenciales.

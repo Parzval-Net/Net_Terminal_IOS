@@ -1,0 +1,13 @@
+# SSH, Telnet y Serial
+SSH usa el OpenSSH de tu sistema, así que respeta tu configuración, tu agente y tus llaves.
+En la sesión puedes indicar una llave privada y un jump host, el equipo intermedio por el que se pasa antes de llegar al destino.
+En Túneles SSH agregas túneles locales, remotos o dinámicos, que escuchan en 127.0.0.1 por defecto.
+Telnet es un cliente propio de la app, y en Serial eliges puerto, velocidad, paridad y control de flujo.
+Si un equipo antiguo solo ofrece algoritmos que OpenSSH ya no acepta, la conexión falla.
+La app lo detecta: presiona la tecla L para activar la compatibilidad en esa sesión y reconectar.
+La misma opción está en la sesión, como Permitir algoritmos legacy, y en Ajustes, Terminal, en modo automático, apagado por defecto.
+Son algoritmos débiles: úsalos solo en redes de gestión confiables.
+Cada sesión puede guardar su contraseña en una bóveda cifrada. El campo es de solo escritura: nunca se vuelve a mostrar.
+Al conectar, la app la completa una sola vez, en el primer pedido de contraseña.
+No la completa si el equipo la rechazó, si pide la frase de una llave, ni en el equipo intermedio de un jump host.
+Para SSH, lo más seguro sigue siendo usar llaves y agente.

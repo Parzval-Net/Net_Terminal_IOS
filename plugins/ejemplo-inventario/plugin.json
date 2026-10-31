@@ -1,0 +1,13 @@
+{
+  "id": "ejemplo-inventario",
+  "name": "Inventario Cisco",
+  "version": "1.0.0",
+  "description": "Obtiene modelo, número de serie y versión del equipo conectado y los agrega a inventario.csv. También lista las interfaces caídas.",
+  "author": "NetTerminal",
+  "entry": "main.py",
+  "permissions": ["session", "files"],
+  "actions": [
+    { "id": "inventario", "label": "Agregar a inventario", "description": "show version + show inventory" },
+    { "id": "caidas", "label": "Interfaces caídas", "description": "show ip interface brief" }
+  ]
+}

@@ -1,0 +1,9 @@
+# Qué es NetTerminal e instalación
+NetTerminal es un cliente de conexión para el trabajo diario con equipos de red y servidores.
+Reúne SSH, Telnet, Serial y una terminal local en una sola app, para macOS, Windows y Linux.
+Todo lo que verás usa datos ficticios.
+Descarga el archivo de tu sistema desde la página de versiones del proyecto: una imagen dmg para macOS, un instalador de Windows, un AppImage o un paquete deb para Linux.
+Si no quieres instalar nada, usa el zip portable: trae los tres ejecutables y una carpeta data con tus sesiones, ajustes y notas.
+Las versiones instaladas buscan novedades al abrir y cada seis horas, o con Buscar ahora en Ajustes, Acerca de.
+Si hay una versión nueva, Actualizar y reiniciar la descarga, verifica la firma del proyecto y la instala, siempre con tu confirmación.
+En modo portable y con el paquete deb, la actualización es manual.

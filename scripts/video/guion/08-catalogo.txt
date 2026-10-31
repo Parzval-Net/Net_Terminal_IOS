@@ -1,0 +1,10 @@
+# Catálogo y packs de comandos
+⌘L abre el catálogo de comandos: 1.776 comandos verificados con fuente oficial.
+Incluye Cisco, Juniper, Fortinet, Huawei, Check Point y WatchGuard, además de Windows, macOS y Linux.
+Detectar ajusta la sintaxis a la plataforma del equipo conectado.
+Puedes buscar por comando o por tarea, por ejemplo vecinos.
+Cada comando trae su explicación y nivel de riesgo, y lo que puede cortar servicio siempre pide confirmación.
+Puedes ejecutarlo, escribirlo sin Enter, marcarlo como favorito o abrir su fuente.
+Con Propio agregas tus comandos, con variables y riesgo.
+Packs de comandos muestra los packs incluidos y permite importar los tuyos en formato JSON.
+Un pack nunca se ejecuta al importarlo, y la app recalcula el riesgo de cada comando.

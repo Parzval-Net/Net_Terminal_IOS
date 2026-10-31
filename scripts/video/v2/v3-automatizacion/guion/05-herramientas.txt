@@ -1,0 +1,11 @@
+# Instalar las herramientas
+
+Algunas funciones usan programas del sistema. Puedes comprobar cada uno en la terminal local de NetTerminal, que abres con ⌘T; en Windows y Linux, Ctrl+Shift+T.
+
+Python 3 es necesario para scripts y plugins. En Windows y macOS, descárgalo desde python.org; en Linux casi siempre viene instalado. En Windows la app usa el lanzador py; en macOS prefiere el Python de Homebrew o de python.org. Si lo instalas con la app abierta, pulsa Volver a detectar en Herramientas, Plugins.
+
+iperf3 es para la prueba de velocidad. En macOS se instala con Homebrew y en Linux con el gestor de paquetes. En Windows, el proyecto iperf no publica binarios: el sitio iperf punto fr enlaza compilaciones de terceros, así que verifica su origen y deja el ejecutable junto a NetTerminal o en el PATH.
+
+El cliente OpenSSH trae ssh, scp y sftp. macOS lo incluye. En Linux es el paquete openssh-client, u openssh-clients en Fedora y Red Hat. En Windows es una característica opcional: agrega OpenSSH Client desde Configuración, o desde PowerShell como administrador.
+
+Para traceroute, Windows trae tracert y macOS trae traceroute. En Linux la app usa traceroute o tracepath. Telnet no necesita nada: viene dentro de la app.

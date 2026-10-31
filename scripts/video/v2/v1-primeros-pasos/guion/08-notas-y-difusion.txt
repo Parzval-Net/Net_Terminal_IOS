@@ -1,0 +1,10 @@
+# Notas, plantillas y envío a varias sesiones
+⌘J abre Notas, un panel con notas de texto que se guardan solas.
+⌘Enter, o Ctrl+Enter en Windows y Linux, envía la línea o la selección a la sesión activa, y Todo envía la nota completa.
+Las variables entre llaves dobles convierten la nota en plantilla: al enviarla, la app pide cada valor.
+Los valores se recuerdan, salvo los que parecen secretos, como contraseñas, enable o comunidades SNMP: esos se piden ocultos y no se guardan.
+Antes de enviar varias líneas o un cambio, ves un resumen para confirmar.
+Una nota con datos sensibles se puede proteger con contraseña: queda cifrada y se bloquea por inactividad.
+Para enviar a varios equipos, cambia el destino abajo: pestañas elegidas, una carpeta o los paneles visibles.
+Antes de enviar ves la lista de equipos, los omitidos y el riesgo de cada línea. Si hay cambios, confirmas escribiendo la cantidad de equipos.
+El envío es secuencial y puedes detenerlo en cualquier momento.

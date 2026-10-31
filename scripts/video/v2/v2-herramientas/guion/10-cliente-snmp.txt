@@ -1,0 +1,13 @@
+# Cliente SNMP
+
+SNMP lee datos de un equipo sin entrar a su consola. El cliente es solo de lectura: nunca escribe en el equipo.
+
+Empieza por el perfil, en Destino SNMP. Escribe la IP y elige la versión. SNMPv3 viene por defecto, con authPriv, SHA-256 y AES-128. MD5 y DES quedan ocultos por ser heredados. v2c envía la comunidad en claro: úsalo solo si el equipo no soporta v3.
+
+Activa Guardar secretos en la bóveda cifrada si Topología los va a usar; quedan atados a ese host y puerto.
+
+En Consulta, GET lee un OID exacto y GETNEXT el siguiente. El recorrido completo de la tabla usa GETBULK, que pide muchas filas por paquete, con tope de filas y botón Detener. Conjuntos de OIDs arma tablas listas, como Interfaces con contadores de 64 bits, y Medir tasas calcula el tráfico.
+
+El Receptor de traps viene apagado y, atención, por defecto escucha en 127.0.0.1, que solo sirve para este PC. En Escuchar en, elige la IP de gestión, o pulsa el botón que ya la trae. El puerto es 162; si no inicia, usa 1162 y configúralo en el equipo.
+
+El Generador de configuración crea un agente de solo lectura. Elige la plataforma y escribe la IP del NMS, obligatoria para la ACL. Sin contraseñas, salen marcadores que reemplazas antes de pegar, y las líneas Verifica marcan sintaxis que depende de la versión.

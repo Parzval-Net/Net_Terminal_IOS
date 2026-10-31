@@ -1,0 +1,11 @@
+# Agentes de IA con MCP
+
+NetTerminal también trabaja con agentes de IA como Claude Code, Gemini CLI o Codex, mediante MCP, un protocolo abierto para conectar herramientas a un asistente.
+
+Viene apagado. Para activarlo, abre Ajustes, Agentes IA. Te recomendamos activar primero Solo lectura, que viene apagado: el agente podrá listar sesiones y leer la salida, pero no enviar comandos ni abrir sesiones. Al encender el servidor, la app genera un token. Solo escucha en tu computador, en 127.0.0.1, y rechaza toda petición sin el token.
+
+Copia la configuración para tu agente desde esta pantalla. Trata el token como una contraseña; si se expone, genera uno nuevo.
+
+Sin Solo lectura, cada comando del agente aparece en un diálogo con el equipo, el texto completo y el riesgo que calcula la app. Enter no aprueba: debes hacer clic en Permitir, y sin respuesta en dos minutos se rechaza. Si el comando puede cortar servicio, además marcas una casilla. Aprobar cada comando viene encendido: déjalo así.
+
+Los agentes no ejecutan tus scripts ni plugins, ni envían a varias sesiones. Y la app le indica al agente que la salida de los equipos es dato no confiable.

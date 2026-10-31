@@ -1,0 +1,8 @@
+# Logs, alertas, historial y búsqueda
+Para grabar una sesión, pulsa Log en la barra de estado. El archivo queda en texto plano y continúa al reconectar.
+En Ajustes, Logs, defines grabación automática, hora por línea, nombre del archivo y rotación diaria.
+Ocultar secretos viene activado: contraseñas, comunidades y llaves quedan con asteriscos.
+En Ajustes, Alertas, creas reglas por texto o expresión regular, para todas las sesiones o una carpeta.
+Cuando la salida coincide, avisan en pantalla y marcan la pestaña. Nunca envían comandos.
+Historial muestra los últimos comandos enviados a ese equipo desde Notas, el catálogo o los botones, no lo que tecleas.
+Y con ⌘F buscas texto en la salida de la terminal.

@@ -1,0 +1,205 @@
+name: Android Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: false
+
+      - name: Configurar Java 17 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Configurar Android SDK y NDK
+        run: |
+          echo "Configurando Android SDK y NDK..."
+          if [ -z "${ANDROID_HOME:-}" ]; then
+            export ANDROID_HOME="/usr/local/lib/android/sdk"
+          fi
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_HOME" >> "$GITHUB_ENV"
+
+          # Buscar NDK instalado o instalar NDK 27 si hace falta
+          NDK_DIR=$(ls -1d "$ANDROID_HOME/ndk/"* 2>/dev/null | sort -V | tail -n 1 || true)
+          if [ -z "$NDK_DIR" ] || [ ! -d "$NDK_DIR" ]; then
+            echo "Instalando NDK con sdkmanager..."
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;27.2.12479018"
+            NDK_DIR="$ANDROID_HOME/ndk/27.2.12479018"
+          fi
+
+          echo "NDK_HOME=$NDK_DIR" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_ROOT=$NDK_DIR" >> "$GITHUB_ENV"
+          echo "NDK configurado en: $NDK_DIR"
+
+          # Agregar build-tools al PATH para apksigner y zipalign
+          BUILD_TOOLS_DIR=$(ls -1d "$ANDROID_HOME/build-tools/"* 2>/dev/null | sort -V | tail -n 1)
+          echo "$BUILD_TOOLS_DIR" >> "$GITHUB_PATH"
+          echo "Build-tools configurado en: $BUILD_TOOLS_DIR"
+
+      - name: Configurar Rust Toolchain y Targets Android
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: aarch64-linux-android,armv7-linux-androideabi,i686-linux-android,x86_64-linux-android
+
+      - name: Instalar dependencias del proyecto (npm)
+        run: npm ci --ignore-scripts
+
+      - name: Preparar y parchear proyecto Android (scripts/setup-android.sh)
+        run: |
+          chmod +x scripts/setup-android.sh
+          ./scripts/setup-android.sh
+
+      - name: Compilar APK Universal y Split por Arquitectura
+        run: |
+          echo "Compilando APK Universal..."
+          npx tauri android build --apk --target aarch64 armv7 x86_64
+
+          echo "Compilando APKs split por ABI..."
+          npx tauri android build --apk --split-per-abi --target aarch64 armv7 x86_64
+
+      - name: Firmar y organizar APKs para distribución
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          mkdir -p dist-android
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Versión de la aplicación: v$VERSION"
+
+          # Determinar keystore de firma (Release si existen los secretos, Debug si aún no se configuran)
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ] && [ -n "$KEY_ALIAS" ]; then
+            echo "✔ Usando Keystore de Release proporcionada por secretos de GitHub..."
+            echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
+            KS_PATH="release.keystore"
+            KS_PASS="$KEYSTORE_PASSWORD"
+            KS_KEY_PASS="${KEY_PASSWORD:-$KEYSTORE_PASSWORD}"
+            KS_ALIAS="$KEY_ALIAS"
+            SIGN_TYPE="release"
+          else
+            echo "ℹ Secretos de Keystore no configurados. Generando Keystore Debug para APK listo para instalar..."
+            keytool -genkey -v -keystore debug.keystore \
+              -storepass android -alias androiddebugkey -keypass android \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=NetTerminal,OU=Mobile,O=Parzval-Net,C=CL"
+            KS_PATH="debug.keystore"
+            KS_PASS="android"
+            KS_KEY_PASS="android"
+            KS_ALIAS="androiddebugkey"
+            SIGN_TYPE="debug"
+          fi
+
+          # Buscar todos los APKs generados en src-tauri/gen/android
+          echo "APKs generados encontrados:"
+          find src-tauri/gen/android/app/build/outputs/apk/ -type f -name "*.apk"
+
+          # Procesar cada APK
+          mapfile -t APKS < <(find src-tauri/gen/android/app/build/outputs/apk/ -type f -name "*.apk" | grep -v "unaligned")
+
+          for apk in "${APKS[@]}"; do
+            base=$(basename "$apk")
+            out_name=""
+
+            if [[ "$base" == *"universal"* ]] || [[ "$apk" == *"universal"* ]]; then
+              out_name="NetTerminal_${VERSION}_universal.apk"
+            elif [[ "$base" == *"arm64-v8a"* ]] || [[ "$apk" == *"arm64-v8a"* ]]; then
+              out_name="NetTerminal_${VERSION}_arm64-v8a.apk"
+            elif [[ "$base" == *"armeabi-v7a"* ]] || [[ "$apk" == *"armeabi-v7a"* ]]; then
+              out_name="NetTerminal_${VERSION}_armeabi-v7a.apk"
+            elif [[ "$base" == *"x86_64"* ]] || [[ "$apk" == *"x86_64"* ]]; then
+              out_name="NetTerminal_${VERSION}_x86_64.apk"
+            elif [[ "$base" == *"x86"* ]] || [[ "$apk" == *"x86"* ]]; then
+              out_name="NetTerminal_${VERSION}_x86.apk"
+            else
+              out_name="NetTerminal_${VERSION}_${base}"
+            fi
+
+            target_apk="dist-android/$out_name"
+            echo "Procesando $base -> $target_apk ($SIGN_TYPE)..."
+
+            # Alinear APK si zipalign está disponible
+            if command -v zipalign >/dev/null 2>&1; then
+              zipalign -p -f 4 "$apk" "$target_apk.aligned" 2>/dev/null || cp "$apk" "$target_apk.aligned"
+              mv "$target_apk.aligned" "$target_apk"
+            else
+              cp "$apk" "$target_apk"
+            fi
+
+            # Firmar con apksigner
+            apksigner sign --ks "$KS_PATH" \
+              --ks-pass "pass:$KS_PASS" \
+              --key-pass "pass:$KS_KEY_PASS" \
+              --ks-key-alias "$KS_ALIAS" \
+              --out "$target_apk" \
+              "$target_apk"
+
+            # Verificar firma
+            apksigner verify --verbose "$target_apk"
+            echo "✔ Firmado exitosamente: $target_apk"
+          done
+
+          # Generar checksums SHA-256
+          cd dist-android
+          sha256sum *.apk > SHA256SUMS-android.txt
+          cat SHA256SUMS-android.txt
+          cd ..
+
+      - name: Subir artefactos de GitHub Actions (APKs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetTerminal-Android-v${{ github.ref_name }}
+          path: dist-android/*
+          retention-days: 30
+
+      - name: Adjuntar APKs a GitHub Release (en Tags v*)
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          TAG: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Adjuntando APKs al Release $TAG en $REPO..."
+          # Reintentar o verificar si el release ya existe
+          for i in {1..5}; do
+            if gh release view "$TAG" --repo "$REPO" >/dev/null 2>&1; then
+              echo "Release $TAG encontrado. Subiendo APKs..."
+              gh release upload "$TAG" dist-android/*.apk dist-android/SHA256SUMS-android.txt --clobber --repo "$REPO"
+              echo "✔ Archivos adjuntados con éxito al Release."
+              exit 0
+            else
+              echo "El release $TAG aún no existe. Esperando 10s (intento $i/5)..."
+              sleep 10
+            fi
+          done
+
+          echo "Creando release $TAG con los APKs de Android..."
+          gh release create "$TAG" dist-android/*.apk dist-android/SHA256SUMS-android.txt \
+            --title "NetTerminal $TAG" \
+            --notes "Versión $TAG - Incluye paquetes de Android (.apk) para ARM64, ARMv7, x86_64 y Universal." \
+            --repo "$REPO"

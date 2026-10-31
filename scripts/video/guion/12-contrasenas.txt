@@ -1,0 +1,8 @@
+# Contraseñas guardadas
+Guardar la contraseña de una sesión es opcional, y funciona en SSH, Telnet, TCP y Serial.
+Se guarda en una bóveda cifrada de la app, y el campo es solo de escritura: nunca se vuelve a mostrar.
+Al conectar, la app la completa una sola vez en el primer pedido de contraseña.
+Una llave en la barra de estado indica que la sesión tiene contraseña guardada.
+En Ajustes, Credenciales, ves el estado de la bóveda, cuya llave vive en el llavero del sistema.
+En modo portable se usa una contraseña maestra.
+Para SSH, la recomendación sigue siendo usar llaves y agente.

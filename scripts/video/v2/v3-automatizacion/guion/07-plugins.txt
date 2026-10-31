@@ -1,0 +1,11 @@
+# Plugins
+
+Un plugin empaqueta acciones para compartirlas: una carpeta con un manifiesto, plugin.json, y código Python con la misma API. Sus acciones aparecen como botones en Herramientas, Plugins.
+
+Este ejemplo, Revisión de puertos, tiene tres acciones: resumen por estado, puertos con errores y exportación a CSV. El manifiesto declara id, versión, archivo de entrada, acciones y permisos. main.py toma la acción elegida de la variable NT_ACTION.
+
+Pide dos permisos. El permiso session es el que la app hace cumplir: sin él, el plugin no lee ni envía nada a la sesión. files, igual que network, es una declaración: Python corre con tus privilegios, así que te protege revisar el código. Un cuarto permiso, vault-type, deja que el plugin pida que la app escriba la contraseña guardada en un pedido de login; el plugin nunca la ve y tú lo apruebas en cada ejecución.
+
+Para instalarlo, elige Desde carpeta o Instalar punto zip. La app rechaza manifiestos inválidos, enlaces simbólicos, más de 200 archivos o 20 megabytes, y código que no se puede leer, como bytecode o binarios. Luego viene la revisión: permisos y todo el código Python, desde el archivo de entrada. Solo al presionar Instalar y habilitar queda activo, con una huella SHA-256 de sus archivos.
+
+Para actualizarlo, sube la versión e instálalo de nuevo. Si alguien edita sus archivos directamente, se bloquea hasta que revises y apruebes el cambio. Con la papelera lo desinstalas.

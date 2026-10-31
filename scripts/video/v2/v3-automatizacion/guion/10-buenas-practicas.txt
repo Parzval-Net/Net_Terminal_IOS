@@ -1,0 +1,7 @@
+# Buenas prácticas
+
+Cinco buenas prácticas. Uno: prueba todo en un equipo de laboratorio. Dos: empieza con consultas y agrega cambios solo cuando el script ya funciona. Tres: guarda scripts, plugins y packs en control de versiones.
+
+Cuatro: nunca escribas contraseñas en botones, notas, scripts, plugins ni packs. Marca Guardar contraseña en la sesión: queda en la bóveda cifrada y se completa al conectar. Los scripts no pueden leer esa bóveda. Si uno necesita volver a entrar a un equipo, usa type_saved_password: la app escribe la contraseña guardada en el pedido de login, el script nunca la ve, y solo funciona si marcaste la casilla al lanzarlo.
+
+Cinco: revisa el código de todo lo que venga de una carpeta compartida antes de ejecutarlo.

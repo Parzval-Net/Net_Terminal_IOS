@@ -1,0 +1,9 @@
+# Buenas prácticas
+
+Prueba primero con comandos de consulta y en un equipo de laboratorio. Usa variables en lugar de IPs o nombres fijos, y nunca escribas contraseñas en botones, scripts, plugins ni packs.
+
+Revisa el código de todo script o plugin antes de ejecutarlo, en especial si viene de una carpeta compartida. Instala plugins solo de origen confiable y pide solo los permisos que necesitas.
+
+Mantén tus plugins en control de versiones y sube la versión en cada cambio. Y al enviar a varios equipos, lee la lista de destinos y el riesgo antes de confirmar.
+
+Si trabajas con agentes de IA, la app ofrece un servidor MCP local, apagado por defecto, con aprobación por comando y modo solo lectura. Los agentes no ejecutan tus scripts ni plugins, ni envían a varias sesiones.

@@ -1,0 +1,27 @@
+# Scripts y macros
+
+NetTerminal tiene dos formas de automatizar: un botón que envía texto a la sesión, y un script de Python que dialoga con el equipo.
+
+Los botones viven en la barra de comandos rápidos, sobre la barra de estado. Si no la ves, actívala en Ajustes, sección Terminal. Para crear uno, presiona el signo más.
+
+Escribe una etiqueta, elige Enviar texto y agrega los comandos, uno por línea. La interfaz va como variable, con su nombre entre llaves dobles.
+
+Al presionar el botón, la app pide el valor de cada variable y muestra una vista previa. Los valores se recuerdan para la próxima vez.
+
+Si el nombre parece un secreto, como password, secret, key, token o community, el campo se pide oculto, se enmascara en la vista previa y nunca se guarda.
+
+Para editar o eliminar un botón, haz clic derecho sobre él.
+
+Un script es un archivo .py en la carpeta scripts de la app. Usa la API import netterminal as nt, con funciones como run, send, wait_for y read, y requiere Python 3.
+
+La app no trae un editor de scripts: lo escribes con tu editor. Este ejemplo ejecuta tres consultas y resume el resultado. Lo que imprime con print aparece como aviso en la app.
+
+Desde el menú Scripts ejecutas cualquier archivo de la carpeta sobre la pestaña activa, y lo puedes detener. También puedes asignarlo a un botón, eligiendo Script Python.
+
+Para enviar un botón a varias sesiones, usa el selector de destino: pestaña actual, pestañas elegidas, una carpeta o los paneles visibles. Los scripts corren solo sobre la pestaña activa.
+
+Antes de enviar, la app muestra los equipos destino, los omitidos y el riesgo de cada línea. Si algo cambia configuración o puede cortar servicio, debes escribir la cantidad de equipos para confirmar.
+
+El motor de riesgo separa los comandos encadenados: show version; reload no pasa como consulta. Se marca como disruptivo y siempre pide confirmación, también en una sola sesión.
+
+Ojo: los botones de texto pasan por este motor de riesgo, pero lo que envía un script de Python no. Revisa cada script como cualquier código antes de ejecutarlo.

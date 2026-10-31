@@ -1,0 +1,5 @@
+# Cierre
+
+Repasemos. Topología solo consulta y nunca dibuja una sugerencia sin tu confirmación. Para archivos, prefiere SCP o SFTP, verifica el MD5 y apaga los servidores al terminar. En SNMP, usa v3 con authPriv.
+
+Gracias por ver este tutorial de NetTerminal.

@@ -1,0 +1,4 @@
+# Todo cambio requiere revisión del dueño (aplica si una regla de rama exige PR con code owners).
+*                   @Parzval-Net
+/.github/           @Parzval-Net
+/src-tauri/tauri*.json @Parzval-Net

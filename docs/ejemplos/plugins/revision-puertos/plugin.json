@@ -1,0 +1,14 @@
+{
+  "id": "revision-puertos",
+  "name": "Revisión de puertos",
+  "version": "1.0.0",
+  "description": "Resume los puertos de un switch Cisco IOS / IOS-XE por estado, lista los que tienen errores y exporta la tabla a CSV en la carpeta de datos. Solo comandos de consulta.",
+  "author": "Equipo de redes",
+  "entry": "main.py",
+  "permissions": ["session", "files"],
+  "actions": [
+    { "id": "resumen", "label": "Resumen de puertos", "description": "show interfaces status" },
+    { "id": "errores", "label": "Puertos con errores", "description": "show interfaces counters errors" },
+    { "id": "exportar", "label": "Exportar a CSV", "description": "show interfaces status a reportes/puertos-<equipo>.csv" }
+  ]
+}

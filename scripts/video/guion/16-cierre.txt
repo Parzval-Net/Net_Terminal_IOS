@@ -1,0 +1,5 @@
+# Cierre
+Con esto recorriste todas las funciones de NetTerminal.
+Usa los servidores integrados y los algoritmos legacy solo en redes de gestión, y detenlos al terminar.
+Los atajos aparecen al pasar el mouse sobre cada botón.
+Gracias por ver este tutorial.

@@ -1,0 +1,5 @@
+# Cierre
+
+En resumen: botones y plantillas para lo frecuente, comandos al conectar para preparar la sesión, scripts para la lógica, plugins para compartir acciones revisadas, packs para compartir comandos y agentes de IA con tu aprobación.
+
+Los ejemplos están en docs/ejemplos, en el repositorio. Gracias por tu atención.

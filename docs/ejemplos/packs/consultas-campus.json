@@ -1,0 +1,32 @@
+{
+  "format": "netterminal-commands",
+  "formatVersion": 1,
+  "id": "consultas-campus",
+  "name": "Campus: consultas frecuentes",
+  "vendor": "cisco",
+  "version": "1.0.0",
+  "author": "Equipo de redes",
+  "description": "Consultas de solo lectura para el turno de operación.",
+  "platforms": [{ "id": "iosxe", "label": "IOS-XE", "detect": "IOS[ -]XE" }],
+  "commands": [
+    {
+      "cmd": "show version | include Version|uptime",
+      "desc": "Versión de software y tiempo encendido, en dos líneas.",
+      "cat": "Sistema",
+      "risk": "read"
+    },
+    {
+      "cmd": "show interfaces {{interfaz}} | include line protocol|rate",
+      "desc": "Estado y tasas de entrada y salida de una interfaz.",
+      "cat": "Interfaces",
+      "risk": "read",
+      "platforms": ["iosxe"]
+    },
+    {
+      "cmd": "ping {{destino}}",
+      "desc": "Prueba de alcance ICMP hacia el destino indicado.",
+      "cat": "Diagnóstico",
+      "risk": "read"
+    }
+  ]
+}

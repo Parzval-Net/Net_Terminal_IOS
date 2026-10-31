@@ -1,0 +1,9 @@
+# Botones de la barra de comandos
+
+La barra de botones está sobre la barra de estado y viene activada en Ajustes, Terminal.
+
+Para crear un botón, presiona el signo más. Escribe una etiqueta y elige el tipo: Enviar texto o Script Python. En Enviar texto va un comando por línea. Aquí creamos Revisar puerto, con el estado de la interfaz y las líneas del log que la mencionan. La interfaz va como variable, entre llaves dobles.
+
+Los botones se activan con una sesión conectada. Al presionarlo, la app pide el valor de la variable y envía las líneas. Un bloque de varias líneas muestra un resumen antes de enviarse, y lo que puede cortar servicio siempre pide confirmación.
+
+Para editar o eliminar un botón, haz clic derecho sobre él.

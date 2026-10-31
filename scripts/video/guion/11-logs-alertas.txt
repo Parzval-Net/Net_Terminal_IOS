@@ -1,0 +1,9 @@
+# Logs y alertas
+Para grabar una sesión, pulsa Log en la barra de estado.
+El archivo queda en texto plano, sin códigos de color, y continúa al reconectar.
+En Ajustes, Logs, defines grabación automática, hora por línea, nombre del archivo y rotación diaria.
+Ocultar secretos viene activado: contraseñas, communities y llaves se guardan con asteriscos.
+La carpeta de logs puede ser la de datos de la app o una que elijas.
+En Alertas creas reglas por texto o expresión regular, globales o solo para una carpeta.
+Cuando la salida coincide, avisan en pantalla, con sonido opcional y una marca en la pestaña.
+Las alertas nunca envían comandos.

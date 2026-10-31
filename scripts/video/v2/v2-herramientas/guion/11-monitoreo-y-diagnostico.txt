@@ -1,0 +1,11 @@
+# Monitoreo, diagnóstico, velocidad, subredes y Syslog
+
+Monitoreo vigila que un equipo responda. Con Nueva sonda eliges ICMP, o TCP con un puerto como el 22. Por defecto mide cada segundo y lo da por caído tras tres fallas seguidas. Suena una alarma al caer y otra al recuperarse.
+
+Diagnóstico reúne ping continuo, traceroute y Puertos TCP.
+
+Velocidad mide con speedtest contra Cloudflare, unos 95 MB por prueba, y con iperf3 entre dos puntos de tu red, si lo tienes instalado.
+
+Subredes calcula redes IPv4 o IPv6 y divide una red IPv4 en subredes.
+
+Syslog recibe logs por UDP 514; si ese puerto no inicia, usa el 1514. Copia el comando logging host para el equipo, filtra por texto o severidad, y activa Guardar en archivo diario si necesitas evidencia.

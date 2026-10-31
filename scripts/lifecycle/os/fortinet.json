@@ -1,0 +1,399 @@
+{
+  "vendor": "Fortinet",
+  "entries": [
+    {
+      "family": "FortiGate/FortiWiFi/Rugged entrada (30G, 31G, 40F, 50G/51G, 60F, 61F, 70F/71F, 70G/71G, 80F, 81F, 90G, 91G)",
+      "match": [
+        "^FORTIGATE-(?:30G|31G|40F|50G|51G|60F|61F|70F|70G|71F|71G|80F|81F|90G|91G|50G-5G|51G-5G|50G-DSL|50G-SFP|70G-POE|71G-POE|40F-3G4G|50G-SFP-POE|51G-SFP-POE)(?![-\\w])",
+        "^FORTIGATERUGGED-(?:60F|70F|60F-3G4G|70F-3G4G)(?![-\\w])",
+        "^FORTIWIFI-(?:30G|40F|50G|51G|60F|61F|70G|71G|50G-5G|50G-DSL|50G-SFP|70G-POE|40F-3G4G)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.6.8",
+      "latest": "8.0.2",
+      "lastAvailable": null,
+      "notes": "Recomendada 7.6.8 segun KB Fortinet actualizada 27-oct-2026 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639). Ultima rama soportada 8.0.",
+      "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate mid-range (100F a 901G, 200E/300E/400E/500E/600E, 800D, 900D)",
+      "match": [
+        "^FORTIGATE-(?:100F|101F|120G|121G|200E|200F|200G|201E|201F|201G|300E|301E|400E|400F|401E|401F|500E|501E|600E|600F|601E|601F|700G|701G|800D|900D|900G|901G|400E-BP)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.6.8",
+      "latest": "8.0.2",
+      "lastAvailable": null,
+      "notes": "Recomendada 7.6.8 segun KB Fortinet del 27-oct-2026 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate high-end (1000D a 4801F, sin 3000D/3100D/3200D/3700D)",
+      "match": [
+        "^FORTIGATE-(?:1000D|1000F|1001F|1100E|1101E|1800F|1801F|2000E|2200E|2201E|2500E|2600F|2601F|3000F|3001F|3200F|3201F|3300E|3301E|3400E|3401E|3500F|3501F|3600E|3601E|3700F|3701F|3960E|3980E|4200F|4201F|4400F|4401F|4800F|4801F)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.6.8",
+      "latest": "8.0.2",
+      "lastAvailable": null,
+      "notes": "Recomendada 7.6.8 segun KB Fortinet del 27-oct-2026 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate chasis 6000F/7000E/7000F",
+      "match": [
+        "^FORTIGATE-(?:6000F|6001F|6300F|6301F|6500F|6501F|7000E|7000F|7030E|7040E|7060E|7081F|7121F)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.6.8",
+      "latest": "8.0.2",
+      "lastAvailable": null,
+      "notes": "Recomendada 7.6.8 segun KB (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639). Modulos 6001F/6300F/6301F/6500F/6501F, 7030E/7040E/7060E, 7081F/7121F.",
+      "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate-VM64 (ALI, AWS, Azure, GCP, HV, IBM, KVM, Xen)",
+      "match": [
+        "^FORTIGATE-(?:VM64|VM64-HV|VM64-ALI|VM64-AWS|VM64-GCP|VM64-IBM|VM64-KVM|VM64-XEN|VM64-AZURE)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.6.8",
+      "latest": "8.0.2",
+      "lastAvailable": null,
+      "notes": "KB recomienda 7.6.8 para FortiGate-VM64 todas las versiones (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate actuales sin recomendacion explicita (variantes 80F/81F, FWF-31G, FWF-80F/81F-2R, 400G/401G, 3000G/3500G/3800G, Rugged G, FortiFirewall, ARM64)",
+      "match": [
+        "^FORTIFIREWALL-(?:VM64|1801F|2600F|3001F|3501F|3980E|4200F|4400F|4401F|4801F|VM64-KVM)(?![-\\w])",
+        "^FORTIGATE-(?:400G|401G|3000G|3001G|3500G|3501G|3800G|3801G|80F-BP|80F-DSL|80F-POE|81F-POE|ARM64-AWS|ARM64-GCP|ARM64-KVM|ARM64-OCI|ARM64-AZURE)(?![-\\w])",
+        "^FORTIGATERUGGED-(?:60G|70G|50G-5G|60G-5G|70G-5G|60G-M12|70G-5G-D)(?![-\\w])",
+        "^FORTIWIFI-(?:31G|80F-2R|81F-2R|81F-2R-POE|80F-2R-3G4G-DSL|81F-2R-3G4G-DSL|81F-2R-3G4G-POE)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": null,
+      "latest": "8.0.2",
+      "lastAvailable": null,
+      "notes": "Soportan 8.0.2 pero no aparecen en la KB de release recomendado; consultar modelo base o TAC.",
+      "source": "https://docs.fortinet.com/document/fortigate/8.0.2/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate 3000D/3100D/3200D/3700D y VM64-OPC/RAXONDEMAND (tope 7.6)",
+      "match": [
+        "^FORTIGATE-(?:3000D|3100D|3200D|3700D|VM64-OPC|VM64-RAXONDEMAND)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.6.8",
+      "latest": "7.6.8",
+      "lastAvailable": "7.6.8",
+      "notes": "No soportados en 8.0. Recomendada 7.6.8 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639). Pueden recibir mas parches 7.6.",
+      "source": "https://docs.fortinet.com/document/fortigate/7.6.8/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate-5001E/5001E1 (tope 7.6)",
+      "match": [
+        "^FORTIGATE-(?:5001E|5001E1)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": null,
+      "latest": "7.6.8",
+      "lastAvailable": "7.6.8",
+      "notes": "No soportados en 8.0 y no listados en la KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortigate/7.6.8/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate/FortiWiFi serie E entrada (60E, 80E, 81E, 90E, 140E; tope 7.4)",
+      "match": [
+        "^FORTIGATE-(?:60E|80E|81E|90E|140E)(?![-\\w])",
+        "^FORTIWIFI-(?:60E)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.4.13",
+      "latest": "7.4.13",
+      "lastAvailable": "7.4.13",
+      "notes": "No soportados en 7.6. Recomendada 7.4.13 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/7.4.13/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate/FortiWiFi serie E variantes (61E, 91E, -POE, -DSL, -DSLJ; tope 7.4)",
+      "match": [
+        "^FORTIGATE-(?:61E|91E|60E-DSL|60E-POE|80E-POE|81E-POE|140E-POE|60E-DSLJ)(?![-\\w])",
+        "^FORTIWIFI-(?:61E|60E-DSL|60E-DSLJ)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": null,
+      "latest": "7.4.13",
+      "lastAvailable": "7.4.13",
+      "notes": "No soportados en 7.6. No listados en la KB de release recomendado (modelo base: 7.4.13).",
+      "source": "https://docs.fortinet.com/document/fortigate/7.4.13/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate 100E/101E/1500D/1500DT (tope 7.2)",
+      "match": [
+        "^FORTIGATE-(?:100E|101E|1500D|1500DT)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.2.14",
+      "latest": "7.2.14",
+      "lastAvailable": "7.2.14",
+      "notes": "No soportados en 7.4. End of Engineering Support cumplido. Recomendada 7.2.14 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/7.2.14/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate-100EF y VM64-SVM/VMX (tope 7.2)",
+      "match": [
+        "^FORTIGATE-(?:100EF|VM64-SVM|VM64-VMX)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": null,
+      "latest": "7.2.14",
+      "lastAvailable": "7.2.14",
+      "notes": "No soportados en 7.4. No listados en la KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortigate/7.2.14/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate 1200D/3800D (tope 7.0)",
+      "match": [
+        "^FORTIGATE-(?:1200D|3800D)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "7.0.19",
+      "latest": "7.0.19",
+      "lastAvailable": "7.0.19",
+      "notes": "No soportados en 7.2. End of Engineering Support cumplido. Recomendada 7.0.19 (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/7.0.19/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate-5001D (tope 6.4)",
+      "match": [
+        "^FORTIGATE-(?:5001D)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "6.4.16",
+      "latest": "6.4.16",
+      "lastAvailable": "6.4.16",
+      "notes": "No soportado en 7.0. End of Engineering Support cumplido (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/6.4.16/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate 300D/400D/500D/600D/3810D/3815D (tope 6.4)",
+      "match": [
+        "^FORTIGATE-(?:300D|400D|500D|600D|3810D|3815D)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": null,
+      "latest": "6.4.16",
+      "lastAvailable": "6.4.16",
+      "notes": "No soportados en 7.0. No listados en la KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortigate/6.4.16/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate/FortiWiFi 30E, 50E, 51E, 52E y Rugged-35D (tope 6.2)",
+      "match": [
+        "^FORTIGATE-(?:30E|50E|51E|52E)(?![-\\w])",
+        "^FORTIGATERUGGED-(?:35D)(?![-\\w])",
+        "^FORTIWIFI-(?:30E|50E|51E)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "6.2.17",
+      "latest": "6.2.17",
+      "lastAvailable": "6.2.17",
+      "notes": "No soportados en 6.4. End of Engineering Support cumplido (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/6.2.17/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate 30E variantes, 92D, 100D, 140D, FWF-50E-2R, Rugged 30D/90D (tope 6.2)",
+      "match": [
+        "^FORTIGATE-(?:92D|100D|140D|30E-MG|140D-POE|30E_3G4G_NAM|30E_3G4G_INTL)(?![-\\w])",
+        "^FORTIGATERUGGED-(?:30D|90D)(?![-\\w])",
+        "^FORTIWIFI-(?:50E-2R|30E_3G4G_NAM|30E_3G4G_INTL)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": null,
+      "latest": "6.2.17",
+      "lastAvailable": "6.2.17",
+      "notes": "No soportados en 6.4. No listados en la KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortigate/6.2.17/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate 98D-POE, 240D, 280D-POE (tope 6.0)",
+      "match": [
+        "^FORTIGATE-(?:240D|98D-POE|280D-POE)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": "6.0.18",
+      "latest": "6.0.18",
+      "lastAvailable": "6.0.18",
+      "notes": "No soportados en 6.2. KB lista FortiGate-280D; release notes solo incluyen FG-280D-POE (https://community.fortinet.com/fortigate-3/technical-tip-recommended-release-for-fortios-116639).",
+      "source": "https://docs.fortinet.com/document/fortigate/6.0.18/fortios-release-notes/760203/introduction-and-supported-models",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiGate/FortiWiFi serie D legacy (30D, 60D, 70D, 80D, 90D, 94D, 200D, 240D-POE; tope 6.0)",
+      "match": [
+        "^FORTIGATE-(?:30D|60D|70D|80D|90D|200D|30D-POE|60D-POE|70D-POE|90D-POE|94D-POE|200D-POE|240D-POE)(?![-\\w])",
+        "^FORTIGATERUGGED-(?:60D)(?![-\\w])",
+        "^FORTIWIFI-(?:30D|60D|90D|92D|30D-POE|60D-POE|90D-POE)(?![-\\w])"
+      ],
+      "os": "FortiOS",
+      "recommended": null,
+      "latest": "6.0.18",
+      "lastAvailable": "6.0.18",
+      "notes": "No soportados en 6.2. No listados en la KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortigate/6.0.18/fortios-release-notes/760203",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiSwitch actuales (1xxF/G, 2xxD/E, 4xxE, 6xxF, 1024E/1048E/1048G, T1024, 2048F, 3032E/G, Rugged F)",
+      "match": [
+        "^(?:FORTISWITCH|FS)-(?:108F|124F|124G|148F|224E|248D|424E|448E|624F|648F|1024E|1048E|1048G|2048F|3032E|3032G|T1024E|108F-POE|124F-POE|148F-POE|224E-POE|248E-POE|424E-POE|448E-POE|108F-FPOE|110G-FPOE|124F-FPOE|124G-FPOE|148F-FPOE|224D-FPOE|248E-FPOE|424E-FPOE|448E-FPOE|624F-FPOE|648F-FPOE|424E-FIBER|M426E-FPOE|T1024F-FPOE)(?![-\\w])",
+        "^(?:FORTISWITCHRUGGED|FSR)-(?:108F|112F-POE|216F-POE|424F-POE)(?![-\\w])"
+      ],
+      "os": "FortiSwitchOS",
+      "recommended": null,
+      "latest": "8.0.1",
+      "lastAvailable": null,
+      "notes": "Fortinet no publica KB de release recomendado por modelo para FortiSwitchOS.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/8.0.1/fortiswitchos-release-notes/784383/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiSwitch 124E/148E y 5xxD (tope 7.6)",
+      "match": [
+        "^(?:FORTISWITCH|FS)-(?:124E|148E|524D|548D|124E-POE|148E-POE|124E-FPOE|524D-FPOE|548D-FPOE)(?![-\\w])"
+      ],
+      "os": "FortiSwitchOS",
+      "recommended": null,
+      "latest": "7.6.8",
+      "lastAvailable": "7.6.8",
+      "notes": "No listados en FortiSwitchOS 8.0.1. Sin KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.6.8/fortiswitchos-release-notes/784383/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiSwitch 3xxG (324G, 348G)",
+      "match": [
+        "^(?:FORTISWITCH|FS)-(?:324G|348G|324G-FPOE|348G-FPOE)(?![-\\w])"
+      ],
+      "os": "FortiSwitchOS",
+      "recommended": null,
+      "latest": "7.6.8",
+      "lastAvailable": null,
+      "notes": "Listados en 7.6.8 pero no en 8.0.1; no hay confirmacion oficial de tope de rama.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.6.8/fortiswitchos-release-notes/784383/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiSwitch 108E, 1024D y Rugged 112D/124D (tope 7.4)",
+      "match": [
+        "^(?:FORTISWITCH|FS)-(?:108E|1024D|108E-POE|108E-FPOE)(?![-\\w])",
+        "^(?:FORTISWITCHRUGGED|FSR)-(?:112D-POE|124D)(?![-\\w])"
+      ],
+      "os": "FortiSwitchOS",
+      "recommended": null,
+      "latest": "7.4.10",
+      "lastAvailable": "7.4.10",
+      "notes": "No soportados en 7.6. Sin KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.4.10/fortiswitchos-release-notes/784383/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiSwitch 424D/448D, 1048D, 3032D (tope 7.0)",
+      "match": [
+        "^(?:FORTISWITCH|FS)-(?:424D|448D|1048D|3032D|424D-POE|448D-POE|424D-FPOE|448D-FPOE)(?![-\\w])"
+      ],
+      "os": "FortiSwitchOS",
+      "recommended": null,
+      "latest": "7.0.12",
+      "lastAvailable": "7.0.12",
+      "notes": "No soportados en 7.2. Sin KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortiswitch/7.0.12/release-notes/784383/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiAP serie G (Wi-Fi 6E) y K (Wi-Fi 7: 231K, 23JK, 241K, 243K, 441K, 443K)",
+      "match": [
+        "^(?:FORTIAP|FAP)-(?:231G|233G|234G|431G|432G|433G|231K|23JK|241K|243K|441K|443K)(?![-\\w])"
+      ],
+      "os": "FortiAP",
+      "recommended": null,
+      "latest": "8.0.0",
+      "lastAvailable": null,
+      "notes": "Fortinet no publica release recomendado por modelo para FortiAP; validar matriz de compatibilidad con FortiOS.",
+      "source": "https://docs.fortinet.com/document/fortiap/8.0.0/fortiap-release-notes/720334/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiAP K nuevos (221K, 222KL, 244K)",
+      "match": [
+        "^(?:FORTIAP|FAP)-(?:221K|222KL|244K)(?![-\\w])"
+      ],
+      "os": "FortiAP",
+      "recommended": null,
+      "latest": "7.6.5",
+      "lastAvailable": null,
+      "notes": "Soportados en 7.6.5 con build especifico (6592/6570); no listados en 8.0.0.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.5/fortiap-release-notes/720334/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiAP serie F (Wi-Fi 6: 231F, 234F, 23JF, 431F, 432F, 432FR, 433F, 831F; tope 7.6)",
+      "match": [
+        "^(?:FORTIAP|FAP)-(?:231F|234F|23JF|431F|432F|432FR|433F|831F)(?![-\\w])"
+      ],
+      "os": "FortiAP",
+      "recommended": null,
+      "latest": "7.6.5",
+      "lastAvailable": "7.6.5",
+      "notes": "No soportados en FortiAP 8.0.0. Pueden recibir mas parches 7.6.",
+      "source": "https://docs.fortinet.com/document/fortiap/7.6.5/fortiap-release-notes/720334/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiAP-U (U221EV a U423EV, U231F, U234F, U431F, U432F, U433F)",
+      "match": [
+        "^(?:FORTIAP|FAP)-U(?:221EV|223EV|24JEV|321EV|323EV|421EV|422EV|423EV|231F|234F|431F|432F|433F)(?![-\\w])"
+      ],
+      "os": "FortiAP-U",
+      "recommended": null,
+      "latest": "7.0.6",
+      "lastAvailable": null,
+      "notes": "Ultima version publicada de FortiAP-U. Sin KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortiap-u/7.0.6/fortiap-u-release-notes/608012/introduction",
+      "checked": "2026-10-28"
+    },
+    {
+      "family": "FortiExtender (211E, 101F, 200F, 201F, 202F, 212F, 311F, 511F, 101G, 211G, 511G, Vehicle, Rugged 511G)",
+      "match": [
+        "^(?:FORTIEXTENDER|FEX)-(?:211E|101F(?:-AM|-EA)?|200F|201F(?:-AM|-EA)?|202F(?:-AM|-EA)?|212F|311F|511F|101G|211G|511G(?:-WIFI)?)(?![-\\w])",
+        "^(?:FORTIEXTENDERVEHICLE|FEV)-(?:211F(?:-AM)?|212F(?:-AM)?|511G)(?![-\\w])",
+        "^FORTIEXTENDER-RUGGEDIZED-511G(?![-\\w])"
+      ],
+      "os": "FortiExtender",
+      "recommended": null,
+      "latest": "8.0.1",
+      "lastAvailable": null,
+      "notes": "Todos los modelos listados soportan 8.0.1. Sin KB de release recomendado.",
+      "source": "https://docs.fortinet.com/document/fortiextender/8.0.1/release-notes/351118/introduction",
+      "checked": "2026-10-28"
+    }
+  ]
+}

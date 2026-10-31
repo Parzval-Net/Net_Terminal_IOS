@@ -1,0 +1,2133 @@
+{
+ "vendor": "juniper",
+ "name": "Juniper",
+ "platforms": [
+  {
+   "id": "junos-evo",
+   "label": "Junos OS Evolved (PTX, ACX, QFX5220...)",
+   "detect": "Junos OS Evolved|junos-evo|\\d+\\.\\d+R\\d+[\\w.\\-]*-EVO",
+   "note": "Kernel Linux, modelo por nodos (re0, fpc0). La versión termina en -EVO. Evaluar antes que 'junos'."
+  },
+  {
+   "id": "ex-legacy",
+   "label": "EX sin ELS (antiguos)",
+   "detect": "[Mm]odel: [Ee][Xx](2200|3200|3300|4200|4500|4550|62\\d\\d|82\\d\\d)",
+   "note": "EX2200, EX3200, EX3300, EX4200, EX4500, EX4550, EX6200, EX8200. Usa port-mode, vlan.N y 'show ethernet-switching interfaces'."
+  },
+  {
+   "id": "junos",
+   "label": "Junos OS (MX, SRX, EX/QFX con ELS)",
+   "detect": "(?<![\\s\\S])(?![\\s\\S]*(Junos OS Evolved|-EVO\\b|[Mm]odel: [Ee][Xx](2200|3200|3300|4200|4500|4550|62\\d\\d|82\\d\\d)))[\\s\\S]*(JUNOS|Junos:)",
+   "note": "Junos clásico (FreeBSD). Incluye EX/QFX con ELS (EX2300, EX3400, EX4300, EX4600, QFX) y SRX."
+  }
+ ],
+ "detectCommand": "show version",
+ "commands": [
+  {
+   "cmd": "show version",
+   "desc": "Muestra modelo, hostname y versión de Junos instalada. Es el punto de partida para identificar plataforma y release.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "En Junos OS Evolved acepta 'show version node {all|nombre}' y la versión termina en -EVO.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-version.html"
+  },
+  {
+   "cmd": "show version detail",
+   "desc": "Detalle de versión por paquete y daemon. Útil para validar consistencia de paquetes tras un upgrade.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-version.html"
+  },
+  {
+   "cmd": "show system uptime",
+   "desc": "Hora actual, tiempo desde el último boot, último commit y carga del sistema.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-uptime.html"
+  },
+  {
+   "cmd": "show system alarms",
+   "desc": "Alarmas de sistema activas (software, licencias, configuración de rescate faltante, etc.).",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-alarms.html"
+  },
+  {
+   "cmd": "show system information",
+   "desc": "Resumen compacto de modelo, familia, versión y hostname.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Disponible desde Junos 17.2; en releases anteriores el comando no existe.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-information.html"
+  },
+  {
+   "cmd": "show system processes extensive",
+   "desc": "Procesos en ejecución con consumo de CPU y memoria, similar a top. Sirve para detectar daemons con alto consumo.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "En Junos OS Evolved la sintaxis acepta 'node {{nodo}}' para filtrar por RE o FPC.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-processes.html"
+  },
+  {
+   "cmd": "show system processes node {{nodo}} detail",
+   "desc": "Procesos de un nodo específico (re0, fpc0, etc.) en Junos OS Evolved, donde el sistema se modela por nodos.",
+   "cat": "Sistema",
+   "risk": "read",
+   "platforms": [
+    "junos-evo"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-processes.html"
+  },
+  {
+   "cmd": "show system applications",
+   "desc": "Estado de las aplicaciones de Junos OS Evolved por nodo, equivalente funcional a revisar daemons en Junos clásico.",
+   "cat": "Sistema",
+   "risk": "read",
+   "platforms": [
+    "junos-evo"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-applications.html"
+  },
+  {
+   "cmd": "show system storage",
+   "desc": "Uso de filesystems (/var, /tmp, /config). Revisar antes de un upgrade o cuando hay alarmas de espacio.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "En Junos OS Evolved se puede filtrar con 'node re0|fpc0'; /soft, /var y /data deben estar bajo 90% para instalar imágenes.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-storage.html"
+  },
+  {
+   "cmd": "show system users",
+   "desc": "Usuarios con sesión activa, origen y tiempo de inactividad.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-users.html"
+  },
+  {
+   "cmd": "request system logout user {{usuario}}",
+   "desc": "Cierra la sesión de un usuario (con 'all' cierra todas sus sesiones). Libera un 'configure exclusive' que haya quedado tomado.",
+   "cat": "Sistema",
+   "risk": "disruptive",
+   "note": "Termina sesiones de administración en curso. Verificar que no sea la propia sesión.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-logout.html"
+  },
+  {
+   "cmd": "show system connections",
+   "desc": "Sockets TCP/UDP abiertos en el Routing Engine (sesiones de gestión, BGP, etc.).",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-connections.html"
+  },
+  {
+   "cmd": "show system virtual-memory",
+   "desc": "Uso de memoria virtual del kernel por zona, para análisis de fugas de memoria.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-virtual-memory.html"
+  },
+  {
+   "cmd": "show system buffers",
+   "desc": "Estadísticas de buffers de red del kernel (mbufs). Ayuda a diagnosticar agotamiento de memoria de red.",
+   "cat": "Sistema",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-buffers.html"
+  },
+  {
+   "cmd": "show system statistics",
+   "desc": "Contadores de protocolos del stack del RE (IP, ICMP, TCP, UDP, ARP).",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-statistics.html"
+  },
+  {
+   "cmd": "show system core-dumps",
+   "desc": "Lista los archivos core generados por caídas de procesos. Insumo clave para casos con JTAC.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "La página del comando solo lista 'show system core-dumps' para Evolved. La guía de diferencias de Evolved indica además la opción 'node {{nodo}}'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-core-dumps.html"
+  },
+  {
+   "cmd": "show system license",
+   "desc": "Licencias instaladas, features en uso y fechas de expiración.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-license-security.html"
+  },
+  {
+   "cmd": "show ntp associations",
+   "desc": "Peers NTP y su estado de sincronización (el asterisco indica el peer seleccionado).",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ntp-associations.html"
+  },
+  {
+   "cmd": "show system reboot",
+   "desc": "Indica si hay un reboot o halt programado pendiente.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-reboot.html"
+  },
+  {
+   "cmd": "show system software list",
+   "desc": "Imágenes de software instaladas en cada nodo de Junos OS Evolved.",
+   "cat": "Sistema",
+   "risk": "read",
+   "platforms": [
+    "junos-evo"
+   ],
+   "note": "Fuente adicional: https://www.juniper.net/documentation/us/en/software/junos/overview-evo/topics/concept/evo-top-differences.html",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-software-list.html"
+  },
+  {
+   "cmd": "show snmp statistics",
+   "desc": "Contadores de PDUs SNMP enviadas y recibidas, para validar polling desde la plataforma de monitoreo.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-snmp-statistics.html"
+  },
+  {
+   "cmd": "show cli history",
+   "desc": "Historial de comandos ejecutados en la sesión actual.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-cli-history.html"
+  },
+  {
+   "cmd": "set cli screen-length 0",
+   "desc": "Desactiva la paginación ('---(more)---') en la sesión actual. Necesario para capturar salidas largas.",
+   "cat": "Sistema",
+   "risk": "read",
+   "note": "Solo afecta la sesión CLI actual. Alternativa por comando: '| no-more'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/cli-environment-settings.html"
+  },
+  {
+   "cmd": "set cli screen-width 0",
+   "desc": "Desactiva el corte de línea por ancho de pantalla en la sesión actual.",
+   "cat": "Sistema",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/cli-environment-settings.html"
+  },
+  {
+   "cmd": "show chassis hardware",
+   "desc": "Inventario de chasis: RE, FPC, PIC, transceivers, con part number y serial.",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-hardware.html"
+  },
+  {
+   "cmd": "show chassis hardware models",
+   "desc": "Inventario con números de modelo FRU, útil para RMA y cotización de repuestos.",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-hardware.html"
+  },
+  {
+   "cmd": "show chassis alarms",
+   "desc": "Alarmas de hardware activas (fuentes, ventiladores, temperatura, FPC).",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-alarms.html"
+  },
+  {
+   "cmd": "show chassis environment",
+   "desc": "Estado y temperatura de componentes, ventiladores y fuentes de poder.",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-environment.html"
+  },
+  {
+   "cmd": "show chassis environment pem",
+   "desc": "Estado eléctrico de las fuentes de poder (PEM/PSU).",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Disponibilidad depende del modelo.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-environment-pem.html"
+  },
+  {
+   "cmd": "show chassis fan",
+   "desc": "Estado y velocidad de los ventiladores.",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-fan.html"
+  },
+  {
+   "cmd": "show chassis power",
+   "desc": "Consumo y presupuesto de energía del chasis.",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Soportado principalmente en MX/PTX/EX modulares; verificar en tu modelo.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-power.html"
+  },
+  {
+   "cmd": "show chassis temperature-thresholds",
+   "desc": "Umbrales de temperatura configurados por componente.",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-temperature-thresholds.html"
+  },
+  {
+   "cmd": "show chassis routing-engine",
+   "desc": "Estado de los Routing Engines: mastership, CPU, memoria, uptime y último motivo de reboot.",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-routing-engine.html"
+  },
+  {
+   "cmd": "show chassis fpc",
+   "desc": "Estado, CPU, memoria y temperatura de las FPC (line cards).",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-fpc.html"
+  },
+  {
+   "cmd": "show chassis fpc pic-status",
+   "desc": "Estado de las PIC por FPC. Útil para confirmar módulos online tras un cambio.",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-fpc.html"
+  },
+  {
+   "cmd": "show chassis pic fpc-slot {{fpc}} pic-slot {{pic}}",
+   "desc": "Detalle de una PIC, incluidos los transceivers insertados por puerto.",
+   "cat": "Hardware",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-pic.html"
+  },
+  {
+   "cmd": "show chassis craft-interface",
+   "desc": "Estado de LEDs y alarmas del panel frontal (craft interface).",
+   "cat": "Hardware",
+   "risk": "read",
+   "note": "Aplica a chasis con craft interface (MX/PTX modulares).",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-craft-interface.html"
+  },
+  {
+   "cmd": "show system errors active",
+   "desc": "Errores activos de hardware por FRU en Junos OS Evolved.",
+   "cat": "Hardware",
+   "risk": "read",
+   "platforms": [
+    "junos-evo"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "junos"
+     ],
+     "cmd": "show chassis errors active"
+    }
+   ],
+   "note": "Evolved reemplaza 'show chassis errors active' por este comando. Fuentes: https://www.juniper.net/documentation/us/en/software/junos/overview-evo/topics/concept/evo-top-differences.html y https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-errors-active.html",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-errors-active.html"
+  },
+  {
+   "cmd": "show virtual-chassis",
+   "desc": "Miembros del Virtual Chassis, rol (master/backup/linecard), prioridad y estado.",
+   "cat": "Hardware",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "note": "Aplica a EX/QFX con Virtual Chassis.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-virtual-chassis.html"
+  },
+  {
+   "cmd": "show pfe terse",
+   "desc": "Estado resumido de los Packet Forwarding Engines.",
+   "cat": "Hardware",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "La referencia lo documenta para MX y serie T.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-pfe-terse.html"
+  },
+  {
+   "cmd": "show interfaces terse",
+   "desc": "Vista resumida de todas las interfaces: estado admin/link, familias y direcciones.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-terse.html"
+  },
+  {
+   "cmd": "show interfaces {{interfaz}} terse",
+   "desc": "Estado resumido de una interfaz y sus unidades lógicas.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-terse.html"
+  },
+  {
+   "cmd": "show interfaces {{interfaz}}",
+   "desc": "Estado, velocidad, MTU, flaps y tráfico de una interfaz.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-gigabit-ethernet.html"
+  },
+  {
+   "cmd": "show interfaces {{interfaz}} extensive",
+   "desc": "Detalle completo con errores de entrada/salida, CRC, drops por cola y autonegociación.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "note": "Sin nombre de interfaz procesa todas. En EX4300 puede subir temporalmente la CPU del proceso ifinfo.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-extensive.html"
+  },
+  {
+   "cmd": "show interfaces descriptions",
+   "desc": "Lista las descripciones configuradas por interfaz con su estado.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/en_US/junos12.3/topics/reference/command-summary/show-interfaces-descriptions.html"
+  },
+  {
+   "cmd": "show interfaces diagnostics optics {{interfaz}}",
+   "desc": "Niveles DOM del transceiver: potencia Tx/Rx, temperatura, voltaje y alarmas.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "note": "El soporte de DOM depende del óptico. Fuente EX: https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-diagnostics-optics-ex-series.html",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-diagnostics-optics-qfx-series.html"
+  },
+  {
+   "cmd": "show interfaces statistics {{interfaz}}",
+   "desc": "Contadores de tráfico y errores de la interfaz.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-statistics.html"
+  },
+  {
+   "cmd": "show interfaces {{interfaz}} | match \"error|drops|CRC\"",
+   "desc": "Filtra rápidamente las líneas de errores y descartes de una interfaz.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/filtering-operational-command.html"
+  },
+  {
+   "cmd": "monitor interface {{interfaz}}",
+   "desc": "Vista en tiempo real de tasas y contadores de una interfaz. Salir con q.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/monitor-interface.html"
+  },
+  {
+   "cmd": "monitor interface traffic",
+   "desc": "Tasas de tráfico en tiempo real de todas las interfaces.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/monitor-interface.html"
+  },
+  {
+   "cmd": "clear interfaces statistics {{interfaz}}",
+   "desc": "Reinicia los contadores de una interfaz para medir errores desde cero.",
+   "cat": "Interfaces",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-interfaces-statistics.html"
+  },
+  {
+   "cmd": "clear interfaces statistics all",
+   "desc": "Reinicia los contadores de todas las interfaces.",
+   "cat": "Interfaces",
+   "risk": "disruptive",
+   "note": "La referencia desaconseja 'all' en despliegues grandes por su impacto operativo y duración. Preferir una interfaz específica.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-interfaces-statistics.html"
+  },
+  {
+   "cmd": "show interfaces ae{{n}} extensive",
+   "desc": "Detalle de un bundle Aggregated Ethernet: miembros, velocidad agregada y errores.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-aggregated-ethernet.html"
+  },
+  {
+   "cmd": "show lacp interfaces",
+   "desc": "Estado LACP de los miembros de bundles AE (actor/partner, collecting/distributing).",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-lacp-interfaces.html"
+  },
+  {
+   "cmd": "show lacp interfaces {{interfaz}} extensive",
+   "desc": "Detalle LACP de un AE o miembro, útil para diagnosticar mismatch de parámetros con el vecino.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-lacp-interfaces.html"
+  },
+  {
+   "cmd": "show lacp statistics interfaces",
+   "desc": "Contadores de LACPDUs enviadas y recibidas por miembro.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-lacp-statistics-interfaces.html"
+  },
+  {
+   "cmd": "show interfaces irb terse",
+   "desc": "Interfaces IRB (L3 de VLAN) y sus direcciones.",
+   "cat": "Interfaces",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "junos-evo"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "ex-legacy"
+     ],
+     "cmd": "show interfaces vlan terse"
+    }
+   ],
+   "note": "En EX sin ELS la interfaz L3 de VLAN se llama vlan.N; en ELS es irb.N.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-terse.html"
+  },
+  {
+   "cmd": "show vlans",
+   "desc": "VLANs configuradas con su ID y puertos miembros.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "note": "Existe en ELS y no ELS pero el formato de salida difiere. Fuente no ELS: https://www.juniper.net/documentation/en_US/junos12.3/topics/reference/command-summary/show-vlans-bridging-ex-series.html",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-vlans-bridging-qfx-series.html"
+  },
+  {
+   "cmd": "show vlans {{vlan}} extensive",
+   "desc": "Detalle de una VLAN: interfaces miembro, tagging e interfaz L3 asociada.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-vlans-bridging-qfx-series.html"
+  },
+  {
+   "cmd": "show ethernet-switching table",
+   "desc": "Tabla MAC aprendida por VLAN e interfaz.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "note": "Mismo comando en ELS y no ELS con distinto formato de salida. En MX usar 'show bridge mac-table'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ethernet-switching-table-qfx-series.html"
+  },
+  {
+   "cmd": "show ethernet-switching table vlan-name {{vlan}}",
+   "desc": "Tabla MAC filtrada por nombre de VLAN.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "ex-legacy"
+     ],
+     "cmd": "show ethernet-switching table vlan {{vlan}}"
+    }
+   ],
+   "note": "ELS usa 'vlan-name'; sin ELS usa 'vlan'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ethernet-switching-table-qfx-series.html"
+  },
+  {
+   "cmd": "show ethernet-switching table interface {{interfaz}}",
+   "desc": "MACs aprendidas en un puerto específico.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ethernet-switching-table-qfx-series.html"
+  },
+  {
+   "cmd": "show ethernet-switching table | match {{mac}}",
+   "desc": "Busca en qué puerto y VLAN se aprendió una MAC.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "note": "Junos muestra las MAC en formato xx:xx:xx:xx:xx:xx.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ethernet-switching-table-qfx-series.html"
+  },
+  {
+   "cmd": "show ethernet-switching table summary",
+   "desc": "Totales de MAC por VLAN e instancia.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ethernet-switching-table-qfx-series.html"
+  },
+  {
+   "cmd": "clear ethernet-switching table",
+   "desc": "Limpia las MAC aprendidas dinámicamente. Provoca flooding breve mientras se reaprende.",
+   "cat": "Capa 2",
+   "risk": "disruptive",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "note": "Sin argumentos borra toda la tabla MAC dinámica y el tráfico se inunda hasta reaprender. Acotar con interface, vlan-name o mac cuando sea posible.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-ethernet-switching-table-bridging-ex-series.html"
+  },
+  {
+   "cmd": "show ethernet-switching interface",
+   "desc": "Estado L2 por interfaz lógica: VLANs miembro, tagging, límite MAC y estado STP.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "ex-legacy"
+     ],
+     "cmd": "show ethernet-switching interfaces"
+    }
+   ],
+   "note": "ELS usa singular 'interface' (desde 12.3R2); sin ELS usa plural 'interfaces'. Fuente no ELS: https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ethernet-switching-interfaces-qfx-series.html",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ethernet-switching-interface-l2.html"
+  },
+  {
+   "cmd": "show bridge mac-table",
+   "desc": "Tabla MAC en routers MX con bridge-domains o instancias virtual-switch.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo MX. La referencia de Juniper indica que MX usa este comando en lugar de 'show ethernet-switching table'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-bridge-mac-table-command.html"
+  },
+  {
+   "cmd": "show spanning-tree interface",
+   "desc": "Rol y estado STP/RSTP/MSTP por puerto (forwarding, blocking, root, designated).",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "note": "Fuente no ELS: https://www.juniper.net/documentation/en_US/junos/topics/reference/command-summary/show-spanning-tree-interface-spanning-trees-ex-series.html",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-stp-interface-command.html"
+  },
+  {
+   "cmd": "show spanning-tree bridge",
+   "desc": "Root bridge, prioridad, costo al root y timers del bridge local.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-stp-bridge-command.html"
+  },
+  {
+   "cmd": "show spanning-tree interface {{interfaz}} detail",
+   "desc": "Detalle STP de un puerto, incluidas BPDUs enviadas/recibidas.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "note": "Sintaxis no confirmada en documentación oficial para EX (ELS y sin ELS); verificar. El manual de EX lista la opción como 'interface-name <nombre>'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-stp-interface-command.html"
+  },
+  {
+   "cmd": "show lldp neighbors",
+   "desc": "Vecinos LLDP por interfaz local: chassis ID, puerto remoto y nombre de sistema.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-lldp-neighbors.html"
+  },
+  {
+   "cmd": "show lldp neighbors interface {{interfaz}}",
+   "desc": "Vecino LLDP de una interfaz específica. Agregar 'detail' para ver todos los TLV.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-lldp-neighbors.html"
+  },
+  {
+   "cmd": "show arp no-resolve",
+   "desc": "Tabla ARP sin resolución DNS, más rápida en equipos con muchas entradas.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-arp.html"
+  },
+  {
+   "cmd": "show arp interface {{interfaz}}",
+   "desc": "Entradas ARP aprendidas en una interfaz.",
+   "cat": "Capa 2",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-arp.html"
+  },
+  {
+   "cmd": "clear arp hostname {{host}}",
+   "desc": "Elimina la entrada ARP de un host para forzar su reaprendizaje.",
+   "cat": "Capa 2",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-arp.html"
+  },
+  {
+   "cmd": "set interfaces {{interfaz}} unit 0 family ethernet-switching interface-mode trunk\nset interfaces {{interfaz}} unit 0 family ethernet-switching vlan members {{vlan}}",
+   "desc": "Configura un puerto como trunk y agrega una VLAN (modo configuración).",
+   "cat": "Capa 2",
+   "risk": "change",
+   "platforms": [
+    "junos"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "ex-legacy"
+     ],
+     "cmd": "set interfaces {{interfaz}} unit 0 family ethernet-switching port-mode trunk\nset interfaces {{interfaz}} unit 0 family ethernet-switching vlan members {{vlan}}"
+    }
+   ],
+   "note": "ELS usa 'interface-mode'; sin ELS usa 'port-mode' (fuente sin ELS: https://juniper.net/documentation/en_US/junos13.2/topics/reference/configuration-statement/port-mode-interfaces.html). Requiere commit.",
+   "source": "https://juniper.net/documentation/en_US/junos13.2/topics/reference/configuration-statement/interface-mode-edit-interfaces.html"
+  },
+  {
+   "cmd": "set interfaces {{interfaz}} unit 0 family ethernet-switching interface-mode access\nset interfaces {{interfaz}} unit 0 family ethernet-switching vlan members {{vlan}}",
+   "desc": "Configura un puerto de acceso en una VLAN (modo configuración).",
+   "cat": "Capa 2",
+   "risk": "change",
+   "platforms": [
+    "junos"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "ex-legacy"
+     ],
+     "cmd": "set interfaces {{interfaz}} unit 0 family ethernet-switching port-mode access\nset interfaces {{interfaz}} unit 0 family ethernet-switching vlan members {{vlan}}"
+    }
+   ],
+   "note": "ELS usa 'interface-mode'; sin ELS usa 'port-mode' (fuente sin ELS: https://juniper.net/documentation/en_US/junos13.2/topics/reference/configuration-statement/port-mode-interfaces.html). Requiere commit.",
+   "source": "https://juniper.net/documentation/en_US/junos13.2/topics/reference/configuration-statement/interface-mode-edit-interfaces.html"
+  },
+  {
+   "cmd": "set vlans {{vlan}} vlan-id {{vlan_id}}\nset vlans {{vlan}} l3-interface irb.{{unidad}}",
+   "desc": "Crea una VLAN y la asocia a su interfaz L3 (modo configuración).",
+   "cat": "Capa 2",
+   "risk": "change",
+   "platforms": [
+    "junos"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "ex-legacy"
+     ],
+     "cmd": "set vlans {{vlan}} vlan-id {{vlan_id}}\nset vlans {{vlan}} l3-interface vlan.{{unidad}}"
+    }
+   ],
+   "note": "ELS usa irb.N; sin ELS usa vlan.N. La unidad irb o vlan debe configurarse aparte, con su dirección IP. Opciones globales L2 pasan de 'ethernet-switching-options' (sin ELS) a 'switch-options' (ELS).",
+   "source": "https://juniper.net/documentation/en_US/junos13.2/topics/reference/configuration-statement/l3-interface-edit-vlans-qfx-series.html"
+  },
+  {
+   "cmd": "show route",
+   "desc": "Tabla de enrutamiento completa (inet.0 y demás tablas).",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "note": "En equipos con full table usar filtros o '| count'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route.html"
+  },
+  {
+   "cmd": "show route {{ip}}",
+   "desc": "Mejor coincidencia y rutas candidatas hacia un destino.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route.html"
+  },
+  {
+   "cmd": "show route {{prefijo}} exact detail",
+   "desc": "Detalle de un prefijo exacto: next-hops, atributos y protocolo.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-exact.html"
+  },
+  {
+   "cmd": "show route {{prefijo}} extensive",
+   "desc": "Vista completa de un prefijo con estado de next-hop, política y razones de no selección.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-extensive.html"
+  },
+  {
+   "cmd": "show route summary",
+   "desc": "Cantidad de rutas por tabla y protocolo. Útil para dimensionar y comparar antes/después de un cambio.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-summary.html"
+  },
+  {
+   "cmd": "show route terse",
+   "desc": "Tabla de rutas en formato compacto.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-terse.html"
+  },
+  {
+   "cmd": "show route protocol {{protocolo}}",
+   "desc": "Rutas aprendidas por un protocolo específico (ospf, bgp, isis, static, direct).",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-protocol.html"
+  },
+  {
+   "cmd": "show route table {{tabla}}",
+   "desc": "Rutas de una tabla específica, por ejemplo una VRF (NOMBRE.inet.0) o mpls.0.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-table.html"
+  },
+  {
+   "cmd": "show route hidden",
+   "desc": "Rutas ocultas (no utilizables), típicamente por next-hop no resoluble o política.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-hidden.html"
+  },
+  {
+   "cmd": "show route forwarding-table destination {{ip}}",
+   "desc": "Entrada instalada en la tabla de forwarding (PFE) para un destino.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-forwarding-table.html"
+  },
+  {
+   "cmd": "show route instance",
+   "desc": "Routing instances configuradas (VRF, virtual-router, virtual-switch) y sus tablas.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-instance.html"
+  },
+  {
+   "cmd": "show ospf neighbor",
+   "desc": "Adyacencias OSPF con estado, interfaz y router ID del vecino.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ospf-ospf3-neighbor.html"
+  },
+  {
+   "cmd": "show ospf interface",
+   "desc": "Interfaces con OSPF habilitado, área, tipo de red y DR/BDR.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ospf-ospf3-interface.html"
+  },
+  {
+   "cmd": "show ospf database",
+   "desc": "LSDB de OSPF por tipo de LSA.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ospf-database.html"
+  },
+  {
+   "cmd": "show ospf route",
+   "desc": "Rutas calculadas por OSPF.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ospf-ospf3-route.html"
+  },
+  {
+   "cmd": "show ospf neighbor instance {{instancia}}",
+   "desc": "Adyacencias OSPF dentro de una routing instance.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ospf-ospf3-neighbor.html"
+  },
+  {
+   "cmd": "show bgp summary",
+   "desc": "Estado de todas las sesiones BGP, prefijos recibidos/aceptados y uptime.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-bgp-summary.html"
+  },
+  {
+   "cmd": "show bgp neighbor {{ip}}",
+   "desc": "Detalle de una sesión BGP: estado, timers, capacidades, último error y políticas.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-bgp-neighbor.html"
+  },
+  {
+   "cmd": "show bgp group",
+   "desc": "Grupos BGP configurados con sus peers y tipo (internal/external).",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-bgp-group.html"
+  },
+  {
+   "cmd": "show route receive-protocol bgp {{ip}}",
+   "desc": "Prefijos y atributos de un vecino BGP tal como llegaron, sin los efectos de la política de import.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-receive-protocol.html"
+  },
+  {
+   "cmd": "show route advertising-protocol bgp {{ip}}",
+   "desc": "Prefijos anunciados a un vecino BGP tras aplicar política de export.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-advertising-protocol.html"
+  },
+  {
+   "cmd": "clear bgp neighbor {{ip}} soft",
+   "desc": "Re-aplica políticas a un vecino BGP sin cerrar la sesión (soft reset).",
+   "cat": "Enrutamiento",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-bgp-neighbor.html"
+  },
+  {
+   "cmd": "clear bgp neighbor {{ip}}",
+   "desc": "Reinicia la sesión BGP con el vecino. Corta el tráfico que depende de esas rutas hasta reconverger.",
+   "cat": "Enrutamiento",
+   "risk": "disruptive",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-bgp-neighbor.html"
+  },
+  {
+   "cmd": "show isis adjacency",
+   "desc": "Adyacencias IS-IS con nivel, estado y hold time.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-isis-adjacency.html"
+  },
+  {
+   "cmd": "show isis interface",
+   "desc": "Interfaces con IS-IS habilitado, nivel y métrica.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-isis-interface.html"
+  },
+  {
+   "cmd": "show isis database",
+   "desc": "LSDB de IS-IS por nivel.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-isis-database.html"
+  },
+  {
+   "cmd": "show isis route",
+   "desc": "Rutas calculadas por IS-IS.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-isis-route.html"
+  },
+  {
+   "cmd": "show isis overview",
+   "desc": "Parámetros globales de IS-IS: system ID, niveles, timers y opciones de tráfico.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-isis-overview.html"
+  },
+  {
+   "cmd": "show bfd session",
+   "desc": "Sesiones BFD con estado, interfaz y temporizadores de detección.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-bfd-session.html"
+  },
+  {
+   "cmd": "show vrrp summary",
+   "desc": "Grupos VRRP con estado (master/backup) e IP virtual.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-vrrp.html"
+  },
+  {
+   "cmd": "show policy {{politica}}",
+   "desc": "Muestra los términos de una policy-statement de routing.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-policy.html"
+  },
+  {
+   "cmd": "test policy {{politica}} {{prefijo}}",
+   "desc": "Evalúa qué rutas de la tabla acepta una política. Útil antes de aplicarla a BGP.",
+   "cat": "Enrutamiento",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/test-policy.html"
+  },
+  {
+   "cmd": "show mpls interface",
+   "desc": "Interfaces con MPLS habilitado y su estado.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-mpls-interface.html"
+  },
+  {
+   "cmd": "show mpls lsp",
+   "desc": "LSPs RSVP ingress, transit y egress con estado.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-mpls-lsp.html"
+  },
+  {
+   "cmd": "show mpls lsp ingress extensive",
+   "desc": "Detalle de LSPs ingress: ERO, path activo, historial y razones de falla.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-mpls-lsp.html"
+  },
+  {
+   "cmd": "show mpls lsp statistics",
+   "desc": "Contadores de tráfico por LSP.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-mpls-lsp.html"
+  },
+  {
+   "cmd": "show ldp neighbor",
+   "desc": "Vecinos LDP descubiertos por interfaz.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ldp-neighbor.html"
+  },
+  {
+   "cmd": "show ldp session",
+   "desc": "Sesiones LDP con estado y conexiones.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ldp-session.html"
+  },
+  {
+   "cmd": "show ldp interface",
+   "desc": "Interfaces con LDP habilitado.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ldp-interface.html"
+  },
+  {
+   "cmd": "show ldp database",
+   "desc": "Bindings de etiquetas LDP enviados y recibidos.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ldp-database.html"
+  },
+  {
+   "cmd": "show ldp overview",
+   "desc": "Parámetros globales y estado de LDP.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ldp-overview.html"
+  },
+  {
+   "cmd": "show rsvp session",
+   "desc": "Sesiones RSVP-TE (ingress, transit, egress).",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-rsvp-session.html"
+  },
+  {
+   "cmd": "show rsvp interface",
+   "desc": "Interfaces RSVP con ancho de banda reservado y disponible.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-rsvp-interface.html"
+  },
+  {
+   "cmd": "show rsvp neighbor",
+   "desc": "Vecinos RSVP y su estado.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-rsvp-neighbor.html"
+  },
+  {
+   "cmd": "show route table mpls.0",
+   "desc": "Tabla de etiquetas MPLS (LFIB) con acciones push, swap y pop.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-table.html"
+  },
+  {
+   "cmd": "show route table inet.3",
+   "desc": "Tabla inet.3 con los next-hops LSP usados para resolver BGP next-hop en L3VPN.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-table.html"
+  },
+  {
+   "cmd": "show route table bgp.l3vpn.0",
+   "desc": "Rutas VPNv4 recibidas por MP-BGP con RD y route targets.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-table.html"
+  },
+  {
+   "cmd": "show route table {{instancia}}.inet.0",
+   "desc": "Tabla de rutas de una VRF L3VPN.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-table.html"
+  },
+  {
+   "cmd": "ping {{ip}} routing-instance {{instancia}}",
+   "desc": "Ping desde una VRF para validar conectividad del servicio L3VPN.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "note": "Sin 'count' corre hasta Ctrl+C. En Junos OS Evolved la opción routing-instance solo admite mgmt_junos.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/ping.html"
+  },
+  {
+   "cmd": "show evpn instance extensive",
+   "desc": "Instancias EVPN con RD, RT, interfaces y estado de ESI.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "junos-evo"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-evpn-instance.html"
+  },
+  {
+   "cmd": "show evpn database",
+   "desc": "Base de datos MAC de EVPN con origen local o remoto.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "junos-evo"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-evpn-database.html"
+  },
+  {
+   "cmd": "show evpn mac-table",
+   "desc": "Tabla MAC de las instancias EVPN.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "junos-evo"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-evpn-mac-table.html"
+  },
+  {
+   "cmd": "show evpn arp-table",
+   "desc": "Tabla de vinculación ARP aprendida en EVPN.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "junos-evo"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-evpn-arp-table.html"
+  },
+  {
+   "cmd": "show route table bgp.evpn.0",
+   "desc": "Rutas EVPN (tipo 1 a 5) recibidas por BGP.",
+   "cat": "MPLS / VPN",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "junos-evo"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-route-table.html"
+  },
+  {
+   "cmd": "show security zones",
+   "desc": "Zonas de seguridad con sus interfaces y servicios host-inbound.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-zones.html"
+  },
+  {
+   "cmd": "show security policies",
+   "desc": "Políticas de seguridad por par de zonas, en orden de evaluación.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-policies.html"
+  },
+  {
+   "cmd": "show security policies from-zone {{zona_origen}} to-zone {{zona_destino}} detail",
+   "desc": "Detalle de las políticas entre dos zonas, con direcciones, aplicaciones y acción.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-policies.html"
+  },
+  {
+   "cmd": "show security policies hit-count",
+   "desc": "Contador de coincidencias por política. Sirve para depurar reglas sin uso.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-policies-hit-count.html"
+  },
+  {
+   "cmd": "show security match-policies from-zone {{zona_origen}} to-zone {{zona_destino}} source-ip {{ip_origen}} destination-ip {{ip_destino}} source-port {{puerto_origen}} destination-port {{puerto_destino}} protocol {{protocolo}}",
+   "desc": "Simula qué política aplicaría a un flujo dado. Clave para validar reglas antes de abrir un ticket.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-match-policies.html"
+  },
+  {
+   "cmd": "show security flow session",
+   "desc": "Sesiones activas en el firewall con zonas, NAT y contadores.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX. En equipos cargados usar filtros.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-flow-session.html"
+  },
+  {
+   "cmd": "show security flow session source-prefix {{ip}}",
+   "desc": "Sesiones filtradas por IP de origen.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-flow-session.html"
+  },
+  {
+   "cmd": "show security flow session destination-prefix {{ip}} destination-port {{puerto}}",
+   "desc": "Sesiones filtradas por destino y puerto.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-flow-session.html"
+  },
+  {
+   "cmd": "show security flow session summary",
+   "desc": "Totales de sesiones activas, fallidas y máximas soportadas.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-flow-session.html"
+  },
+  {
+   "cmd": "show security flow statistics",
+   "desc": "Contadores globales del flow module (paquetes, sesiones, drops).",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-flow-statistics.html"
+  },
+  {
+   "cmd": "clear security flow session session-identifier {{id}}",
+   "desc": "Elimina una sesión específica del firewall. El flujo afectado se corta y debe re-establecerse.",
+   "cat": "Seguridad",
+   "risk": "disruptive",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-security-flow-session-session-identifier.html"
+  },
+  {
+   "cmd": "show security nat source rule all",
+   "desc": "Reglas de NAT de origen con contadores de traducción.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-nat-source-rule.html"
+  },
+  {
+   "cmd": "show security nat source summary",
+   "desc": "Resumen de pools y reglas de NAT de origen.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-nat-source-summary.html"
+  },
+  {
+   "cmd": "show security nat source pool all",
+   "desc": "Pools de NAT de origen con uso de direcciones y puertos.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-nat-source-pool.html"
+  },
+  {
+   "cmd": "show security nat destination rule all",
+   "desc": "Reglas de NAT de destino con contadores.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-nat-destination-rule.html"
+  },
+  {
+   "cmd": "show security nat static rule all",
+   "desc": "Reglas de NAT estático con contadores.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-nat-static-rule.html"
+  },
+  {
+   "cmd": "show security ike security-associations",
+   "desc": "SAs IKE (fase 1) con estado y peer remoto.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-ike-security-associations.html"
+  },
+  {
+   "cmd": "show security ike security-associations detail",
+   "desc": "Detalle de SAs IKE: algoritmos, lifetime y rol.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-ike-security-associations.html"
+  },
+  {
+   "cmd": "show security ike active-peer",
+   "desc": "Peers IKE activos (incluye accesos remotos).",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-ike-active-peer.html"
+  },
+  {
+   "cmd": "show security ipsec security-associations",
+   "desc": "SAs IPsec (fase 2) por túnel con SPI y lifetime.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-ipsec-security-associations.html"
+  },
+  {
+   "cmd": "show security ipsec statistics",
+   "desc": "Contadores de cifrado, descifrado y errores IPsec.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-ipsec-statistics.html"
+  },
+  {
+   "cmd": "show security screen statistics zone {{zona}}",
+   "desc": "Contadores de screens (protección contra floods y escaneos) por zona.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-screen-statistics.html"
+  },
+  {
+   "cmd": "show security alarms",
+   "desc": "Alarmas de seguridad activas (violaciones, intentos de login, etc.).",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-alarms.html"
+  },
+  {
+   "cmd": "show security log",
+   "desc": "Eventos de seguridad registrados localmente.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX/vSRX. Depende de la configuración de logging (modo event/stream).",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-security-log.html"
+  },
+  {
+   "cmd": "show firewall",
+   "desc": "Contadores de los firewall filters (ACL stateless) aplicados.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-firewall-filter.html"
+  },
+  {
+   "cmd": "show firewall filter {{filtro}}",
+   "desc": "Contadores y policers de un firewall filter específico.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-firewall-filter.html"
+  },
+  {
+   "cmd": "show firewall log",
+   "desc": "Paquetes registrados por términos con acción 'log' en firewall filters.",
+   "cat": "Seguridad",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-firewall-log.html"
+  },
+  {
+   "cmd": "show chassis cluster status",
+   "desc": "Estado de los redundancy groups: nodo primario/secundario, prioridad y flags de failover.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-cluster-status.html"
+  },
+  {
+   "cmd": "show chassis cluster interfaces",
+   "desc": "Estado de control link, fabric link e interfaces reth.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-cluster-interfaces.html"
+  },
+  {
+   "cmd": "show chassis cluster statistics",
+   "desc": "Heartbeats y mensajes de sincronización de sesiones entre nodos.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-cluster-statistics.html"
+  },
+  {
+   "cmd": "show chassis cluster information",
+   "desc": "Historial de eventos y transiciones de estado del cluster.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-cluster-information.html"
+  },
+  {
+   "cmd": "show chassis cluster control-plane statistics",
+   "desc": "Contadores del control link (heartbeats enviados/recibidos).",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-cluster-control-plane-statistics.html"
+  },
+  {
+   "cmd": "show chassis cluster data-plane interfaces",
+   "desc": "Estado de los fabric links del data plane.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-cluster-data-plane-interfaces.html"
+  },
+  {
+   "cmd": "show chassis cluster ip-monitoring status redundancy-group {{rg}}",
+   "desc": "Estado del IP monitoring que puede gatillar failover del redundancy group.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-cluster-ip-monitoring-status-redundancy-group.html"
+  },
+  {
+   "cmd": "request chassis cluster failover node {{nodo}} redundancy-group {{rg}}",
+   "desc": "Fuerza failover manual del redundancy group hacia el nodo indicado. Puede cortar sesiones y tráfico.",
+   "cat": "Alta disponibilidad",
+   "risk": "disruptive",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster. El nodo indicado (0 o 1) pasa a primario. Luego ejecutar 'request chassis cluster failover reset'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-chassis-cluster-failover-node.html"
+  },
+  {
+   "cmd": "request chassis cluster failover reset redundancy-group {{rg}}",
+   "desc": "Deshace el failover manual y devuelve el redundancy group a su configuración original; según prioridades y preempt, el grupo puede volver a cambiar de nodo.",
+   "cat": "Alta disponibilidad",
+   "risk": "disruptive",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Solo SRX en chassis cluster.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-chassis-cluster-failover-reset.html"
+  },
+  {
+   "cmd": "show chassis routing-engine | match \"Current state|Election\"",
+   "desc": "Identifica qué RE es master y cuál backup en chasis con doble RE.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-chassis-routing-engine.html"
+  },
+  {
+   "cmd": "show task replication",
+   "desc": "Estado de replicación de NSR entre Routing Engines.",
+   "cat": "Alta disponibilidad",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Requiere NSR configurado; ejecutar en el RE master.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-task-replication.html"
+  },
+  {
+   "cmd": "request chassis routing-engine master switch",
+   "desc": "Conmuta el mastership al RE backup. Con GRES/NSR es transparente; sin ellos provoca reconvergencia.",
+   "cat": "Alta disponibilidad",
+   "risk": "disruptive",
+   "platforms": [
+    "junos",
+    "ex-legacy",
+    "junos-evo"
+   ],
+   "note": "Solo chasis con doble RE. El comando conserva la palabra 'master' aunque la documentación use 'primary' para el rol. Entre dos conmutaciones esperar al menos 4 minutos. En Evolved solo admite switch (acquire y release no están disponibles).",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-chassis-routing-engine-master.html"
+  },
+  {
+   "cmd": "show class-of-service",
+   "desc": "Resumen de toda la configuración CoS aplicada (clases, schedulers, classifiers, rewrite).",
+   "cat": "QoS",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-class-of-service.html"
+  },
+  {
+   "cmd": "show class-of-service interface {{interfaz}}",
+   "desc": "Scheduler map, classifiers y rewrite rules aplicados a una interfaz.",
+   "cat": "QoS",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-class-of-service-interface.html"
+  },
+  {
+   "cmd": "show class-of-service forwarding-class",
+   "desc": "Forwarding classes definidas y su mapeo a colas.",
+   "cat": "QoS",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-class-of-service-forwarding-class.html"
+  },
+  {
+   "cmd": "show class-of-service classifier",
+   "desc": "Classifiers (DSCP, 802.1p, EXP) y su mapeo a forwarding class.",
+   "cat": "QoS",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-class-of-service-classifier.html"
+  },
+  {
+   "cmd": "show class-of-service scheduler-map",
+   "desc": "Scheduler maps con transmit-rate, buffer y prioridad por cola.",
+   "cat": "QoS",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-class-of-service-scheduler-map.html"
+  },
+  {
+   "cmd": "show interfaces queue {{interfaz}}",
+   "desc": "Paquetes encolados, transmitidos y descartados por cola. Principal comando para validar drops de QoS.",
+   "cat": "QoS",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-interfaces-queue.html"
+  },
+  {
+   "cmd": "ping {{ip}} count {{n}}",
+   "desc": "Prueba de conectividad ICMP con cantidad de paquetes definida.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/ping.html"
+  },
+  {
+   "cmd": "ping {{ip}} source {{ip_origen}} count {{n}}",
+   "desc": "Ping usando una IP de origen específica (por ejemplo loopback).",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/ping.html"
+  },
+  {
+   "cmd": "ping {{ip}} size {{bytes}} do-not-fragment count {{n}}",
+   "desc": "Ping con tamaño fijo y bit DF para validar MTU del camino.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/ping.html"
+  },
+  {
+   "cmd": "ping {{ip}} rapid count {{n}}",
+   "desc": "Ping rápido con salida compacta, útil para medir pérdida.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/ping.html"
+  },
+  {
+   "cmd": "traceroute {{ip}}",
+   "desc": "Traza el camino hop a hop hacia un destino.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/traceroute.html"
+  },
+  {
+   "cmd": "traceroute {{ip}} routing-instance {{instancia}}",
+   "desc": "Traceroute desde una routing instance o VRF.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/traceroute.html"
+  },
+  {
+   "cmd": "traceroute {{ip}} no-resolve",
+   "desc": "Traceroute sin resolución DNS de cada salto.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/traceroute.html"
+  },
+  {
+   "cmd": "monitor traffic interface {{interfaz}} no-resolve",
+   "desc": "Captura en vivo del tráfico destinado al RE en la interfaz (no muestra tráfico de tránsito).",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Solo ve tráfico de control/host, no el tráfico reenviado por hardware. La referencia advierte que puede afectar el desempeño y recomienda usarlo con apoyo de JTAC.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/monitor-traffic.html"
+  },
+  {
+   "cmd": "monitor traffic interface {{interfaz}} matching \"host {{ip}}\" detail",
+   "desc": "Captura filtrada por host con detalle de cabeceras.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "note": "Solo ve tráfico de control/host. La referencia advierte que puede afectar el desempeño y recomienda usarlo con apoyo de JTAC.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/monitor-traffic.html"
+  },
+  {
+   "cmd": "monitor traffic interface {{interfaz}} write-file /var/tmp/{{archivo}}.pcap",
+   "desc": "Guarda la captura en formato pcap para analizar con Wireshark.",
+   "cat": "Diagnóstico",
+   "risk": "change",
+   "note": "Escribe un archivo en el equipo: revisar espacio en /var antes de capturar. La referencia advierte que puede afectar el desempeño.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/monitor-traffic.html"
+  },
+  {
+   "cmd": "show pfe statistics traffic",
+   "desc": "Estadísticas de tráfico y descartes del Packet Forwarding Engine.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Comando de MX y serie T. La referencia solo está publicada en la documentación de Junos 13.2; verificar en tu versión y plataforma.",
+   "source": "https://www.juniper.net/documentation/en_US/junos13.2/topics/reference/command-summary/show-pfe-statistics-traffic.html"
+  },
+  {
+   "cmd": "show ddos-protection protocols violations",
+   "desc": "Protocolos que exceden los policers de protección DDoS del plano de control.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "platforms": [
+    "junos"
+   ],
+   "note": "Introducido en Junos 11.2. Disponible en plataformas con protección DDoS del plano de control (por ejemplo MX, PTX y QFX); verificar en tu modelo.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-ddos-protocols-violations.html"
+  },
+  {
+   "cmd": "request support information | save /var/tmp/{{archivo}}.txt",
+   "desc": "Genera el RSI (Request Support Information) que pide JTAC y lo guarda en un archivo del equipo.",
+   "cat": "Diagnóstico",
+   "risk": "change",
+   "note": "Puede tardar varios minutos y consumir CPU en equipos grandes. La salida incluye toda la configuración, también lo oculto con apply-flags omit: tratar el archivo como sensible.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-support-information.html"
+  },
+  {
+   "cmd": "show route | count",
+   "desc": "Cuenta líneas de salida. Combinable con cualquier show para obtener totales rápidos.",
+   "cat": "Diagnóstico",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/filtering-operational-command.html"
+  },
+  {
+   "cmd": "show log messages",
+   "desc": "Log principal del sistema (syslog local).",
+   "cat": "Logs",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-log-messages.html"
+  },
+  {
+   "cmd": "show log messages | last {{n}}",
+   "desc": "Últimas N líneas del log de mensajes.",
+   "cat": "Logs",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/filtering-operational-command.html"
+  },
+  {
+   "cmd": "show log messages | match {{texto}}",
+   "desc": "Filtra el log por un patrón, por ejemplo una interfaz o un error.",
+   "cat": "Logs",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/filtering-operational-command.html"
+  },
+  {
+   "cmd": "show log messages | match \"SNMP_TRAP_LINK|UPDOWN\"",
+   "desc": "Eventos de link up/down registrados.",
+   "cat": "Logs",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/filtering-operational-command.html"
+  },
+  {
+   "cmd": "show log messages | except {{texto}}",
+   "desc": "Excluye líneas que coinciden con un patrón para reducir ruido.",
+   "cat": "Logs",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/filtering-operational-command.html"
+  },
+  {
+   "cmd": "show log {{archivo}}",
+   "desc": "Muestra otro archivo de log de /var/log (por ejemplo chassisd o interactive-commands).",
+   "cat": "Logs",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-log.html"
+  },
+  {
+   "cmd": "show log interactive-commands | last {{n}}",
+   "desc": "Auditoría de comandos ejecutados por usuarios, si el syslog de interactive-commands está habilitado.",
+   "cat": "Logs",
+   "risk": "read",
+   "note": "Depende de la configuración de syslog.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-log.html"
+  },
+  {
+   "cmd": "monitor start messages",
+   "desc": "Muestra en tiempo real las nuevas entradas del log en la terminal. Detener con 'monitor stop'.",
+   "cat": "Logs",
+   "risk": "read",
+   "note": "Juniper advierte que el monitoreo continuo puede impactar desempeño.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/monitor-start.html"
+  },
+  {
+   "cmd": "monitor stop",
+   "desc": "Detiene todos los monitores de logs activos en la sesión.",
+   "cat": "Logs",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/monitor-stop.html"
+  },
+  {
+   "cmd": "file list /var/log",
+   "desc": "Lista los archivos de log disponibles.",
+   "cat": "Logs",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/file-list.html"
+  },
+  {
+   "cmd": "clear log {{archivo}}",
+   "desc": "Vacía el contenido de un archivo de log. Se pierde la evidencia histórica.",
+   "cat": "Logs",
+   "risk": "change",
+   "note": "Sin la opción 'all' vacía solo el archivo activo y deja los archivos rotados.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-log.html"
+  },
+  {
+   "cmd": "show configuration | display set",
+   "desc": "Configuración activa en formato set. Facilita respaldos y replicación de cambios.",
+   "cat": "Configuración",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-configuration.html"
+  },
+  {
+   "cmd": "show configuration interfaces {{interfaz}}",
+   "desc": "Configuración de una interfaz específica.",
+   "cat": "Configuración",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-configuration.html"
+  },
+  {
+   "cmd": "show configuration | display set | match {{texto}}",
+   "desc": "Busca líneas de configuración que contengan un patrón.",
+   "cat": "Configuración",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/filtering-operational-command.html"
+  },
+  {
+   "cmd": "show system commit",
+   "desc": "Historial de commits con usuario, fecha y comentario.",
+   "cat": "Configuración",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-commit.html"
+  },
+  {
+   "cmd": "show system rollback {{n}} compare 0",
+   "desc": "Compara una versión anterior (rollback N) con la configuración activa, sin entrar a modo configuración.",
+   "cat": "Configuración",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/show-system-rollback.html"
+  },
+  {
+   "cmd": "configure",
+   "desc": "Entra al modo configuración compartido. Otros usuarios ven los cambios no confirmados.",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/configure.html"
+  },
+  {
+   "cmd": "configure private",
+   "desc": "Entra con una copia privada de la candidata; solo se confirman los propios cambios. Recomendado en equipos con varios operadores.",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/configure.html"
+  },
+  {
+   "cmd": "configure exclusive",
+   "desc": "Bloquea la configuración candidata para otros usuarios mientras dure la sesión.",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/configure.html"
+  },
+  {
+   "cmd": "show | compare",
+   "desc": "En modo configuración, muestra el diff entre la candidata y la activa antes de confirmar.",
+   "cat": "Configuración",
+   "risk": "read",
+   "note": "Solo en modo configuración.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/filtering-operational-command.html"
+  },
+  {
+   "cmd": "show | compare rollback {{n}}",
+   "desc": "Diff entre la candidata y una versión anterior.",
+   "cat": "Configuración",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/rollback.html"
+  },
+  {
+   "cmd": "commit check",
+   "desc": "Valida sintaxis y consistencia de la candidata sin aplicarla.",
+   "cat": "Configuración",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/commit.html"
+  },
+  {
+   "cmd": "commit confirmed {{minutos}}",
+   "desc": "Aplica la configuración con rollback automático si no se confirma dentro del plazo. Protección clave para cambios remotos.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Confirmar con 'commit' o 'commit check' antes que expire el plazo, o vuelve a la configuración anterior. Aplica toda la candidata y puede cortar servicio según su contenido.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/commit.html"
+  },
+  {
+   "cmd": "commit comment \"{{texto}}\"",
+   "desc": "Aplica la configuración dejando un comentario en el historial de commits.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Aplica toda la candidata; puede cortar servicio según su contenido. Revisar antes con 'show | compare'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/commit.html"
+  },
+  {
+   "cmd": "commit and-quit",
+   "desc": "Aplica la configuración y sale del modo configuración.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Aplica toda la candidata; puede cortar servicio según su contenido. Revisar antes con 'show | compare'.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/commit.html"
+  },
+  {
+   "cmd": "commit synchronize",
+   "desc": "Aplica y sincroniza la configuración en ambos Routing Engines o nodos del cluster.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Necesario en doble RE o chassis cluster si no está configurado 'commit synchronize' por defecto. Aplica toda la candidata y puede cortar servicio según su contenido.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/commit.html"
+  },
+  {
+   "cmd": "rollback {{n}}",
+   "desc": "Carga una configuración previa en la candidata. Requiere commit para aplicarse.",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/rollback.html"
+  },
+  {
+   "cmd": "rollback 0",
+   "desc": "Descarta los cambios no confirmados de la candidata.",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/rollback.html"
+  },
+  {
+   "cmd": "load merge terminal",
+   "desc": "Pega configuración en formato jerárquico y la fusiona con la candidata. Terminar con Ctrl+D.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Es el 'load' del modo configuración (el 'load' del modo operativo es otro comando).",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/junos-config-files-loading.html"
+  },
+  {
+   "cmd": "load set terminal",
+   "desc": "Pega comandos set y los aplica a la candidata. Terminar con Ctrl+D.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Es el 'load' del modo configuración (el 'load' del modo operativo es otro comando).",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/junos-config-files-loading.html"
+  },
+  {
+   "cmd": "load override {{archivo}}",
+   "desc": "Reemplaza toda la candidata con el contenido de un archivo. Al confirmar puede eliminar configuración existente.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Es el 'load' del modo configuración. Revisar con 'show | compare' antes de confirmar.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli/topics/topic-map/junos-config-files-loading.html"
+  },
+  {
+   "cmd": "save /var/tmp/{{archivo}}.conf",
+   "desc": "En modo configuración, guarda la configuración en un archivo para respaldo.",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/save.html"
+  },
+  {
+   "cmd": "request system configuration rescue save",
+   "desc": "Guarda la configuración activa como configuración de rescate y elimina la alarma de rescue faltante.",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-configuration-rescue-save.html"
+  },
+  {
+   "cmd": "deactivate interfaces {{interfaz}}",
+   "desc": "En modo configuración, desactiva la configuración de una interfaz. Al hacer commit corta el servicio que pasa por ella.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo configuración. Requiere commit.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/deactivate.html"
+  },
+  {
+   "cmd": "set interfaces {{interfaz}} disable",
+   "desc": "En modo configuración, deja la interfaz administrativamente abajo. Al hacer commit corta el servicio.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Modo configuración. Requiere commit. Apaga la interfaz sin quitar su configuración.",
+   "source": "https://juniper.net/documentation/en_US/junos13.2/topics/usage-guidelines/interfaces-disabling-a-physical-interface.html"
+  },
+  {
+   "cmd": "request system storage cleanup dry-run",
+   "desc": "Lista los archivos que se eliminarían en una limpieza de almacenamiento, sin borrarlos.",
+   "cat": "Configuración",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-storage-cleanup.html"
+  },
+  {
+   "cmd": "request system storage cleanup",
+   "desc": "Elimina logs rotados, cores y archivos temporales para liberar espacio.",
+   "cat": "Configuración",
+   "risk": "change",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "junos-evo"
+     ],
+     "cmd": "request system software delete {{paquete}}"
+    }
+   ],
+   "note": "Pide confirmación antes de borrar; revisar antes con dry-run. En Evolved desde 20.1R1 las imágenes ISO se eliminan con 'request system software delete' (fuente: https://www.juniper.net/documentation/us/en/software/junos/overview-evo/topics/concept/evo-top-differences.html).",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-storage-cleanup.html"
+  },
+  {
+   "cmd": "request system software add {{ruta_paquete}}",
+   "desc": "Instala un paquete de software. Normalmente requiere reboot para activarse.",
+   "cat": "Configuración",
+   "risk": "change",
+   "note": "Instala el paquete sin reiniciar; el nuevo release se activa al reiniciar. En EX y QFX dejar el paquete en /var/tmp. En Junos clásico se suele usar 'no-validate' o 'validate' y 'reboot'; en Evolved la instalación es por nodo. En SRX con VM Host se usa 'request vmhost software'. Revisar release notes.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-software-add.html"
+  },
+  {
+   "cmd": "request system software validate {{ruta_paquete}}",
+   "desc": "Valida la configuración activa contra un paquete antes de instalarlo.",
+   "cat": "Configuración",
+   "risk": "read",
+   "platforms": [
+    "junos",
+    "ex-legacy"
+   ],
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-software-validate.html"
+  },
+  {
+   "cmd": "request system software rollback",
+   "desc": "Vuelve a la imagen de software anterior. Requiere reboot.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "variants": [
+    {
+     "platforms": [
+      "junos-evo"
+     ],
+     "cmd": "request system software rollback reboot"
+    }
+   ],
+   "note": "En Junos OS Evolved la sintaxis es 'request system software rollback reboot [paquete]' y reinicia todos los Routing Engines y FPC (fuente: https://www.juniper.net/documentation/us/en/software/junos/overview-evo/topics/concept/evo-top-differences.html).",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-software-rollback.html"
+  },
+  {
+   "cmd": "request system snapshot slice alternate",
+   "desc": "Copia el software activo a la partición alternativa como respaldo de arranque.",
+   "cat": "Configuración",
+   "risk": "change",
+   "platforms": [
+    "junos",
+    "ex-legacy",
+    "junos-evo"
+   ],
+   "variants": [
+    {
+     "platforms": [
+      "junos-evo"
+     ],
+     "cmd": "request system snapshot"
+    }
+   ],
+   "note": "La opción 'slice alternate' existe en EX, QFX/EX4600 y SRX; en MX y PTX usar 'request system snapshot' sin ella. Tras el snapshot el software activo y el de respaldo quedan idénticos, así que no se puede volver al release anterior. En Evolved el snapshot va al SSD secundario (fuente: https://www.juniper.net/documentation/us/en/software/junos/junos-install-upgrade-evo/topics/topic-map/evo-backup-snapshot.html).",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-snapshot.html"
+  },
+  {
+   "cmd": "request system reboot",
+   "desc": "Reinicia el equipo. Corta todo el servicio hasta que vuelva a operar.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "En Evolved reinicia todos los nodos del sistema.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-reboot.html"
+  },
+  {
+   "cmd": "request system reboot in {{minutos}}",
+   "desc": "Programa un reboot en N minutos. Cancelar con 'clear system reboot'.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-reboot.html"
+  },
+  {
+   "cmd": "clear system reboot",
+   "desc": "Cancela un reboot, halt o power-off programado.",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/clear-system-reboot.html"
+  },
+  {
+   "cmd": "request system halt",
+   "desc": "Detiene el sistema operativo. Requiere acceso físico o consola para volver a arrancar.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-halt.html"
+  },
+  {
+   "cmd": "request system power-off",
+   "desc": "Apaga el equipo. Requiere intervención física para encenderlo.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-power-off.html"
+  },
+  {
+   "cmd": "request system zeroize",
+   "desc": "Borra toda la configuración, claves y logs, dejando el equipo en estado de fábrica. Irreversible.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "Con doble RE se ejecuta en ambos. Usar solo para baja de equipo o RMA.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/request-system-zeroize.html"
+  },
+  {
+   "cmd": "request node reboot {{nodo}}",
+   "desc": "Reinicia un nodo específico (RE o FPC) en Junos OS Evolved.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "platforms": [
+    "junos-evo"
+   ],
+   "note": "La sintaxis 'request node reboot <nodo>' se documenta solo en la guía de diferencias de Evolved; no hay página de referencia propia.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/overview-evo/topics/concept/evo-top-differences.html"
+  },
+  {
+   "cmd": "restart {{proceso}} gracefully",
+   "desc": "Reinicia un daemon (por ejemplo routing o chassis-control). Puede afectar protocolos durante el reinicio.",
+   "cat": "Configuración",
+   "risk": "disruptive",
+   "note": "En Evolved reinicia la aplicación en el nodo local (en otro nodo: 'request system application restart app <aplicación> node <nodo>'). La referencia pide no reiniciar procesos sin indicación de soporte, porque puede cortar tráfico.",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/restart.html"
+  },
+  {
+   "cmd": "file show {{archivo}}",
+   "desc": "Muestra el contenido de un archivo local.",
+   "cat": "Configuración",
+   "risk": "read",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/file-show.html"
+  },
+  {
+   "cmd": "file copy {{origen}} {{destino}}",
+   "desc": "Copia archivos local o remotamente (scp, ftp, http).",
+   "cat": "Configuración",
+   "risk": "change",
+   "source": "https://www.juniper.net/documentation/us/en/software/junos/cli-reference/topics/ref/command/file-copy.html"
+  }
+ ]
+}

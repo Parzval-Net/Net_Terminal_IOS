@@ -1,0 +1,6 @@
+# Introducción
+Bienvenido a NetTerminal, un cliente de conexión liviano para el trabajo diario con equipos de red y servidores.
+Reúne SSH, Telnet, Serial y terminal local en una sola app para macOS, Windows y Linux.
+En este tutorial verás cómo usar y configurar cada función, con datos ficticios.
+A la izquierda está el panel de sesiones, arriba las pestañas y abajo la barra de botones y la barra de estado.
+La pantalla de inicio reúne los accesos principales, como conexión rápida, terminal local y herramientas de red.

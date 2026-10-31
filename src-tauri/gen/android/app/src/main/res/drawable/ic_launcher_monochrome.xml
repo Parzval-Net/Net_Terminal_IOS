@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <group
+        android:pivotX="512"
+        android:pivotY="512"
+        android:scaleX="0.78"
+        android:scaleY="0.78">
+        <!-- Monochrome outline/silhouette for Android 13+ themed icons -->
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M264,262h496a42,42 0 0,1 42,42v314a42,42 0 0,1 -42,42h-496a42,42 0 0,1 -42,-42v-314a42,42 0 0,1 42,-42z M272,290a22,22 0 0,0 -22,22v286a22,22 0 0,0 22,22h480a22,22 0 0,0 22,-22v-286a22,22 0 0,0 -22,-22h-480z" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M466,640H558L586,728H438Z" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M389,718h246a15,15 0 0,1 15,15v0a15,15 0 0,1 -15,15h-246a15,15 0 0,1 -15,-15v0a15,15 0 0,1 15,-15z" />
+        <path
+            android:pathData="M300,392L356,436L300,480"
+            android:strokeWidth="28"
+            android:strokeColor="#FFFFFFFF"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round" />
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M394,458h84a10,10 0 0,1 10,10v4a10,10 0 0,1 -10,10h-84a10,10 0 0,1 -10,-10v-4a10,10 0 0,1 10,-10z" />
+    </group>
+</vector>

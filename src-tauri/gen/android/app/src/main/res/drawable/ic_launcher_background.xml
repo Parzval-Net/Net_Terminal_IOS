@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <!-- Full-bleed gradient background so Android's system mask (circle, squircle, teardrop) shapes it cleanly -->
+    <path android:pathData="M0,0h1024v1024h-1024z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="1024"
+                android:endY="1024"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#FF3B7BFF" />
+                <item android:offset="1.0" android:color="#FF1E2F8C" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Top subtle gloss -->
+    <path android:pathData="M0,0h1024v512h-1024z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="512"
+                android:startY="0"
+                android:endX="512"
+                android:endY="512"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#38FFFFFF" />
+                <item android:offset="1.0" android:color="#00FFFFFF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

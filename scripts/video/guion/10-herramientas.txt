@@ -1,0 +1,15 @@
+# Herramientas de red
+Herramientas se abre con ⌘E, y cada módulo se activa o desactiva en Ajustes, Módulos.
+Monitoreo vigila equipos por ICMP o por puertos TCP, con gráfico de latencia, jitter y pérdida.
+Si un equipo cae, suena una alarma y la app avisa cuando se recupera, aunque estés en otra pestaña.
+Diagnóstico reúne ping continuo, traceroute y verificación de puertos TCP.
+Velocidad mide con speedtest e iperf3, como cliente o como servidor.
+La calculadora de subredes trabaja con IPv4 e IPv6 y divide una red en subredes más pequeñas.
+El cliente SNMP consulta en v1, v2c y v3 con GET, GETNEXT, WALK y GETBULK, siempre en solo lectura.
+Los conjuntos de OIDs muestran, por ejemplo, las interfaces con contadores de 64 bits.
+El generador SNMP crea la configuración de un agente de solo lectura para seis plataformas.
+Transferencias levanta servidores TFTP, HTTP y FTP, y muestra el comando exacto para el equipo.
+También ofrece SFTP interactivo en una pestaña y un cliente FTP con TLS verificado.
+Respaldos guarda la configuración usando solo comandos de consulta y enmascara los secretos.
+Elige A y B para comparar dos fechas o dos equipos, con las líneas agregadas y quitadas.
+Syslog recibe logs en vivo, y Plugins agrega acciones en Python con revisión de permisos.

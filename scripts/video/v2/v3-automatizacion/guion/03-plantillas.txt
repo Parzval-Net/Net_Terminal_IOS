@@ -1,0 +1,9 @@
+# Plantillas con variables
+
+Las variables también funcionan en Notas, el panel que abres con ⌘J. Una nota con variables es una plantilla, como esta, que revisa un puerto.
+
+Selecciona las líneas y presiona ⌘Enter; en Windows y Linux, Ctrl+Enter. Se abre Completar plantilla: escribes cada valor una vez y ves la vista previa. La app recuerda los valores, salvo los que parecen secretos, como password, enable, comunidad o tacacs: esos se piden ocultos y nunca se guardan.
+
+Para enviar a varias sesiones, cambia el destino: pestañas elegidas, una carpeta o los paneles visibles. Las variables se piden una vez y el mismo valor va a todos los equipos.
+
+Antes de enviar ves los equipos, los omitidos y el riesgo. Si algo no es consulta, escribes la cantidad de equipos para confirmar. El envío va de un equipo a otro, con una pausa ajustable, y lo puedes detener.
