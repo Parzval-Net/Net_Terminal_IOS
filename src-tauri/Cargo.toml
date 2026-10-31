@@ -85,7 +85,7 @@ keyring = { version = "3.6", default-features = false, features = ["windows-nati
 # Zoom nativo de WebView2 (pellizco y Ctrl+rueda): se apaga para que los gestos lleguen al mapa de Topología.
 # Mismas versiones que ya trae tauri/wry, para no duplicar crates.
 webview2-com = "0.39"
-windows-core = "0.62"
+windows-core = "0.100"
 
 [target.'cfg(target_os = "linux")'.dependencies]
 keyring = { version = "3.6", default-features = false, features = ["sync-secret-service", "crypto-rust"] }
