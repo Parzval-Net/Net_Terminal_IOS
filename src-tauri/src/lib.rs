@@ -20,6 +20,7 @@ mod snmp;
 // Cliente SSH nativo: solo iOS (en el PC se compila para sus pruebas).
 #[cfg(any(target_os = "ios", test))]
 mod ssh_native;
+mod ssh_keys;
 mod scripts;
 mod seal;
 mod models;
@@ -317,6 +318,32 @@ fn prompt_host(host: &str) -> String {
     let h = host.trim();
     let h = h.rsplit_once('@').map_or(h, |(_, x)| x);
     h.trim_start_matches('[').trim_end_matches(']').to_lowercase()
+}
+
+/// Llaves SSH de la app (iOS: no hay ~/.ssh). Copia la elegida a `keys/` y devuelve su ruta relativa.
+#[tauri::command(async)]
+fn ssh_key_import(path: String, state: State<'_, AppState>) -> Result<String, String> {
+    ssh_keys::import(&state.data_dir, &path)
+}
+
+#[tauri::command(async)]
+fn ssh_key_list(state: State<'_, AppState>) -> Vec<ssh_keys::KeyInfo> {
+    ssh_keys::list(&state.data_dir)
+}
+
+#[tauri::command(async)]
+fn ssh_key_delete(name: String, state: State<'_, AppState>) -> Result<(), String> {
+    ssh_keys::delete(&state.data_dir, &name)
+}
+
+#[tauri::command(async)]
+fn ssh_key_generate(name: String, state: State<'_, AppState>) -> Result<ssh_keys::Generated, String> {
+    ssh_keys::generate(&state.data_dir, &name)
+}
+
+#[tauri::command(async)]
+fn ssh_key_public(name: String, state: State<'_, AppState>) -> Result<String, String> {
+    ssh_keys::public_of(&state.data_dir, &name)
 }
 
 #[tauri::command(async)]
@@ -1310,6 +1337,11 @@ pub fn run() {
             update_sessions,
             add_sessions,
             list_serial_ports,
+            ssh_key_import,
+            ssh_key_list,
+            ssh_key_delete,
+            ssh_key_generate,
+            ssh_key_public,
             connect,
             write,
             resize,
