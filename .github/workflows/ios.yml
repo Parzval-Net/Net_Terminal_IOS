@@ -90,31 +90,28 @@ jobs:
           mkdir -p dist
           ditto -c -k --sequesterRsrc --keepParent "$APP" "dist/NetTerminal-v${VERSION}-ios-simulator.app.zip"
 
-      # Dispositivo sin firma: xcodebuild usa la fase de Tauri que compila libapp.a para arm64.
+      # Dispositivo sin firma: xcodebuild directo no sirve (la fase de Tauri exige que el CLI esté corriendo).
       # Sin certificado de Apple, el .app sale sin firmar y se re-firma al instalarlo (AltStore, Sideloadly o Xcode).
       - name: Compilar para dispositivo (sin firma)
-        run: |
-          xcodebuild \
-            -project src-tauri/gen/apple/net-terminal.xcodeproj \
-            -scheme net-terminal_iOS \
-            -configuration Release \
-            -sdk iphoneos \
-            -destination 'generic/platform=iOS' \
-            -derivedDataPath build/device \
-            ARCHS=arm64 \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            build
+        run: npx tauri ios build --target aarch64 --no-sign --archive-only --ci
 
       - name: Empaquetar .ipa sin firma
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          APP=$(find build/device/Build/Products -maxdepth 2 -type d -name '*.app' | head -1)
+          APP=$(find src-tauri/gen/apple/build/net-terminal_iOS.xcarchive/Products/Applications -maxdepth 1 -type d -name '*.app' | head -1)
           [ -n "$APP" ] || { echo "::error::No se encontró el .app de dispositivo"; exit 1; }
           rm -rf ipa && mkdir -p ipa/Payload
           cp -R "$APP" ipa/Payload/
           (cd ipa && zip -qry "../dist/NetTerminal-v${VERSION}-ios-unsigned.ipa" Payload)
+
+      # latest.json: lo consulta la app (Ajustes > Acerca de) para avisar de versiones nuevas.
+      - name: Generar latest.json
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          printf '{"version":"%s","notes":"","pub_date":"%s"}\n' "$VERSION" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > dist/latest.json
+          cat dist/latest.json
 
       - name: Generar SHA256SUMS
         run: |
@@ -157,3 +154,4 @@ jobs:
             dist/*.zip
             dist/*.ipa
             dist/SHA256SUMS
+            dist/latest.json

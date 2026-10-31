@@ -2,7 +2,7 @@
 name = "net-terminal"
 version = "0.9.19"
 description = "Cliente SSH, Telnet y Serial liviano y multiplataforma"
-repository = "https://github.com/Parzval-Net/NetTerminal_Android"
+repository = "https://github.com/Parzval-Net/Net_Terminal_IOS"
 authors = ["NetTerminal"]
 edition = "2021"
 

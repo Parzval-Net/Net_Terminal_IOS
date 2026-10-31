@@ -182,10 +182,19 @@ fn is_newer(latest: &str, current: &str) -> bool {
     parse(latest) > parse(current)
 }
 
+/// Los tags de la edición iOS llevan sufijo (v0.9.19-ios), igual que el workflow de release.
+#[cfg(target_os = "ios")]
+const TAG_SUFFIX: &str = "-ios";
+#[cfg(target_os = "android")]
+const TAG_SUFFIX: &str = "";
+
 #[cfg(any(target_os = "android", target_os = "ios"))]
 pub async fn check(_app: &AppHandle) -> Result<UpdateInfo, String> {
     let current = env!("CARGO_PKG_VERSION").to_string();
     let url = endpoint();
+    // reqwest va con "rustls-no-provider": sin el plugin updater (solo escritorio) nadie instala
+    // el proveedor y `build()` hace panic (con panic=abort, la app se cierra al abrir).
+    let _ = rustls::crypto::ring::default_provider().install_default();
     let client = reqwest::Client::builder()
         .timeout(Duration::from_secs(20))
         .user_agent("NetTerminal-Updater")
@@ -215,7 +224,7 @@ pub async fn check(_app: &AppHandle) -> Result<UpdateInfo, String> {
         latest: latest_data.version.clone(),
         newer,
         url: if newer {
-            format!("https://github.com/{}/releases/tag/v{}", repo(), clean_latest)
+            format!("https://github.com/{}/releases/tag/v{}{}", repo(), clean_latest, TAG_SUFFIX)
         } else {
             format!("https://github.com/{}/releases", repo())
         },
