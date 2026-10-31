@@ -101,19 +101,19 @@ pub trait KeyStore: Send + Sync {
     fn delete(&self) -> Result<(), String>;
 }
 
-/// Llavero del sistema: Keychain (macOS), Administrador de credenciales (Windows) o
+/// Llavero del sistema: Keychain (macOS e iOS), Administrador de credenciales (Windows) o
 /// Secret Service (Linux). Sin Secret Service no hay respaldo en archivo: se usa la
 /// contraseña maestra.
 pub struct OsKeyStore;
 
-#[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+#[cfg(any(target_os = "macos", target_os = "ios", windows, target_os = "linux"))]
 impl OsKeyStore {
     fn entry() -> Result<keyring::Entry, String> {
         keyring::Entry::new("NetTerminal", "vault-key").map_err(|e| e.to_string())
     }
 }
 
-#[cfg(any(target_os = "macos", windows, target_os = "linux"))]
+#[cfg(any(target_os = "macos", target_os = "ios", windows, target_os = "linux"))]
 impl KeyStore for OsKeyStore {
     fn get(&self) -> Result<Option<Zeroizing<Vec<u8>>>, String> {
         match Self::entry()?.get_secret() {
@@ -133,7 +133,7 @@ impl KeyStore for OsKeyStore {
     }
 }
 
-#[cfg(not(any(target_os = "macos", windows, target_os = "linux")))]
+#[cfg(not(any(target_os = "macos", target_os = "ios", windows, target_os = "linux")))]
 impl KeyStore for OsKeyStore {
     fn get(&self) -> Result<Option<Zeroizing<Vec<u8>>>, String> {
         Err("Llavero no disponible".into())

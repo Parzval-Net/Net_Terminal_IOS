@@ -77,7 +77,7 @@ serialport = { version = "4.6", features = ["libudev"] }
 [target.'cfg(unix)'.dependencies]
 libc = "0.2"
 
-[target.'cfg(target_os = "macos")'.dependencies]
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
 keyring = { version = "3.6", default-features = false, features = ["apple-native"] }
 
 [target.'cfg(windows)'.dependencies]
