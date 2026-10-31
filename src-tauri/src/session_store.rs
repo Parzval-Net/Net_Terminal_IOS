@@ -139,6 +139,10 @@ impl SessionStore {
     }
 
     fn default_sessions() -> Vec<Session> {
+        // En iOS no hay terminal local: la lista parte vacía.
+        if cfg!(target_os = "ios") {
+            return Vec::new();
+        }
         vec![Session {
             id: Uuid::new_v4().to_string(),
             name: "Terminal local".to_string(),

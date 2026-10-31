@@ -6,8 +6,6 @@ import { TabBar, type TabBarProps } from "./components/TabBar";
 import { VerticalTabs } from "./components/VerticalTabs";
 import { StatusBar } from "./components/StatusBar";
 import { ActivityBar, MobileBottomNav } from "./components/ActivityBar";
-import { AssistantPanel } from "./components/AssistantPanel";
-import { AI_OUTPUT_LINES, AiAvailability, AiCommand, aiAvailable, catalogFor, trimOutput } from "./lib/ai";
 import { HistoryMenu } from "./components/HistoryMenu";
 import { TerminalView, TermController } from "./components/TerminalView";
 import type { CredChange } from "./components/SessionModal";
@@ -209,43 +207,17 @@ function Workspace({
   const [notesOpen, setNotesOpenRaw] = useState(() => stored("notesOpen", false));
   const [commandsOpen, setCommandsOpenRaw] = useState(() => stored("commandsOpen", false));
   useEffect(() => persist("commandsOpen", commandsOpen), [commandsOpen]);
-  // Asistente IA on-device: solo iOS con Apple Intelligence disponible (null = no se muestra).
-  const [ai, setAi] = useState<AiAvailability | null>(null);
-  const [assistantOpen, setAssistantOpenRaw] = useState(false);
-  useEffect(() => {
-    // modelNotReady: el modelo se descarga en segundo plano; se vuelve a consultar al volver a la app.
-    const check = () => aiAvailable().then(setAi);
-    check();
-    document.addEventListener("visibilitychange", check);
-    return () => document.removeEventListener("visibilitychange", check);
-  }, []);
   // Notas y Comandos comparten el lado derecho: abrir uno cierra el otro.
   const setNotesOpen = (v: boolean | ((o: boolean) => boolean)) =>
     setNotesOpenRaw((o) => {
       const next = typeof v === "function" ? v(o) : v;
-      if (next) {
-        setCommandsOpenRaw(false);
-        setAssistantOpenRaw(false);
-      }
+      if (next) setCommandsOpenRaw(false);
       return next;
     });
   const setCommandsOpen = (v: boolean | ((o: boolean) => boolean)) =>
     setCommandsOpenRaw((o) => {
       const next = typeof v === "function" ? v(o) : v;
-      if (next) {
-        setNotesOpenRaw(false);
-        setAssistantOpenRaw(false);
-      }
-      return next;
-    });
-  // Notas, Comandos y Asistente comparten el lado derecho.
-  const setAssistantOpen = (v: boolean | ((o: boolean) => boolean)) =>
-    setAssistantOpenRaw((o) => {
-      const next = typeof v === "function" ? v(o) : v;
-      if (next) {
-        setNotesOpenRaw(false);
-        setCommandsOpenRaw(false);
-      }
+      if (next) setNotesOpenRaw(false);
       return next;
     });
   const [notesWidth, setNotesWidth] = useState(() =>
