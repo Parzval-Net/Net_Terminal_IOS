@@ -206,7 +206,7 @@ import type { TabBrief, TerminalRef } from "./FileManager";
 import { Btn, Collapsible, CountBadge, Label, Toggle } from "./ui";
 import { ContextMenu } from "../Sidebar";
 import { LifecycleChip } from "../StatusBar";
-import { isMac } from "../../lib/platform";
+import { isIOS, isMac } from "../../lib/platform";
 import { modelFromPlatform } from "../../lib/lifecycle";
 import type { MenuItem } from "../tabMenu";
 
@@ -2797,7 +2797,7 @@ export function TopologyTool({
                   ))}
                 </select>
               </Label>
-              <Label text="Fabricante" className="w-full sm:w-40">
+              <Label text="Fabricante" className="ios-vendor w-full sm:w-40">
                 <select className="field w-full" value={vendor} onChange={(e) => setVendor(e.target.value as TopoVendor)}>
                   {VENDORS.map((v) => (
                     <option key={v.id} value={v.id}>
@@ -2868,8 +2868,8 @@ export function TopologyTool({
             <Search size={13} className="absolute left-2 top-1/2 -translate-y-1/2 text-muted pointer-events-none" aria-hidden />
             <input
               type="search"
-              className="field !h-8 !pl-7 w-40 sm:!w-64 @max-[860px]:!w-44 !text-[12px]"
-              placeholder="Buscar (nombre, IP, MAC, puerto)"
+              className="ios-topo-search field !h-8 !pl-7 w-40 sm:!w-64 @max-[860px]:!w-44 !text-[12px]"
+              placeholder={isIOS ? "Buscar nodo o IP" : "Buscar (nombre, IP, MAC, puerto)"}
               title="Busca por nombre, IP, MAC, interfaz o descripción; Enter va al primero"
               aria-label="Buscar en el diagrama"
               disabled={!topo.nodes.length}

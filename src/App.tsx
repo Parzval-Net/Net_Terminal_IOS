@@ -2053,13 +2053,13 @@ function EmptyState({
             aria-label="Conexión rápida sin guardar"
             className="ios-cell flex flex-col justify-between p-3.5 rounded-2xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left group touch-manipulation min-h-[92px] shadow-xs"
           >
-            <div className="flex items-center justify-between w-full">
+            <div className="ios-card-top flex items-center justify-between w-full">
               <span className="w-8 h-8 rounded-xl bg-hover text-muted group-hover:text-fg grid place-items-center transition-colors">
                 <Zap size={17} />
               </span>
               <ChevronRight size={15} className="text-muted/40 group-hover:text-fg transition-colors" />
             </div>
-            <div className="mt-2.5">
+            <div className="ios-card-text mt-2.5">
               <div className="ios-title text-[13px] font-semibold text-fg leading-tight">
                 Conexión rápida
               </div>
@@ -2075,13 +2075,13 @@ function EmptyState({
             aria-label="Terminal local"
             className="ios-cell flex flex-col justify-between p-3.5 rounded-2xl bg-panel border border-line hover:border-accent/40 active:bg-hover transition-all text-left group touch-manipulation min-h-[92px] shadow-xs"
           >
-            <div className="flex items-center justify-between w-full">
+            <div className="ios-card-top flex items-center justify-between w-full">
               <span className="w-8 h-8 rounded-xl bg-hover text-muted group-hover:text-fg grid place-items-center transition-colors">
                 <Terminal size={17} />
               </span>
               <ChevronRight size={15} className="text-muted/40 group-hover:text-fg transition-colors" />
             </div>
-            <div className="mt-2.5">
+            <div className="ios-card-text mt-2.5">
               <div className="ios-title text-[13px] font-semibold text-fg leading-tight">
                 Terminal local
               </div>

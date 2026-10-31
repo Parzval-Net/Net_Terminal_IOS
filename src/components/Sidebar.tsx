@@ -590,7 +590,7 @@ export const Sidebar = memo(function Sidebar(p: Props) {
       style={{ width: p.width }}
       className="relative shrink-0 h-full flex flex-col bg-chrome border-r border-line max-sm:!w-full max-w-full sm:max-w-[calc(100vw-44px)]"
     >
-      <div className="flex items-center gap-0.5 px-2.5 pt-3 pb-2">
+      <div className="ios-side-tools flex items-center gap-0.5 px-2.5 pt-3 pb-2">
         <div className="relative flex-1 mr-1">
           <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted" />
           <input

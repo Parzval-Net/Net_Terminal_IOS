@@ -494,6 +494,53 @@ html.ios .ios-group > * + *::before {
 html.ios .ios-home .grid-cols-2:has(> .ios-cell:only-child) {
   grid-template-columns: 1fr;
 }
+/* Conexión rápida como fila compacta (ícono, texto, chevron) en vez de tarjeta vertical. El
+   contenedor del ícono pasa a display: contents para ordenar sus hijos junto al texto. */
+html.ios .ios-home .ios-cell:not(.ios-cell-row) {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-height: 56px;
+  padding: 10px 14px;
+}
+html.ios .ios-home .ios-card-top {
+  display: contents;
+}
+html.ios .ios-home .ios-card-top > :first-child {
+  order: 0;
+}
+html.ios .ios-home .ios-card-text {
+  order: 1;
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+html.ios .ios-home .ios-card-top > :last-child {
+  order: 2;
+  flex-shrink: 0;
+}
+/* Los subtítulos y rótulos se muestran completos (hasta 2 líneas) en lugar de cortarse con "…". */
+html.ios .ios-home .ios-sub,
+html.ios .ios-home .ios-cell-row .truncate,
+html.ios .ios-home .ios-row .truncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+/* Los títulos de fila no se parten por la mitad: una línea con elipsis solo si no cabe. */
+html.ios .ios-home .ios-row .ios-title.truncate {
+  display: block;
+  white-space: normal;
+  -webkit-line-clamp: unset;
+}
+/* iPhone: accesos rápidos en una columna; en dos, "Subredes & Ping" no cabe. */
+html.ios:not(.ipad) .ios-home .grid-cols-2:has(> .ios-cell-row) {
+  grid-template-columns: 1fr;
+}
 html.ios .ios-row,
 html.ios .ios-cell-row {
   min-height: 52px;
@@ -535,6 +582,70 @@ html.ios .ios-link {
   font: -apple-system-subheadline;
   color: var(--accent);
   min-height: 44px;
+}
+
+/* Herramientas y diálogos: sin desbordes ni textos cortados, y áreas táctiles de 44 pt. */
+/* Las acciones a la derecha de una sección (filtros, selects) pueden encogerse y bajar de línea. */
+html.ios section > header > .shrink-0 {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
+}
+/* Las pistas bajo el título de una sección se leen completas. */
+html.ios section > header p.truncate,
+html.ios section > header .truncate + p {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+/* Nombre de tema con su pista ("Automático · Sigue la interfaz"): baja de línea en vez de cortarse. */
+html.ios .ios-wrap {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+html.ios .ios-theme-name {
+  height: auto;
+  min-height: 28px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+/* Campos de 44 pt de alto mínimo (los de h-7 o h-8 quedaban en 28 a 32 pt). */
+html.ios .field {
+  min-height: 44px;
+}
+/* Botones pequeños (h-6 a h-9): se amplía el área táctil con un pseudo-elemento, sin mover el
+   diseño. Los botones ya posicionados (absolute, fixed, sticky) se dejan como están. */
+html.ios button:is(.h-6, .h-7, .h-8, .h-9, .w-6, .w-7, .w-8):not(.absolute, .fixed, .sticky, .relative) {
+  position: relative;
+}
+html.ios button:is(.h-6, .h-7, .h-8, .h-9, .w-6, .w-7, .w-8)::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+
+/* iPad: el panel de sesiones mide 256 pt; el filtro ocupa su propia fila para no quedar de 80 pt. */
+html.ipad .ios-side-tools {
+  flex-wrap: wrap;
+}
+html.ipad .ios-side-tools > .flex-1 {
+  flex-basis: 100%;
+  margin: 0 0 4px;
+}
+/* iPad: la pantalla de inicio aprovecha más ancho que en iPhone (420 pt quedaba angosta). */
+html.ipad .ios-home > div {
+  max-width: 600px;
+}
+
+/* Topología: el select de fabricante y el buscador mostraban "Cisco (CDP + LL" y "Buscar (nombre, IP, MA"
+   porque el texto de 16 pt no cabe en los anchos pensados para escritorio. */
+html.ipad .ios-vendor {
+  width: 15rem;
+}
+html.ios .ios-topo-search {
+  width: 17rem !important;
+  max-width: 100%;
 }
 
 /* iPad: barra lateral de actividad con botones de 44 pt y selección teñida (HIG, Sidebars). */

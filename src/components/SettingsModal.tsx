@@ -990,8 +990,8 @@ function ThemeCard({
           ))}
         </div>
       </div>
-      <div className="flex items-center justify-between px-2.5 h-7 text-[12px]">
-        <span className="truncate" title={hint ? `${preset.name} · ${hint}` : preset.name}>
+      <div className="ios-theme-name flex items-center justify-between px-2.5 h-7 text-[12px]">
+        <span className="ios-wrap truncate" title={hint ? `${preset.name} · ${hint}` : preset.name}>
           {preset.name}
           {hint && <span className="text-muted"> · {hint}</span>}
         </span>
