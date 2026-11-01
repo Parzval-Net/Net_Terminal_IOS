@@ -64,7 +64,7 @@ Funciona en iPhone 13 o posterior y en iPad, con iOS 16 o superior.
 | Catálogo, macros, notas y alertas | ✅ | ✅ |
 | Topología CDP / LLDP | Opcional | ✅ |
 | Transferencias TFTP / HTTP | Opcional | ✅ |
-| CLI Lab | — | ✅ |
+| CLI Lab | No | ✅ |
 
 **Opcional:** viene desactivado en iPhone por el tamaño de pantalla y se activa en Ajustes › Módulos.
 
