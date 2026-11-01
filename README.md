@@ -14,7 +14,7 @@
   <a href="https://github.com/Parzval-Net/Net_Terminal_IOS/releases/latest"><img src="https://img.shields.io/github/v/release/Parzval-Net/Net_Terminal_IOS?color=007AFF&label=Versi%C3%B3n" alt="Versión"></a>
   <a href="https://github.com/Parzval-Net/Net_Terminal_IOS/actions/workflows/ios.yml"><img src="https://github.com/Parzval-Net/Net_Terminal_IOS/actions/workflows/ios.yml/badge.svg" alt="Estado del build iOS"></a>
   <a href="https://tauri.app"><img src="https://img.shields.io/badge/Tauri%202-Mobile-24C8D8?logo=tauri&logoColor=white" alt="Tauri 2 Mobile"></a>
-  <a href="IOS.md"><img src="https://img.shields.io/badge/Licencia-MIT-yellow.svg" alt="Licencia MIT"></a>
+  <a href="LICENSE.md"><img src="https://img.shields.io/badge/Licencia-PolyForm%20Noncommercial%201.0.0-red.svg" alt="Licencia PolyForm Noncommercial 1.0.0"></a>
 </p>
 
 <p align="center">
@@ -125,6 +125,7 @@ Requisitos y pasos completos en [IOS.md](IOS.md).
 
 ## 📄 Licencia y Créditos
 
-- **Licencia:** Distribuido bajo la licencia MIT.
+- **Licencia:** [PolyForm Noncommercial 1.0.0](LICENSE.md). Se permite usar, estudiar y modificar el código solo con fines no comerciales (uso personal, investigación, educación, organizaciones sin fines de lucro y entidades públicas). Cualquier uso comercial, incluido el uso interno en empresas, requiere una licencia aparte del autor. Las versiones publicadas antes del 31-10-2026 conservan los términos con que se distribuyeron.
+- **Dependencias de terceros:** cada una mantiene su propia licencia (MIT, Apache-2.0, etc.).
 - **Autor y Desarrollador:** Nicolás Rivera ([@Parzval-Net](https://github.com/Parzval-Net)).
 - **Núcleo Tecnológico:** Desarrollado con [Tauri 2 Mobile](https://tauri.app), [Rust](https://www.rust-lang.org), [russh](https://github.com/Eugeny/russh) y [xterm.js](https://xtermjs.org).

@@ -2,6 +2,7 @@
   "name": "netterminal",
   "private": true,
   "version": "0.9.19",
+  "license": "PolyForm-Noncommercial-1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
